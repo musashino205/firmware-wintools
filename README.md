@@ -6,6 +6,8 @@ OpenWrtのfirmware-utilsのWindows移植（という名の適当再現）
 
 ```firmware-wintools -h```
 
+```firmware-wintools <func> -h``` （機能ヘルプ）
+
 ## 機能
 現在 nec-enc のみ
 
@@ -18,8 +20,6 @@ OpenWrtにおけるnec-encの機能を提供します。
 使用方法:
 
 ```firmware-wintools nec-enc -i <input file> -o <output file> -k <key>```
-
-```firmware-wintools nec-enc -h```
 
 確認済み機種:
 
