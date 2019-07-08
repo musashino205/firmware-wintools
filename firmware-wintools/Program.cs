@@ -73,7 +73,6 @@ namespace firmware_wintools
 			{
 				case "nec-enc":
 					Console.WriteLine("=== nec-enc mode ===");
-					Tools.nec_enc nec_enc = new Tools.nec_enc();
 					ret = Tools.nec_enc.Do_FwEncode(args, props);
 					break;
 				default:
