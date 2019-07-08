@@ -9,7 +9,9 @@ OpenWrtのfirmware-utilsのWindows移植（という名の適当再現）
 ```firmware-wintools <func> -h``` （機能ヘルプ）
 
 ## 機能
-現在 nec-enc のみ
+
+- nec-enc
+- xorimage
 
 ---
 
@@ -38,6 +40,20 @@ OpenWrtにおけるnec-encの機能を提供します。
 注意:
 
 WG2600HPxシリーズやMRxxLNシリーズ、WR4100N及びその類似機種はファームウェアの暗号化方法が異なるため、使用できません。
+
+---
+
+### xorimage
+
+OpenWrtにおけるxorimageの機能を提供します。
+
+使用方法:
+
+```firmware-wintools xorimage -i <input file> -o <output file> -p <pattern> [-x]```
+
+注意:
+
+```-x``` オプションは、patternに文字列で表現することができない16進数を使用する必要がある場合に用います。
 
 ---
 
