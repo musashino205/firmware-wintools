@@ -11,7 +11,7 @@ namespace firmware_wintools.Tools
 			public string key;
 		}
 
-		public static void PrintHelp()
+		private void PrintHelp()
 		{
 			Console.WriteLine("Usage: firmware-wintools nec-enc [OPTIONS...]\n" +
 				Environment.NewLine +
@@ -21,13 +21,13 @@ namespace firmware_wintools.Tools
 				"  -k <key>\tuse <key> for encode/decode the firmware\n");
 		}
 
-		public static void PrintInfo(Properties props)
+		private void PrintInfo(Properties props)
 		{
 			Console.WriteLine("===== nec-enc mode =====");
 			Console.WriteLine(" key:\t\t{0}\n", props.key);
 		}
 
-		static int XorPattern(ref byte[] data, int len, ref string key, int k_len, int k_off)
+		private int XorPattern(ref byte[] data, int len, ref string key, int k_len, int k_off)
 		{
 			int data_pos = 0;
 			int offset = k_off;
@@ -43,7 +43,7 @@ namespace firmware_wintools.Tools
 			return offset;
 		}
 
-		static void XorData(ref byte[] data, int len, ref byte[] pattern)
+		private void XorData(ref byte[] data, int len, ref byte[] pattern)
 		{
 			int data_pos = 0;
 
@@ -54,7 +54,7 @@ namespace firmware_wintools.Tools
 			}
 		}
 
-		public static int Do_NecEnc(string[] args, Program.Properties props)
+		public int Do_NecEnc(string[] args, Program.Properties props)
 		{
 			int max_key_len = 16;
 			int pattern_len = 251;

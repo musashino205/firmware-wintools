@@ -12,7 +12,7 @@ namespace firmware_wintools.Tools
 			public bool ishex;
 		}
 
-		static void PrintHelp()
+		private void PrintHelp()
 		{
 			Console.WriteLine("Usage: firmware-wintools xorimage [OPTIONS...]\n" +
 				Environment.NewLine +
@@ -23,14 +23,14 @@ namespace firmware_wintools.Tools
 				"  -x\t\tuse \"hex pattern\" mode\n");
 		}
 
-		static void PrintInfo(Properties props)
+		private void PrintInfo(Properties props)
 		{
 			Console.WriteLine("===== xorimage mode =====");
 			Console.WriteLine(" pattern:\t{0}\n", props.pattern);
 			Console.WriteLine(" hex mode:\t{0}\n", props.ishex.ToString());
 		}
 
-		static int XorData(ref byte[] data, int len, Properties props, int p_len, int p_off)
+		private int XorData(ref byte[] data, int len, Properties props, int p_len, int p_off)
 		{
 			int data_pos = 0;
 			int offset = p_off;
@@ -54,7 +54,7 @@ namespace firmware_wintools.Tools
 			return offset;
 		}
 
-		public static int Do_Xor(string[] args, Program.Properties props)
+		public int Do_Xor(string[] args, Program.Properties props)
 		{
 			int read_len, p_off = 0;
 			byte[] hex_pattern = new byte[128];
