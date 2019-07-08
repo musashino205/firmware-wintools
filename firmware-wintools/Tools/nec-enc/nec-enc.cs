@@ -57,7 +57,7 @@ namespace firmware_wintools.Tools
 			}
 		}
 
-		public static int Do_FwEncode(string[] args, Program.Properties props)
+		public static int Do_NecEnc(string[] args, Program.Properties props)
 		{
 			int max_key_len = 16;
 			int pattern_len = 251;
