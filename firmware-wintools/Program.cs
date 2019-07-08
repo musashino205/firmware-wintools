@@ -35,7 +35,7 @@ namespace firmware_wintools
 
 			if (args.Length < 1)
 			{
-				Console.WriteLine("error: no command-line arguments");
+				Console.Error.WriteLine("error: no command-line arguments");
 				return 1;
 			}
 
@@ -56,7 +56,7 @@ namespace firmware_wintools
 			{
 				if (props.inFile == null || props.outFile == null)
 				{
-					Console.WriteLine("error: parameter error, exit");
+					Console.Error.WriteLine("error: parameter error, exit");
 					if (props.debug)
 						Thread.Sleep(4000);
 					return 1;
@@ -84,7 +84,7 @@ namespace firmware_wintools
 					}
 					else
 					{
-						Console.WriteLine("error: mode is missing");
+						Console.Error.WriteLine("error: mode is missing");
 						ret = 1;
 					}
 					break;
@@ -92,7 +92,7 @@ namespace firmware_wintools
 
 			if (ret != 0)
 			{
-				Console.WriteLine("ERROR");
+				Console.Error.WriteLine("ERROR");
 				if (props.debug)
 					Thread.Sleep(4000);
 				return ret;
