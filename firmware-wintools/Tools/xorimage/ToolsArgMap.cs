@@ -2,7 +2,7 @@
 {
 	partial class ToolsArgMap
 	{
-		public void Init_args_Xorimage(string[] args, ref Tools.xorimage.Properties props)
+		public void Init_args_Xorimage(string[] args, ref Tools.XorImage.Properties props)
 		{
 			for (int i = 0; i < args.Length; i++)
 			{

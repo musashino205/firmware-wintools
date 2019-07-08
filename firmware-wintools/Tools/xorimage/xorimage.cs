@@ -4,7 +4,7 @@ using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	class xorimage
+	class XorImage
 	{
 		public struct Properties
 		{

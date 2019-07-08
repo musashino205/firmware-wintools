@@ -69,10 +69,10 @@ namespace firmware_wintools
 			switch (args[0])
 			{
 				case "nec-enc":
-					ret = Tools.nec_enc.Do_NecEnc(args, props);
+					ret = Tools.Nec_Enc.Do_NecEnc(args, props);
 					break;
 				case "xorimage":
-					ret = Tools.xorimage.Do_Xor(args, props);
+					ret = Tools.XorImage.Do_Xor(args, props);
 					break;
 				default:
 					if (props.help)

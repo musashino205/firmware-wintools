@@ -2,7 +2,7 @@
 {
 	partial class ToolsArgMap
 	{
-		public void Init_args_NecEnc(string[] args, ref Tools.nec_enc.Properties props)
+		public void Init_args_NecEnc(string[] args, ref Tools.Nec_Enc.Properties props)
 		{
 			for (int i = 0; i < args.Length; i++)
 			{

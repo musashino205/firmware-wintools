@@ -4,7 +4,7 @@ using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	class nec_enc
+	class Nec_Enc
 	{
 		public struct Properties
 		{
