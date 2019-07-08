@@ -24,6 +24,12 @@ namespace firmware_wintools.Tools
 				"  -k <key>\tuse <key> for encode/decode the firmware\n");
 		}
 
+		public static void PrintInfo(Properties props)
+		{
+			Console.WriteLine("===== nec-enc mode =====");
+			Console.WriteLine(" key:\t\t{0}\n", props.key);
+		}
+
 		static int XorPattern(ref byte[] data, int len, ref string key, int k_len, int k_off)
 		{
 			int data_pos = 0;
@@ -83,6 +89,8 @@ namespace firmware_wintools.Tools
 				Console.WriteLine("Key length is not in range (0, {0})", max_key_len);
 				return 1;
 			}
+
+			PrintInfo(subprops);
 
 			if (!File.Exists(props.inFile))
 			{

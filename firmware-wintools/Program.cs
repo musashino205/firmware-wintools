@@ -72,7 +72,6 @@ namespace firmware_wintools
 			switch (args[0])
 			{
 				case "nec-enc":
-					Console.WriteLine("=== nec-enc mode ===");
 					ret = Tools.nec_enc.Do_FwEncode(args, props);
 					break;
 				default:
