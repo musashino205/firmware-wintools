@@ -8,7 +8,7 @@ namespace firmware_wintools.Tools
 {
 	partial class ToolsArgMap
 	{
-		public void Init_args_NecEnc(string[] args, ref Tools.nec_enc.Properties props)
+		public void Init_args_Xorimage(string[] args, ref Tools.xorimage.Properties props)
 		{
 			for (int i = 0; i < args.Length; i++)
 			{
@@ -18,9 +18,12 @@ namespace firmware_wintools.Tools
 				{
 					switch (param.Replace("-", ""))
 					{
-						case "k":
-							if (ArgMap.Set_StrParamFromArgs(args, i, ref props.key) == 0)
+						case "p":
+							if (ArgMap.Set_StrParamFromArgs(args, i, ref props.pattern) == 0)
 								i++;
+							break;
+						case "x":
+							props.ishex = true;
 							break;
 					}
 				}

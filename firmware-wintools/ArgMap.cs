@@ -8,7 +8,7 @@ namespace firmware_wintools
 {
 	class ArgMap
 	{
-		private int Set_StrParamFromArgs(string[] args, int index, ref string target)
+		public static int Set_StrParamFromArgs(string[] args, int index, ref string target)
 		{
 			if (index + 1 < args.Length && !args[index + 1].StartsWith("-"))
 			{

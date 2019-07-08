@@ -74,6 +74,9 @@ namespace firmware_wintools
 				case "nec-enc":
 					ret = Tools.nec_enc.Do_FwEncode(args, props);
 					break;
+				case "xorimage":
+					ret = Tools.xorimage.Do_Xor(args, props);
+					break;
 				default:
 					if (props.help)
 					{
