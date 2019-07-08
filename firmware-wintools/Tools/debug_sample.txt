@@ -1,0 +1,7 @@
+﻿デバッグ時のコマンドライン引数サンプル
+
+# nec-enc
+nec-enc -i ..\..\SampleBin\openwrt-ath79-generic-nec_wg1200cr-squashfs-factory.bin -o test.out -k 9gsiy9nzep452pad -D
+
+# xorimage
+xorimage -i ..\..\SampleBin\openwrt-ramips-mt7620-iodata_wn-ac733gr3-squashfs-factory.bin -o test.out -p 8844A2D168B45A2D -x -D
