@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 
 namespace firmware_wintools
@@ -18,6 +19,8 @@ namespace firmware_wintools
 
 		static void PrintHelp()
 		{
+			Assembly asm = Assembly.GetExecutingAssembly();
+			Console.WriteLine("{0}  Version: {1}\n", asm.GetName().Name, asm.GetName().Version);
 			Console.WriteLine("Usage: firmware-wintools <func> [OPTIONS...]\n" +
 				Environment.NewLine +
 				"Functions:\n" +
