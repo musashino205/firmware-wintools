@@ -8,11 +8,9 @@ namespace firmware_wintools.Tools
 		{
 			for (int i = 0; i < args.Length; i++)
 			{
-				string param = args[i];
-
-				if (param.StartsWith("-"))
+				if (args[i].StartsWith("-"))
 				{
-					switch (param.Replace("-", ""))
+					switch (args[i].Replace("-", ""))
 					{
 						case "s":
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref props.signature) == 0)

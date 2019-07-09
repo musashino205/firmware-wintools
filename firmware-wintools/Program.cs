@@ -12,6 +12,7 @@ namespace firmware_wintools
 			public bool help;
 			public string inFile;
 			public string outFile;
+			public int propcnt;
 		}
 
 		static void PrintHelp()
@@ -32,14 +33,17 @@ namespace firmware_wintools
 			int ret;
 			Properties props = new Properties();
 
-			if (args.Length < 1)
+			if (args.Length == 0)		// 引数が0ならヘルプ表示して終了
 			{
-				Console.Error.WriteLine("error: no command-line arguments");
-				return 1;
+				PrintHelp();
+				return 0;
 			}
 
 			ArgMap argMap = new ArgMap();
 			argMap.Init_args(args, ref props);
+
+			if (props.propcnt == 0)
+				props.help = true;		// -* パラメータの個数が0なら指定されたモードの有無/有効性に関わらずhelpフラグを立てる
 
 			if (props.debug)
 			{
@@ -55,7 +59,7 @@ namespace firmware_wintools
 			{
 				if (props.inFile == null || props.outFile == null)
 				{
-					Console.Error.WriteLine("error: parameter error, exit");
+					Console.Error.WriteLine("error: input or output file is not specified");
 					if (props.debug)
 						Thread.Sleep(4000);
 					return 1;
@@ -83,28 +87,15 @@ namespace firmware_wintools
 					ret = xorimage.Do_Xor(args, props);
 					break;
 				default:
-					if (props.help)
-					{
-						PrintHelp();
-						ret = 0;
-					}
-					else
-					{
-						Console.Error.WriteLine("error: mode is missing");
-						ret = 1;
-					}
+					Console.Error.WriteLine("error: mode is not specified or invalid mode is specified");
+					ret = 1;		// 指定されたモードが無効ならエラー吐いてret=1
 					break;
 			}
 
 			if (ret != 0)
-			{
 				Console.Error.WriteLine("ERROR");
-				if (props.debug)
-					Thread.Sleep(4000);
-				return ret;
-			}
-
-			Console.WriteLine("DONE");
+			else
+				Console.WriteLine("DONE");
 
 			if (props.debug)
 				Thread.Sleep(4000);
