@@ -19,7 +19,7 @@
 		{
 			for (int i = 0; i < args.Length; i++)
 			{
-				if (args[i].StartsWith("-") && args[i].Length > 1)	// args[i].Length > 1: ハイフンのみ ('-') 対策（propcnt用）
+				if (args[i].StartsWith("-"))
 				{
 					switch (args[i].Replace("-", ""))
 					{
@@ -36,6 +36,9 @@
 							break;
 						case "D":
 							props.debug = true;
+							break;
+						case "":    // ハイフンのみ ('-') 対策
+							props.prop_invalid = true;
 							break;
 					}
 					props.propcnt++;

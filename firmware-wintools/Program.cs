@@ -13,6 +13,7 @@ namespace firmware_wintools
 			public string inFile;
 			public string outFile;
 			public int propcnt;
+			public bool prop_invalid;
 		}
 
 		static void PrintHelp()
@@ -41,6 +42,12 @@ namespace firmware_wintools
 
 			ArgMap argMap = new ArgMap();
 			argMap.Init_args(args, ref props);
+
+			if (props.prop_invalid)
+			{
+				Console.Error.WriteLine("error: invalid parameter is specified");
+				return 1;
+			}
 
 			if (props.propcnt == 0)
 				props.help = true;		// -* パラメータの個数が0なら指定されたモードの有無/有効性に関わらずhelpフラグを立てる
@@ -87,8 +94,16 @@ namespace firmware_wintools
 					ret = xorimage.Do_Xor(args, props);
 					break;
 				default:
-					Console.Error.WriteLine("error: mode is not specified or invalid mode is specified");
-					ret = 1;		// 指定されたモードが無効ならエラー吐いてret=1
+					if (args[0].StartsWith("-") && props.help)
+					{
+						PrintHelp();
+						ret = 0;
+					}
+					else
+					{
+						Console.Error.WriteLine("error: mode is not specified or invalid mode is specified");
+						ret = 1;        // 指定されたモードが無効ならエラー吐いてret=1
+					}
 					break;
 			}
 
