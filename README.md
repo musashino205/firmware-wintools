@@ -10,8 +10,19 @@ OpenWrtのfirmware-utilsのWindows移植（という名の適当再現）
 
 ## 機能
 
+- mkedimaximg
 - nec-enc
 - xorimage
+
+---
+
+### mkedimaximg
+
+OpenWrtにおけるmkedimaximgの機能を提供します。
+
+使用方法:
+
+```firmware-wintools mkedimaximg -i <input file> -o <output file> -s <signature> -m <model> -f <flash> -S <start> [-b]```
 
 ---
 
