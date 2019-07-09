@@ -68,6 +68,10 @@ namespace firmware_wintools
 
 			switch (args[0])
 			{
+				case "mkedimaximg":
+					Tools.MkEdimaxImg mkedimaximg = new Tools.MkEdimaxImg();
+					ret = mkedimaximg.Do_MkEdimaxImage(args, props);
+					break;
 				case "nec-enc":
 					Tools.Nec_Enc nec_enc = new Tools.Nec_Enc();
 					ret = nec_enc.Do_NecEnc(args, props);
