@@ -20,7 +20,9 @@ namespace firmware_wintools
 		static void PrintHelp()
 		{
 			Assembly asm = Assembly.GetExecutingAssembly();
-			Console.WriteLine("{0}  Version: {1}\n", asm.GetName().Name, asm.GetName().Version);
+			Console.WriteLine("{0}  Version: {1}\n",
+				((AssemblyProductAttribute)asm.GetCustomAttributes(typeof(AssemblyProductAttribute), false)[0]).Product,
+				asm.GetName().Version);
 			Console.WriteLine("Usage: firmware-wintools <func> [OPTIONS...]\n" +
 				Environment.NewLine +
 				"Functions:\n" +
