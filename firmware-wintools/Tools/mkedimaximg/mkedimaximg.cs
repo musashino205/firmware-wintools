@@ -147,6 +147,12 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
+			if (inFs.Length > 0xFFFFFFFFu)
+			{
+				Console.Error.WriteLine("error: input file is too large");
+				return 1;
+			}
+
 			buf = new byte[inFs.Length];
 			header.size = Convert.ToInt32(inFs.Length + sizeof(short));
 
