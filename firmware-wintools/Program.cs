@@ -19,7 +19,9 @@ namespace firmware_wintools
 			Console.WriteLine("Usage: firmware-wintools <func> [OPTIONS...]\n" +
 				Environment.NewLine +
 				"Functions:\n" +
-				"  nec-enc: encode/decode the firmware for NEC Aterm series\n" +
+				"    mkedimaximg:\tadd Edimax header and checksum\n" +
+				"    nec-enc:\t\tencode/decode firmware for NEC Aterm series\n" +
+				"    xorimage:\t\tencode/decode firmware by xor with a pattern\n" +
 				Environment.NewLine + Environment.NewLine +
 				"For details in each functions, please run following:\n" +
 				"  firmware-wintools <func> -h\n");
