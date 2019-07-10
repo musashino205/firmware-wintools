@@ -51,10 +51,10 @@
 							props.debug = true;
 							break;
 						case "":    // ハイフンのみ ('-') 対策
-							props.prop_invalid = true;
+							props.param_invalid = true;
 							break;
 					}
-					props.propcnt++;
+					props.paramcnt++;
 				}
 			}
 		}

@@ -32,11 +32,11 @@ namespace firmware_wintools
 			/// <summary>
 			/// -* オプションの数（指定されたモードは含まない）
 			/// </summary>
-			public int propcnt;
+			public int paramcnt;
 			/// <summary>
 			/// 無効なパラメータの有無 ('-')
 			/// </summary>
-			public bool prop_invalid;
+			public bool param_invalid;
 		}
 
 		/// <summary>
@@ -78,13 +78,13 @@ namespace firmware_wintools
 			ArgMap argMap = new ArgMap();
 			argMap.Init_args(args, ref props);
 
-			if (props.prop_invalid)
+			if (props.param_invalid)
 			{
 				Console.Error.WriteLine("error: invalid parameter is specified");
 				return 1;
 			}
 
-			if (props.propcnt == 0)
+			if (props.paramcnt == 0)
 				props.help = true;		// -* パラメータの個数が0なら指定されたモードの有無/有効性に関わらずhelpフラグを立てる
 
 			if (props.debug)
