@@ -6,12 +6,24 @@ namespace firmware_wintools.Tools
 {
 	class XorImage
 	{
+		/// <summary>
+		/// xorimageの機能プロパティ
+		/// </summary>
 		public struct Properties
 		{
+			/// <summary>
+			/// xorに用いるpattern
+			/// </summary>
 			public string pattern;
+			/// <summary>
+			/// 指定されたパターンがhex値であるか否か
+			/// </summary>
 			public bool ishex;
 		}
 
+		/// <summary>
+		/// xorimageの機能ヘルプを表示します
+		/// </summary>
 		private void PrintHelp()
 		{
 			Console.WriteLine("Usage: firmware-wintools xorimage [OPTIONS...]\n" +
@@ -23,6 +35,10 @@ namespace firmware_wintools.Tools
 				"  -x\t\tuse \"hex pattern\" mode\n");
 		}
 
+		/// <summary>
+		/// xorimageの実行情報を表示します
+		/// </summary>
+		/// <param name="props"></param>
 		private void PrintInfo(Properties props)
 		{
 			Console.WriteLine("===== xorimage mode =====");
@@ -30,6 +46,16 @@ namespace firmware_wintools.Tools
 			Console.WriteLine(" hex mode:\t{0}\n", props.ishex.ToString());
 		}
 
+		/// <summary>
+		/// 指定された <paramref name="props"/> 内のpatternを用いて、<paramref name="data"/>
+		/// のxorを行います
+		/// </summary>
+		/// <param name="data">xor対象データ</param>
+		/// <param name="len">xor対象データの長さ</param>
+		/// <param name="props">xorimageの機能プロパティ</param>
+		/// <param name="p_len">パターン長</param>
+		/// <param name="p_off">パターン オフセット</param>
+		/// <returns></returns>
 		private int XorData(ref byte[] data, int len, Properties props, int p_len, int p_off)
 		{
 			int data_pos = 0;
@@ -54,6 +80,14 @@ namespace firmware_wintools.Tools
 			return offset;
 		}
 
+		/// <summary>
+		/// xorimageメイン関数
+		/// <para>コマンドライン引数とメインプロパティから、xorによりファームウェアの
+		/// エンコード/デコード を行います</para>
+		/// </summary>
+		/// <param name="args">コマンドライン引数</param>
+		/// <param name="props">Program内のメインプロパティ</param>
+		/// <returns></returns>
 		public int Do_Xor(string[] args, Program.Properties props)
 		{
 			int read_len, p_off = 0;

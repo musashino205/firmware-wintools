@@ -4,6 +4,11 @@ namespace firmware_wintools.Tools
 {
 	partial class ToolsArgMap
 	{
+		/// <summary>
+		/// コマンドライン引数 (<paramref name="args"/>) を解析し、mkedimaximgの機能プロパティを取得します
+		/// </summary>
+		/// <param name="args">コマンドライン引数</param>
+		/// <param name="props">mkedimaximgの機能プロパティ</param>
 		public void Init_args_MkEdimaxImg(string[] args, ref Tools.MkEdimaxImg.Properties props)
 		{
 			for (int i = 0; i < args.Length; i++)

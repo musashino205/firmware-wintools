@@ -6,11 +6,20 @@ namespace firmware_wintools.Tools
 {
 	class Nec_Enc
 	{
+		/// <summary>
+		/// nec-encの機能プロパティ
+		/// </summary>
 		public struct Properties
 		{
+			/// <summary>
+			/// patternのxorに用いるキー
+			/// </summary>
 			public string key;
 		}
 
+		/// <summary>
+		/// nec-encの機能ヘルプを表示します
+		/// </summary>
 		private void PrintHelp()
 		{
 			Console.WriteLine("Usage: firmware-wintools nec-enc [OPTIONS...]\n" +
@@ -21,12 +30,25 @@ namespace firmware_wintools.Tools
 				"  -k <key>\tuse <key> for encode/decode the firmware\n");
 		}
 
+		/// <summary>
+		/// nec-encの実行情報を表示します
+		/// </summary>
+		/// <param name="props">nec-encの機能プロパティ</param>
 		private void PrintInfo(Properties props)
 		{
 			Console.WriteLine("===== nec-enc mode =====");
 			Console.WriteLine(" key:\t\t{0}\n", props.key);
 		}
 
+		/// <summary>
+		/// keyを用いてxorによりpatternを生成します
+		/// </summary>
+		/// <param name="data">ベースパターン データ</param>
+		/// <param name="len">ベースパータンのデータ長</param>
+		/// <param name="key">ベースパターンのxorに用いるキー</param>
+		/// <param name="k_len">キー長</param>
+		/// <param name="k_off">キー オフセット</param>
+		/// <returns></returns>
 		private int XorPattern(ref byte[] data, int len, ref string key, int k_len, int k_off)
 		{
 			int data_pos = 0;
@@ -43,6 +65,13 @@ namespace firmware_wintools.Tools
 			return offset;
 		}
 
+		/// <summary>
+		/// patternを用いて対象データのxorを行います
+		/// <para>対象データとpatternは長さが同一である必要があります</para>
+		/// </summary>
+		/// <param name="data">xor対象データ</param>
+		/// <param name="len">xor対象データの長さ</param>
+		/// <param name="pattern">xorに用いるpattern</param>
 		private void XorData(ref byte[] data, int len, ref byte[] pattern)
 		{
 			int data_pos = 0;
@@ -54,6 +83,15 @@ namespace firmware_wintools.Tools
 			}
 		}
 
+		/// <summary>
+		/// nec-encメイン関数
+		/// <para>コマンドライン引数とメインプロパティから、多重xorを用いた
+		/// NEC Aterm シリーズ用ファームウェアのエンコード/デコードを行います
+		/// </para>
+		/// </summary>
+		/// <param name="args">コマンドライン引数</param>
+		/// <param name="props">Program内メインプロパティ</param>
+		/// <returns>実行結果</returns>
 		public int Do_NecEnc(string[] args, Program.Properties props)
 		{
 			int max_key_len = 16;

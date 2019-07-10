@@ -7,16 +7,41 @@ namespace firmware_wintools
 {
 	class Program
 	{
+		/// <summary>
+		/// メインプロパティ
+		/// <para>プログラム全体で必要となるパラメータを管理</para>
+		/// </summary>
 		public struct Properties
 		{
+			/// <summary>
+			/// 出力詳細化
+			/// </summary>
 			public bool debug;
+			/// <summary>
+			/// ヘルプ フラグ
+			/// </summary>
 			public bool help;
+			/// <summary>
+			/// 入力ファイル パス
+			/// </summary>
 			public string inFile;
+			/// <summary>
+			/// 出力ファイル パス
+			/// </summary>
 			public string outFile;
+			/// <summary>
+			/// -* オプションの数（指定されたモードは含まない）
+			/// </summary>
 			public int propcnt;
+			/// <summary>
+			/// 無効なパラメータの有無 ('-')
+			/// </summary>
 			public bool prop_invalid;
 		}
 
+		/// <summary>
+		/// 本体ヘルプを表示
+		/// </summary>
 		static void PrintHelp()
 		{
 			Assembly asm = Assembly.GetExecutingAssembly();
@@ -34,6 +59,11 @@ namespace firmware_wintools
 				"  firmware-wintools <func> -h\n");
 		}
 
+		/// <summary>
+		/// main関数として、各機能への分岐などを行います
+		/// </summary>
+		/// <param name="args">コマンドライン引数</param>
+		/// <returns>実行結果</returns>
 		static int Main(string[] args)
 		{
 			int ret;

@@ -8,15 +8,36 @@ namespace firmware_wintools.Tools
 {
 	class MkEdimaxImg
 	{
+		/// <summary>
+		/// mkedimaximgの機能プロパティ
+		/// </summary>
 		public struct Properties
 		{
+			/// <summary>
+			/// edimaxヘッダに付加するシグネチャ
+			/// </summary>
 			public string signature;
+			/// <summary>
+			/// edimaxヘッダに付加するモデル名
+			/// </summary>
 			public string model;
+			/// <summary>
+			/// edimaxヘッダに付加するフラッシュ アドレス
+			/// </summary>
 			public int flash;
+			/// <summary>
+			/// edimaxヘッダに付加するスタート アドレス
+			/// </summary>
 			public int start;
+			/// <summary>
+			/// edimaxヘッダの数値をBEで算出/書き込みを行うか否か
+			/// </summary>
 			public bool isbe;
 		}
 
+		/// <summary>
+		/// edimaxヘッダ構造体
+		/// </summary>
 		public struct Header
 		{
 			public byte[] sign;
@@ -26,6 +47,9 @@ namespace firmware_wintools.Tools
 			public int size;
 		}
 
+		/// <summary>
+		/// mkedimaximgの機能ヘルプを表示します
+		/// </summary>
 		private void PrintHelp()
 		{
 			Console.WriteLine("Usage: firmware-wintools xorimage [OPTIONS...]\n" +
@@ -40,6 +64,10 @@ namespace firmware_wintools.Tools
 				"  -b\t\t\tuse \"big endian\" mode\n");
 		}
 
+		/// <summary>
+		/// mkedimaximgの実行情報を表示します
+		/// </summary>
+		/// <param name="props"></param>
 		private void PrintInfo(Properties props)
 		{
 			Console.WriteLine("===== mkedimaximg mode =====");
@@ -50,6 +78,12 @@ namespace firmware_wintools.Tools
 			Console.WriteLine(" BE mode:\t{0}\n", props.isbe.ToString());
 		}
 
+		/// <summary>
+		/// <paramref name="buf"/> からデータ末尾に付加するchecksumの算出を行います
+		/// </summary>
+		/// <param name="buf">checksum算出対象データ</param>
+		/// <param name="isbe">BEでの算出</param>
+		/// <returns></returns>
 		private ushort CalcCkSum(byte[] buf, bool isbe)
 		{
 			ushort cksum = 0;
@@ -65,6 +99,14 @@ namespace firmware_wintools.Tools
 			return cksum;
 		}
 
+		/// <summary>
+		/// mkedimaximgメイン関数
+		/// <para>コマンドライン引数とメインプロパティから、edimaxヘッダと checksum
+		/// の付加を行います</para>
+		/// </summary>
+		/// <param name="args">コマンドライン引数</param>
+		/// <param name="props">メインプロパティ</param>
+		/// <returns></returns>
 		public int Do_MkEdimaxImage(string[] args, Program.Properties props)
 		{
 			int read_len;
