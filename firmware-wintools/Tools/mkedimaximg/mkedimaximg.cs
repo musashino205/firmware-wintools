@@ -156,13 +156,13 @@ namespace firmware_wintools.Tools
 
 			if (subprops.flash == 0)
 			{
-				Console.Error.WriteLine("error: no flash address specified");
+				Console.Error.WriteLine("error: no or invalid flash address specified");
 				return 1;
 			}
 
 			if (subprops.start == 0)
 			{
-				Console.Error.WriteLine("error: no start address specified");
+				Console.Error.WriteLine("error: no or invalid start address specified");
 				return 1;
 			}
 
