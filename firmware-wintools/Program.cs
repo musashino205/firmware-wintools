@@ -51,6 +51,7 @@ namespace firmware_wintools
 			Console.WriteLine("Usage: firmware-wintools <func> [OPTIONS...]\n" +
 				Environment.NewLine +
 				"Functions:\n" +
+				"    buffalo-enc:\tencrypt/decrypt firmware for Buffalo devices\n" +
 				"    mkedimaximg:\tadd Edimax header and checksum\n" +
 				"    nec-enc:\t\tencode/decode firmware for NEC Aterm series\n" +
 				"    xorimage:\t\tencode/decode firmware by xor with a pattern\n" +
