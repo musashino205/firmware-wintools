@@ -2,6 +2,8 @@
 
 OpenWrtのfirmware-utilsのWindows移植（という名の適当再現）
 
+@musashino205 が学習目的で作成しています。
+
 ## ヘルプ
 
 ```firmware-wintools -h```
@@ -81,10 +83,17 @@ OpenWrtにおけるxorimageの機能を提供します。
 
 ---
 
-## 動作確認済環境
+## 動作要件
 
-- Windows 10 1903
+- Windows OS
+  - 型付け周りが非常に雑な為、OSのbit数等、環境によっては正しく動作しない可能性もあります。
+
 - .NET Framework 4.7.2
+
+### 動作確認済環境
+
+- Windows 10 64bit (1903)
+- .NET Framework 4.8
 
 ## バージョン履歴
 
@@ -96,5 +105,10 @@ MIT
 
 ## Thanks
 
-- OpenWrt project team
-- all contributors in OpenWrt project
+- OpenWrt
+  - project team
+  - all contributors
+
+- Microsoft Docs
+
+- アドバイス頂いたMastodonユーザー各位
