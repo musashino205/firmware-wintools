@@ -1,0 +1,4 @@
+﻿OpenWrt側Cコードコンパイル時のコマンドラインサンプル
+
+# buffalo-enc
+gcc -o buffalo-enc buffalo-enc.c buffalo-lib.c -I/home/tofu/toolchains/ath79_generic/staging_dir/host/include -include endian.h -L/home/tofu/toolchains/ath79_generic/staging_dir/host/lib -Wal
