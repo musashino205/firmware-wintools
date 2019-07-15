@@ -10,9 +10,22 @@ OpenWrtのfirmware-utilsのWindows移植（という名の適当再現）
 
 ## 機能
 
+- buffalo-enc
 - mkedimaximg
 - nec-enc
 - xorimage
+
+---
+
+### buffalo-enc
+
+OpenWrtにおけるbuffalo-encの機能を提供します。
+
+使用方法:
+
+encryption: ```firmware-wintools buffalo-enc -i <input file> -o <output file> -p <product> -v <version> [-S <size>] [-l]```
+
+decryption: ```firmware-wintools buffalo-enc -i <input file> -o <output file> -d [-O <offset>] [-l]```
 
 ---
 
