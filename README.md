@@ -97,8 +97,8 @@ OpenWrtにおけるxorimageの機能を提供します。
 
 ## バージョン履歴
 
-- 0.2.0 - buffalo-enc, mkedimaximg, xorimage 追加
-- 0.1.0 - 初版（nec-enc）
+- 0.2.0 (2019/07/15): buffalo-enc, mkedimaximg, xorimage 追加
+- 0.1.0 (2019/07/07): 初版（nec-enc）
 
 ## ライセンス
 
