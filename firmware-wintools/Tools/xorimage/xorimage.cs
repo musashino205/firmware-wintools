@@ -136,13 +136,14 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			FileStream inFs = null;
-			FileStream outFs = null;
-
+			FileStream inFs;
+			FileStream outFs;
+			FileMode outFMode =
+				File.Exists(props.outFile) ? FileMode.Truncate : FileMode.Create;
 			try
 			{
-				inFs = new FileStream(props.inFile, FileMode.Open, FileAccess.Read);
-				outFs = new FileStream(props.outFile, FileMode.OpenOrCreate, FileAccess.Write);
+				inFs = new FileStream(props.inFile, FileMode.Open, FileAccess.Read, FileShare.Read);
+				outFs = new FileStream(props.outFile, outFMode, FileAccess.Write, FileShare.None);
 			} catch (IOException i)
 			{
 				Console.Error.WriteLine(i.Message);
