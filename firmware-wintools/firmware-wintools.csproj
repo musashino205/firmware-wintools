@@ -46,6 +46,10 @@
     <Compile Include="ArgMap.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tools\buffalo-tools\buffalo-enc.cs" />
+    <Compile Include="Tools\buffalo-tools\buffalo-libh.cs" />
+    <Compile Include="Tools\buffalo-tools\buffalo-lib.cs" />
+    <Compile Include="Tools\buffalo-tools\ToolsArgMap.cs" />
     <Compile Include="Tools\mkedimaximg\mkedimaximg.cs" />
     <Compile Include="Tools\mkedimaximg\ToolsArgMap.cs" />
     <Compile Include="Tools\nec-enc\ToolsArgMap.cs" />
@@ -59,8 +63,10 @@
     <None Include="SampleBin\openwrt-ath79-generic-elecom_wrc-1750ghbk2-i-initramfs-kernel.bin" />
     <None Include="SampleBin\openwrt-ath79-generic-nec_wg1200cr-squashfs-factory.bin" />
     <None Include="SampleBin\openwrt-ramips-mt7620-iodata_wn-ac733gr3-squashfs-factory.bin" />
+    <None Include="SampleBin\openwrt-ramips-mt76x8-buffalo_wcr-1166ds-squashfs-factory.bin" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Tools\compile_sample.txt" />
     <Content Include="Tools\debug_sample.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

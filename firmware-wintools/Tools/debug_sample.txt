@@ -1,5 +1,9 @@
 ﻿デバッグ時のコマンドライン引数サンプル
 
+# buffalo-enc
+buffalo-enc -i test.out -o test.enc -l -D -p WCR-1166DS -v 9.99
+buffalo-enc -i ..\..\SampleBin\openwrt-ramips-mt76x8-buffalo_wcr-1166ds-squashfs-factory.bin -o test.out -d -O 200 -l
+
 # mkedimaximg
 mkedimaximg -i ..\..\SampleBin\openwrt-ath79-generic-elecom_wrc-1750ghbk2-i-initramfs-kernel.bin -o test.out -s CSYS -m RN68 -f 0x70000 -S 0x01100000 -b -D
 

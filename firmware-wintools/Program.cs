@@ -116,6 +116,10 @@ namespace firmware_wintools
 
 			switch (args[0])
 			{
+				case "buffalo-enc":
+					Tools.Buffalo_Enc buffalo_enc = new Tools.Buffalo_Enc();
+					ret = buffalo_enc.Do_BuffaloEnc(args, props);
+					break;
 				case "mkedimaximg":
 					Tools.MkEdimaxImg mkedimaximg = new Tools.MkEdimaxImg();
 					ret = mkedimaximg.Do_MkEdimaxImage(args, props);
