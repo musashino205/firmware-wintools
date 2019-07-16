@@ -114,14 +114,14 @@ namespace firmware_wintools.Tools
 
 			if (subprops.key == null)
 			{
-				Console.WriteLine("error: \"key\" is not specified");
+				Console.Error.WriteLine("error: \"key\" is not specified");
 				return 1;
 			}
 
 			int k_len = subprops.key.Length;
 			if (k_len == 0 || k_len > max_key_len)
 			{
-				Console.WriteLine("Key length is not in range (0, {0})", max_key_len);
+				Console.Error.WriteLine("error: Key length is not in range (0, {0})", max_key_len);
 				return 1;
 			}
 
@@ -129,7 +129,7 @@ namespace firmware_wintools.Tools
 
 			if (!File.Exists(props.inFile))
 			{
-				Console.WriteLine("cannot open input file (not found)");
+				Console.Error.WriteLine("error: cannot open input file (not found)");
 				return 1;
 			}
 
@@ -152,7 +152,7 @@ namespace firmware_wintools.Tools
 			}
 			catch (IOException i)
 			{
-				Console.WriteLine(i.Message);
+				Console.Error.WriteLine(i.Message);
 				return 1;
 			}
 
