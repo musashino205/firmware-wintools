@@ -14,6 +14,7 @@ OpenWrtのfirmware-utilsのWindows移植（という名の適当再現）
 
 - buffalo-enc
 - mkedimaximg
+- mksenaofw
 - nec-enc
 - xorimage
 
@@ -38,6 +39,24 @@ OpenWrtにおけるmkedimaximgの機能を提供します。
 使用方法:
 
 ```firmware-wintools mkedimaximg -i <input file> -o <output file> -s <signature> -m <model> -f <flash> -S <start> [-b]```
+
+---
+
+### mksenaofw
+
+OpenWrtにおけるmksenaofwの機能を提供します。
+
+使用方法:
+
+encode: ```mksenaofw -i <input file> -o <output file> -t <type> -r <vendor> -p <product> [-v <version>] [-z] [-b <blocksize>]```
+
+decode: ```mksenaofw -i <input file> -o <output file> -d```
+
+注意:
+
+- 本プログラムにおける引数解析の仕組み上、encode/decodeの指定や入力ファイル指定に用いるオプションをオリジナルのものから変更しています。
+
+- ファームウェアタイプ 0 及び 5～12 については、日本国内の機種で用いられている事例は今のところ確認していないため、実装は省略しています。
 
 ---
 
