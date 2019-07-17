@@ -7,6 +7,10 @@ buffalo-enc -i ..\..\SampleBin\openwrt-ramips-mt76x8-buffalo_wcr-1166ds-squashfs
 # mkedimaximg
 mkedimaximg -i ..\..\SampleBin\openwrt-ath79-generic-elecom_wrc-1750ghbk2-i-initramfs-kernel.bin -o test.out -s CSYS -m RN68 -f 0x70000 -S 0x01100000 -b -D
 
+# mksenaofw
+mksenaofw -i test.out -o test.enc -t 2 -r 0x30a -p 0x60 -v 200
+mksenaofw -i ..\..\SampleBin\openwrt-ath79-generic-iodata_wn-ac1600dgr2-squashfs-dgr2-dgr3-factory.bin -o test.out -d
+
 # nec-enc
 nec-enc -i ..\..\SampleBin\openwrt-ath79-generic-nec_wg1200cr-squashfs-factory.bin -o test.out -k 9gsiy9nzep452pad -D
 

@@ -52,6 +52,9 @@
     <Compile Include="Tools\buffalo-tools\ToolsArgMap.cs" />
     <Compile Include="Tools\mkedimaximg\mkedimaximg.cs" />
     <Compile Include="Tools\mkedimaximg\ToolsArgMap.cs" />
+    <Compile Include="Tools\mksenaofw\firmware_type.cs" />
+    <Compile Include="Tools\mksenaofw\mksenaofw.cs" />
+    <Compile Include="Tools\mksenaofw\ToolsArgMap.cs" />
     <Compile Include="Tools\nec-enc\ToolsArgMap.cs" />
     <Compile Include="Tools\nec-enc\nec-enc.cs" />
     <Compile Include="Tools\xorimage\ToolsArgMap.cs" />
@@ -61,6 +64,7 @@
     <None Include="App.config" />
     <None Include="SampleBin\openwrt-ath79-generic-elecom_wrc-1750ghbk2-i-initramfs-factory.bin" />
     <None Include="SampleBin\openwrt-ath79-generic-elecom_wrc-1750ghbk2-i-initramfs-kernel.bin" />
+    <None Include="SampleBin\openwrt-ath79-generic-iodata_wn-ac1600dgr2-squashfs-dgr2-dgr3-factory.bin" />
     <None Include="SampleBin\openwrt-ath79-generic-nec_wg1200cr-squashfs-factory.bin" />
     <None Include="SampleBin\openwrt-ramips-mt7620-iodata_wn-ac733gr3-squashfs-factory.bin" />
     <None Include="SampleBin\openwrt-ramips-mt76x8-buffalo_wcr-1166ds-squashfs-factory.bin" />
