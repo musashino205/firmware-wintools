@@ -53,7 +53,7 @@ namespace firmware_wintools
 				"Functions:\n" +
 				"    buffalo-enc:\tencrypt/decrypt firmware for Buffalo devices\n" +
 				"    mkedimaximg:\tadd Edimax header and checksum\n" +
-				"    mksenaofw:\tencode/decode firmware for the devices manufactured by Senao\n" +
+				"    mksenaofw:\t\tencode/decode firmware for the devices manufactured by Senao\n" +
 				"    nec-enc:\t\tencode/decode firmware for NEC Aterm series\n" +
 				"    xorimage:\t\tencode/decode firmware by xor with a pattern\n" +
 				Environment.NewLine + Environment.NewLine +
