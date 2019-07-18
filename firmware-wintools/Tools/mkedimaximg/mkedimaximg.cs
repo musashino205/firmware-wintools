@@ -52,16 +52,17 @@ namespace firmware_wintools.Tools
 		/// </summary>
 		private void PrintHelp()
 		{
-			Console.WriteLine("Usage: firmware-wintools xorimage [OPTIONS...]\n" +
-				Environment.NewLine +
-				"Options:\n" +
-				"  -i <file>\t\tinput file\n" +
-				"  -o <file>\t\toutput file\n" +
-				"  -s <signature>\tuse <signature> for image header\n" +
-				"  -m <model>\t\tuse <model> for image header\n" +
-				"  -f <flash>\t\tuse the <flash> address for image header\n" +
-				"  -S <start>\t\tuse the <start> address for image header\n" +
-				"  -b\t\t\tuse \"big endian\" mode\n");
+			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Help_Usage +
+				Lang.Tools.MkEdimaxImgRes.FuncDesc +
+				Environment.NewLine + Environment.NewLine +
+				Lang.Tools.MkEdimaxImgRes.Help_Options +
+				Lang.Resource.Help_Options_i +
+				Lang.Resource.Help_Options_o +
+				Lang.Tools.MkEdimaxImgRes.Help_Options_s +
+				Lang.Tools.MkEdimaxImgRes.Help_Options_m +
+				Lang.Tools.MkEdimaxImgRes.Help_Options_f +
+				Lang.Tools.MkEdimaxImgRes.Help_Options_s2 +
+				Lang.Tools.MkEdimaxImgRes.Help_Options_b);
 		}
 
 		/// <summary>
@@ -70,12 +71,12 @@ namespace firmware_wintools.Tools
 		/// <param name="props"></param>
 		private void PrintInfo(Properties props)
 		{
-			Console.WriteLine("===== mkedimaximg mode =====");
-			Console.WriteLine(" signature:\t{0}", props.signature);
-			Console.WriteLine(" model:\t\t{0}", props.model);
-			Console.WriteLine(" flash addr:\t0x{0:X}", props.flash);
-			Console.WriteLine(" start addr:\t0x{0:X}", props.start);
-			Console.WriteLine(" BE mode:\t{0}\n", props.isbe.ToString());
+			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info);
+			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_Signature, props.signature);
+			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_Model, props.model);
+			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_FlashAddr, props.flash);
+			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_StartAddr, props.start);
+			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_BE, props.isbe.ToString());
 		}
 
 		/// <summary>
@@ -134,35 +135,41 @@ namespace firmware_wintools.Tools
 
 			if (subprops.signature == null || subprops.signature == "")
 			{
-				Console.Error.WriteLine("error: no signature specified");
+				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+					Lang.Tools.MkEdimaxImgRes.Error_NoSignature);
 				return 1;
 			}
 			else if (subprops.signature.Length != 4)
 			{
-				Console.Error.WriteLine("error: signature must be 4 characters long");
+				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+					Lang.Tools.MkEdimaxImgRes.Error_InvalidSignatureLen);
 				return 1;
 			}
 
 			if (subprops.model == null || subprops.model == "")
 			{
-				Console.Error.WriteLine("error: no model specified");
+				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+					Lang.Tools.MkEdimaxImgRes.Error_NoModel);
 				return 1;
 			}
 			else if (subprops.model.Length != 4)
 			{
-				Console.Error.WriteLine("error: model must be 4 characters long");
+				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+					Lang.Tools.MkEdimaxImgRes.Error_InvalidModelLen);
 				return 1;
 			}
 
 			if (subprops.flash == 0)
 			{
-				Console.Error.WriteLine("error: no or invalid flash address specified");
+				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+					Lang.Tools.MkEdimaxImgRes.Error_NoInvalidFlash);
 				return 1;
 			}
 
 			if (subprops.start == 0)
 			{
-				Console.Error.WriteLine("error: no or invalid start address specified");
+				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+					Lang.Tools.MkEdimaxImgRes.Error_NoInvalidStart);
 				return 1;
 			}
 
@@ -192,7 +199,8 @@ namespace firmware_wintools.Tools
 
 			if (inFs.Length > 0xFFFFFFFFu)
 			{
-				Console.Error.WriteLine("error: input file is too large");
+				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+					Lang.Tools.MkEdimaxImgRes.Error_LargeInFile);
 				return 1;
 			}
 

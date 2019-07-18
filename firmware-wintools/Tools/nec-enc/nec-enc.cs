@@ -22,12 +22,13 @@ namespace firmware_wintools.Tools
 		/// </summary>
 		private void PrintHelp()
 		{
-			Console.WriteLine("Usage: firmware-wintools nec-enc [OPTIONS...]\n" +
-				Environment.NewLine +
-				"Options:\n" +
-				"  -i <file>\tinput file\n" +
-				"  -o <file>\toutput file\n" +
-				"  -k <key>\tuse <key> for encode/decode the firmware\n");
+			Console.WriteLine(Lang.Tools.NecEncRes.Help_Usage +
+				Lang.Tools.NecEncRes.FuncDesc +
+				Environment.NewLine + Environment.NewLine +
+				Lang.Tools.NecEncRes.Help_Options +
+				Lang.Resource.Help_Options_i +
+				Lang.Resource.Help_Options_o +
+				Lang.Tools.NecEncRes.Help_Options_k);
 		}
 
 		/// <summary>
@@ -36,8 +37,8 @@ namespace firmware_wintools.Tools
 		/// <param name="props">nec-encの機能プロパティ</param>
 		private void PrintInfo(Properties props)
 		{
-			Console.WriteLine("===== nec-enc mode =====");
-			Console.WriteLine(" key:\t\t{0}\n", props.key);
+			Console.WriteLine(Lang.Tools.NecEncRes.Info);
+			Console.WriteLine(Lang.Tools.NecEncRes.Info_key, props.key);
 		}
 
 		/// <summary>
@@ -114,24 +115,21 @@ namespace firmware_wintools.Tools
 
 			if (subprops.key == null)
 			{
-				Console.Error.WriteLine("error: \"key\" is not specified");
+				Console.Error.WriteLine(
+					Lang.Resource.Main_Error_Prefix + Lang.Tools.NecEncRes.Error_NoKey);
 				return 1;
 			}
 
 			int k_len = subprops.key.Length;
 			if (k_len == 0 || k_len > max_key_len)
 			{
-				Console.Error.WriteLine("error: Key length is not in range (0, {0})", max_key_len);
+				Console.Error.WriteLine(
+					Lang.Resource.Main_Error_Prefix + Lang.Tools.NecEncRes.Error_InvalidKeyLen,
+					max_key_len);
 				return 1;
 			}
 
 			PrintInfo(subprops);
-
-			if (!File.Exists(props.inFile))
-			{
-				Console.Error.WriteLine("error: cannot open input file (not found)");
-				return 1;
-			}
 
 			FileStream inFs;
 			FileStream outFs;

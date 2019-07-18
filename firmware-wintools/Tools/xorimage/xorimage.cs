@@ -26,13 +26,14 @@ namespace firmware_wintools.Tools
 		/// </summary>
 		private void PrintHelp()
 		{
-			Console.WriteLine("Usage: firmware-wintools xorimage [OPTIONS...]\n" +
-				Environment.NewLine +
-				"Options:\n" +
-				"  -i <file>\tinput file\n" +
-				"  -o <file>\toutput file\n" +
-				"  -p <pattern>\tuse <pattern> for encode/decode the firmware by xor\n" +
-				"  -x\t\tuse \"hex pattern\" mode\n");
+			Console.WriteLine(Lang.Tools.XorimageRes.Help_Usage +
+				Lang.Tools.XorimageRes.FuncDesc +
+				Environment.NewLine + Environment.NewLine +
+				Lang.Tools.XorimageRes.Help_Options +
+				Lang.Resource.Help_Options_i +
+				Lang.Resource.Help_Options_o +
+				Lang.Tools.XorimageRes.Help_Options_Pattern +
+				Lang.Tools.XorimageRes.Help_Options_Hex);
 		}
 
 		/// <summary>
@@ -41,9 +42,9 @@ namespace firmware_wintools.Tools
 		/// <param name="props"></param>
 		private void PrintInfo(Properties props)
 		{
-			Console.WriteLine("===== xorimage mode =====");
-			Console.WriteLine(" pattern:\t{0}\n", props.pattern);
-			Console.WriteLine(" hex mode:\t{0}\n", props.ishex.ToString());
+			Console.WriteLine(Lang.Tools.XorimageRes.Info);
+			Console.WriteLine(Lang.Tools.XorimageRes.Info_Pattern, props.pattern);
+			Console.WriteLine(Lang.Tools.XorimageRes.Info_Hex, props.ishex.ToString());
 		}
 
 		/// <summary>
@@ -109,7 +110,8 @@ namespace firmware_wintools.Tools
 			int p_len = subprops.pattern.Length;
 			if (p_len == 0)
 			{
-				Console.Error.WriteLine("error: incorrect pattern length (must be > 0");
+				Console.Error.WriteLine(
+					Lang.Resource.Main_Error_Prefix + Lang.Tools.XorimageRes.Error_InvalidPatternLen);
 				return 1;
 			}
 
@@ -119,21 +121,17 @@ namespace firmware_wintools.Tools
 			{
 				if ((p_len / 2) > hex_pattern.Length)
 				{
-					Console.Error.WriteLine("error: provided hex pattern is too long");
+					Console.Error.WriteLine(
+						Lang.Resource.Main_Error_Prefix + Lang.Tools.XorimageRes.Error_LongHexPattern);
 					return 1;
 				}
 
 				if (p_len % 2 != 0)
 				{
-					Console.Error.WriteLine("error: the numbers of charactors (hex) is incorrect");
+					Console.Error.WriteLine(
+						Lang.Resource.Main_Error_Prefix + Lang.Tools.XorimageRes.Error_InvalidHexPatternLen);
 					return 1;
 				}
-			}
-
-			if (!File.Exists(props.inFile))
-			{
-				Console.WriteLine("cannot open input file (not found)");
-				return 1;
 			}
 
 			FileStream inFs;

@@ -101,48 +101,46 @@ namespace firmware_wintools.Tools
 
 		private void PrintHelp()
 		{
-			string types = "";
-			for (int i = 0; i < FIRMWARE_TYPES.Length; i++)
-				types += "\t\t\t" + FIRMWARE_TYPES[i].id.ToString() + " = " +
-					FIRMWARE_TYPES[i].name + "\t" + FIRMWARE_TYPES[i].comment + 
-						Environment.NewLine;
-			Console.WriteLine("Usage: firmware-wintools mksenaofw [OPTIONS...]\n" +
-				Environment.NewLine +
-				"Options:\n" +
-				"  -i <file>\t\tinput file\n" +
-				"  -o <file>\t\toutput file\n" +
-				"  -t <type>\t\tuse image <type> for image header\n" +
-				"\t\t\t--- valid image <type> values: ---\n" +
-				types +
-				"\t\t\t(5 - 12: not implemented in this program)\n" +
-				"\t\t\t----------------------------------\n" +
-				"  -v <version>\t\tuse <version> for image header\n" +
-				"  -r <vendor>\t\tuse <vendor> for image header\n" +
-				"  -p <product>\t\tuse <product> for image header\n" +
-				"  -m <magic>\t\tuse <magic> for image header\n" +
-				"  -z\t\t\tenable image padding to <blocksize>\n" +
-				"  -b <blocksize>\tuse the <blocksize> for padding image\n" +
-				"  -d\t\t\tuse \"decode\" mode instead of \"encode\"\n");
+			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Help_Usage +
+				Lang.Tools.MkSenaoFwRes.FuncDesc +
+				Environment.NewLine + Environment.NewLine +
+				Lang.Tools.MkSenaoFwRes.Help_Options +
+				Lang.Resource.Help_Options_i +
+				Lang.Resource.Help_Options_o +
+				Lang.Tools.MkSenaoFwRes.Help_Options_t +
+				Lang.Tools.MkSenaoFwRes.Help_Options_t_values);
+			for (int i = 0; i < FIRMWARE_TYPES.Length; i++)			// firmware types
+				Console.WriteLine(Lang.Tools.MkSenaoFwRes.Help_Options_t_TypeFmt,
+					FIRMWARE_TYPES[i].id.ToString(), FIRMWARE_TYPES[i].name, FIRMWARE_TYPES[i].comment);
+			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Help_Options_t_NoImpl +
+				Lang.Tools.MkSenaoFwRes.Help_Options_t_Line +
+				Lang.Tools.MkSenaoFwRes.Help_Options_v +
+				Lang.Tools.MkSenaoFwRes.Help_Options_r +
+				Lang.Tools.MkSenaoFwRes.Help_Options_p +
+				Lang.Tools.MkSenaoFwRes.Help_Options_m +
+				Lang.Tools.MkSenaoFwRes.Help_Options_z +
+				Lang.Tools.MkSenaoFwRes.Help_Options_b +
+				Lang.Tools.MkSenaoFwRes.Help_Options_d);
 		}
 
 		private void PrintInfo(Properties subprops)
 		{
-			Console.WriteLine("===== mksenaofw mode ({0}) =====",
-				subprops.isde ? "decode": "encode");
-			Console.WriteLine(" Firmware Type\t: {0} ({1})",
+			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info,
+				subprops.isde ? Lang.Tools.MkSenaoFwRes.Info_Decode: Lang.Tools.MkSenaoFwRes.Info_Encode);
+			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_FwType,
 				subprops.fw_type, FIRMWARE_TYPES[subprops.fw_type].name);
-			Console.WriteLine(" Firmware Ver.\t: {0}", subprops.version);
-			Console.WriteLine(" Vendor ID\t: 0x{0:X}", subprops.vendor);
-			Console.WriteLine(" Product ID\t: 0x{0:X}", subprops.product);
-			Console.WriteLine(" Data MD5 sum\t: {0}",
+			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_FwVer, subprops.version);
+			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_Vendor, subprops.vendor);
+			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_Product, subprops.product);
+			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_MD5,
 				BitConverter.ToString(subprops.md5sum).Replace("-", ""));
-			Console.WriteLine(" Header Magic\t: {0:X}", subprops.magic);
+			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_Magic, subprops.magic);
 
 			if (!subprops.isde)
 			{
-				Console.WriteLine(" Padding Image\t: {0}", subprops.pad);
+				Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_Pad, subprops.pad);
 				if (subprops.pad)
-					Console.WriteLine(" Block Size\t: 0x{0:X} ({0} bytes)",
+					Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_BS,
 						subprops.bs);
 			}
 
@@ -158,12 +156,14 @@ namespace firmware_wintools.Tools
 			if (fw_type > FIRMWARE_TYPES.Length - 1 ||	// 渡されたtypeが配列長を超過
 				fw_type == FIRMEARE_TYPE_NONE)			// または未指定状態
 			{
-				Console.Error.WriteLine("error: no or invalid firmware type is specified");
+				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix + 
+					Lang.Tools.MkSenaoFwRes.Error_NoInvalidFwType);
 				return 1;
 			}
 			else if (fw_type == 0)						// typeが "combo"
 			{
-				Console.Error.WriteLine("error: firmware type \"combo\" is not supported in this program");
+				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+					Lang.Tools.MkSenaoFwRes.Error_NoImplCombo);
 				return 1;
 			}
 
@@ -221,7 +221,8 @@ namespace firmware_wintools.Tools
 
 			if (inFs.Length > 0x7FFFFFFFL)
 			{
-				Console.Error.WriteLine("error: input file is too large (>= 2 GiB)");
+				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+					Lang.Tools.MkSenaoFwRes.Error_LargeInFile);
 				return 1;
 			}
 			filesize = Convert.ToInt32(inFs.Length);
@@ -252,7 +253,8 @@ namespace firmware_wintools.Tools
 
 			if ((cksum = Calc_HeaderCksum(ref buf, HDR_LEN)) < 0)
 			{
-				Console.Error.WriteLine("error: failed to calculate header checksum");
+				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+					Lang.Tools.MkSenaoFwRes.Error_FailHeaderCksum);
 				return 1;
 			}
 			fw_header.cksum = (uint)IPAddress.HostToNetworkOrder(cksum);
@@ -380,17 +382,19 @@ namespace firmware_wintools.Tools
 				if (ChkFwType(Convert.ToUInt32(subprops.fw_type)) != 0)
 					return 1;
 
-				if (Encoding.ASCII.GetByteCount(subprops.version) > sizeof(uint) || 
+				if (Encoding.ASCII.GetByteCount(subprops.version) > sizeof(uint) * 4 ||	// 0 < version len < 17
 					Encoding.ASCII.GetByteCount(subprops.version) == 0)
 				{
-					Console.Error.WriteLine("error: the length of version is incorrect");
+					Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+						Lang.Tools.MkSenaoFwRes.Error_InvalidVerLen);
 					return 1;
 				}
 
 				/* ref: https://wikidevi.com/wiki/Senao */
 				if (subprops.vendor == 0 || subprops.product == 0)
 				{
-					Console.Error.WriteLine("error: vendor or product is not specified");
+					Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+						Lang.Tools.MkSenaoFwRes.Error_NoInvalidVenProd);
 					return 1;
 				}
 			}

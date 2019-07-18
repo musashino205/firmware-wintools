@@ -45,20 +45,24 @@ namespace firmware_wintools
 		static void PrintHelp()
 		{
 			Assembly asm = Assembly.GetExecutingAssembly();
-			Console.WriteLine("{0}  Version: {1}\n",
+			Console.WriteLine(Lang.Resource.Main_Help_NameVer,
 				((AssemblyProductAttribute)asm.GetCustomAttributes(typeof(AssemblyProductAttribute), false)[0]).Product,
 				asm.GetName().Version);
-			Console.WriteLine("Usage: firmware-wintools <func> [OPTIONS...]\n" +
+			Console.WriteLine(Lang.Resource.Main_Help_Usage +
 				Environment.NewLine +
-				"Functions:\n" +
-				"    buffalo-enc:\tencrypt/decrypt firmware for Buffalo devices\n" +
-				"    mkedimaximg:\tadd Edimax header and checksum\n" +
-				"    mksenaofw:\t\tencode/decode firmware for the devices manufactured by Senao\n" +
-				"    nec-enc:\t\tencode/decode firmware for NEC Aterm series\n" +
-				"    xorimage:\t\tencode/decode firmware by xor with a pattern\n" +
-				Environment.NewLine + Environment.NewLine +
-				"For details in each functions, please run following:\n" +
-				"  firmware-wintools <func> -h\n");
+				Lang.Resource.Main_Help_Functions);
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Main_FuncDesc_Fmt,	// buffalo-enc
+				"buffalo-enc", Lang.Tools.BuffaloEncRes.FuncDesc);
+			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Main_FuncDesc_Fmt,	// mkedimaximg
+				"mkedimaximg", Lang.Tools.MkEdimaxImgRes.FuncDesc);
+			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Main_FuncDesc_Fmt,	// mksenaofw
+				"mksenaofw", Lang.Tools.MkSenaoFwRes.FuncDesc);
+			Console.WriteLine(Lang.Tools.NecEncRes.Main_FuncDesc_Fmt,		// nec-enc
+				"nec-enc", Lang.Tools.NecEncRes.FuncDesc);
+			Console.WriteLine(Lang.Tools.XorimageRes.Main_FuncDesc_Fmt,		// xorimage
+				"xorimage", Lang.Tools.XorimageRes.FuncDesc);
+			Console.WriteLine(Environment.NewLine +
+				Lang.Resource.Main_Help_DetailsMsg);
 		}
 
 		/// <summary>
@@ -71,6 +75,7 @@ namespace firmware_wintools
 			int ret;
 			Properties props = new Properties();
 
+			//Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
 			if (args.Length == 0)		// 引数が0ならヘルプ表示して終了
 			{
 				PrintHelp();
@@ -82,7 +87,8 @@ namespace firmware_wintools
 
 			if (props.param_invalid)
 			{
-				Console.Error.WriteLine("error: invalid parameter is specified");
+				Console.Error.WriteLine(
+					Lang.Resource.Main_Error_Prefix + Lang.Resource.Main_Error_InvalidParam);
 				return 1;
 			}
 
@@ -103,15 +109,14 @@ namespace firmware_wintools
 			{
 				if (props.inFile == null || props.outFile == null)
 				{
-					Console.Error.WriteLine("error: input or output file is not specified");
+					Console.Error.WriteLine(
+						Lang.Resource.Main_Error_Prefix + Lang.Resource.Main_Error_NoInOutFile);
 					if (props.debug)
 						Thread.Sleep(4000);
 					return 1;
 				}
 
-				Console.WriteLine("********** Info **********\n" +
-					" input file:\t{0}\n\t\t({1})\n\n" +
-					" output file:\t{2}\n\t\t({3})\n\n",
+				Console.WriteLine(Lang.Resource.Main_Info + Environment.NewLine,
 					Path.GetFileName(props.inFile), Directory.GetParent(props.inFile),
 					Path.GetFileName(props.outFile), Directory.GetParent(props.outFile));
 			}
@@ -146,7 +151,8 @@ namespace firmware_wintools
 					}
 					else
 					{
-						Console.Error.WriteLine("error: mode is not specified or invalid mode is specified");
+						Console.Error.WriteLine(
+							Lang.Resource.Main_Error_Prefix + Lang.Resource.Main_Error_NoInvalidMode);
 						ret = 1;        // 指定されたモードが無効ならエラー吐いてret=1
 					}
 					break;

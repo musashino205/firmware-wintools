@@ -1,0 +1,229 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Error.FailDecrypt" xml:space="preserve">
+    <value>failed to decrypt</value>
+  </data>
+  <data name="Error.FailEncrypt" xml:space="preserve">
+    <value>failed to encrypt</value>
+  </data>
+  <data name="Error.InvalidMagicLen" xml:space="preserve">
+    <value>length of magic must be {0}</value>
+  </data>
+  <data name="Error.LargeOffset" xml:space="preserve">
+    <value>specified offset "{0}" is larger than the size of input file</value>
+  </data>
+  <data name="Error.LongKey" xml:space="preserve">
+    <value>specified key "{0}" is too long</value>
+  </data>
+  <data name="Error.LongProduct" xml:space="preserve">
+    <value>specified product name "{0}" is too long</value>
+  </data>
+  <data name="Error.LongVersion" xml:space="preserve">
+    <value>specified version "{0}" is too long</value>
+  </data>
+  <data name="Error.NoKey" xml:space="preserve">
+    <value>no key is specified</value>
+  </data>
+  <data name="Error.NoProduct" xml:space="preserve">
+    <value>no product specified</value>
+  </data>
+  <data name="Error.NoVersion" xml:space="preserve">
+    <value>no version specified</value>
+  </data>
+  <data name="FuncDesc" xml:space="preserve">
+    <value>encrypt/decrypt firmware for Buffalo devices</value>
+  </data>
+  <data name="Help.Options" xml:space="preserve">
+    <value>Options:
+</value>
+  </data>
+  <data name="Help.Options.d" xml:space="preserve">
+    <value>  -d			use decrypt mode instead of encrypt
+</value>
+  </data>
+  <data name="Help.Options.k" xml:space="preserve">
+    <value>  -k &lt;key&gt;		use &lt;key&gt; for encryption (default: "{0}")
+</value>
+  </data>
+  <data name="Help.Options.l" xml:space="preserve">
+    <value>  -l			use longstate encryption/decryption method
+</value>
+  </data>
+  <data name="Help.Options.m" xml:space="preserve">
+    <value>  -m &lt;magic&gt;		use &lt;magic&gt; for encryption (default: "{1}")
+</value>
+  </data>
+  <data name="Help.Options.o2" xml:space="preserve">
+    <value>  -O &lt;offset&gt;		offset of encrypted data in file (for decryption)
+</value>
+  </data>
+  <data name="Help.Options.p" xml:space="preserve">
+    <value>  -p &lt;product&gt;		use &lt;product&gt; name for encryption
+</value>
+  </data>
+  <data name="help.Options.S" xml:space="preserve">
+    <value>  -S &lt;size&gt;		size of unencrypted data in file (for encryption)
+</value>
+  </data>
+  <data name="Help.Options.v" xml:space="preserve">
+    <value>  -v &lt;version&gt;		use &lt;version&gt; for encryption
+</value>
+  </data>
+  <data name="Help.Usage" xml:space="preserve">
+    <value>Usage: firmware-wintools buffalo-enc [OPTIONS...]
+</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>===== buffalo-enc mode ({0}) =====</value>
+  </data>
+  <data name="Info.Cksum" xml:space="preserve">
+    <value> Checksum	: 0x{0:x}</value>
+  </data>
+  <data name="Info.DataLen" xml:space="preserve">
+    <value> Data len	: {0} bytes</value>
+  </data>
+  <data name="Info.Decrypt" xml:space="preserve">
+    <value>decrypt</value>
+  </data>
+  <data name="Info.Encrypt" xml:space="preserve">
+    <value>encrypt</value>
+  </data>
+  <data name="Info.Key" xml:space="preserve">
+    <value> key		: '{0}'</value>
+  </data>
+  <data name="Info.Longstate" xml:space="preserve">
+    <value> longstate	: {0}</value>
+  </data>
+  <data name="Info.Magic" xml:space="preserve">
+    <value> Magic		: '{0}'</value>
+  </data>
+  <data name="Info.Product" xml:space="preserve">
+    <value> Product	: '{0}'</value>
+  </data>
+  <data name="Info.Seed" xml:space="preserve">
+    <value> Seed		: 0x{0,2:X}</value>
+  </data>
+  <data name="Info.Version" xml:space="preserve">
+    <value> Version	: '{0}'</value>
+  </data>
+  <data name="Main.FuncDesc.Fmt" xml:space="preserve">
+    <value>    {0}		: {1}</value>
+  </data>
+</root>

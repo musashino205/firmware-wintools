@@ -6,6 +6,9 @@ namespace firmware_wintools.Tools
 {
 	class Buffalo_Enc
 	{
+		const string DEFAULT_KEY = "Buffalo";
+		const string DEFAULT_MAGIC = "start";
+
 		public struct Properties
 		{
 			public string crypt_key;
@@ -22,54 +25,60 @@ namespace firmware_wintools.Tools
 
 		private void PrintHelp()
 		{
-			Console.WriteLine("Usage: firmware-wintools nec-enc [OPTIONS...]\n" +
-				Environment.NewLine +
-				"Options:\n" +
-				"  -i <file>\tinput file\n" +
-				"  -o <file>\toutput file\n" +
-				"  -d\t\tuse decrypt mode instead of encrypt\n" +
-				"  -l\t\tuse longstate {en,de}cryption method\n" +
-				"  -k <key>\tuse <key> for encryption (default: \"Buffalo\")\n" +
-				"  -m <magic>\tuse <magic>\n" +
-				"  -p <product>\tuse <product> name for encryption\n" +
-				"  -v <version>\tuse <version> for encryption\n" +
-				"  -O <offset>\toffset of encrypted data in file (for decryption)\n" +
-				"  -S <size>\tsize of unencrypted data in file (for encryption)\n");
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Help_Usage +
+				Lang.Tools.BuffaloEncRes.FuncDesc +
+				Environment.NewLine + Environment.NewLine +
+				Lang.Tools.BuffaloEncRes.Help_Options +
+				Lang.Resource.Help_Options_i +
+				Lang.Resource.Help_Options_o +
+				Lang.Tools.BuffaloEncRes.Help_Options_d +
+				Lang.Tools.BuffaloEncRes.Help_Options_l +
+				Lang.Tools.BuffaloEncRes.Help_Options_k +
+				Lang.Tools.BuffaloEncRes.Help_Options_m +
+				Lang.Tools.BuffaloEncRes.Help_Options_p +
+				Lang.Tools.BuffaloEncRes.Help_Options_v +
+				Lang.Tools.BuffaloEncRes.Help_Options_o2 +
+				Lang.Tools.BuffaloEncRes.help_Options_S,
+				DEFAULT_KEY, DEFAULT_MAGIC);
 		}
 
 		private void PrintInfo(Properties props, bool isdbg)
 		{
-			Console.WriteLine("===== buffalo-enc mode =====");
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info, props.isde ?
+				Lang.Tools.BuffaloEncRes.Info_Decrypt : Lang.Tools.BuffaloEncRes.Info_Encrypt);
 			if (isdbg)
 			{
-				Console.WriteLine(" decrypt mode\t: {0}", props.isde);
-				Console.WriteLine(" longstate\t: {0}", props.islong);
-				Console.WriteLine(" key\t\t: '{0}'", props.crypt_key);
+				Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Longstate, props.islong);
+				Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Key, props.crypt_key);
 			}
-			Console.WriteLine(" Magic:\t\t: '{0}'", props.magic);
-			Console.WriteLine(" Seed\t\t: 0x{0,2:X}", props.seed);
-			Console.WriteLine(" Product\t: '{0}'", props.product);
-			Console.WriteLine(" Version\t: '{0}'", props.version);
-			Console.WriteLine(" Data len\t: {0}", props.size);
-			Console.WriteLine(" Checksum\t: 0x{0:x}", props.cksum);
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Magic, props.magic);
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Seed, props.seed);
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Product, props.product);
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Version, props.version);
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_DataLen, props.size);
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Cksum, props.cksum);
 		}
 
 		private int CheckParams(Properties props)
 		{
-			if (props.crypt_key == null)
+			if (props.crypt_key == null || props.crypt_key.Length == 0)
 			{
-				Console.Error.WriteLine("error: no key specified");
+				Console.Error.WriteLine(
+					Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_NoKey);
 				return 1;
 			}
 			else if (props.crypt_key.Length > Buffalo_Lib.BCRYPT_MAX_KEYLEN)
 			{
-				Console.Error.WriteLine("error: key \"{0}\" is too long", props.crypt_key);
+				Console.Error.WriteLine(
+					Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_LongKey,
+					props.crypt_key);
 				return 1;
 			}
 
 			if (props.magic.Length != Buffalo_Lib.ENC_MAGIC_LEN - 1)
 			{
-				Console.Error.WriteLine("error: length of magic must be {0}",
+				Console.Error.WriteLine(
+					Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_InvalidMagicLen,
 					Buffalo_Lib.ENC_MAGIC_LEN - 1);
 				return 1;
 			}
@@ -78,24 +87,28 @@ namespace firmware_wintools.Tools
 			{
 				if (props.product == null)
 				{
-					Console.Error.WriteLine("error: no product specified");
+					Console.Error.WriteLine(
+						Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_NoProduct);
 					return 1;
 				}
 				else if (props.product.Length > Buffalo_Lib.ENC_PRODUCT_LEN - 1)
 				{
-					Console.Error.WriteLine("error: specified product name {0} is too long",
+					Console.Error.WriteLine(
+						Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_LongProduct,
 						props.product);
 					return 1;
 				}
 
 				if (props.version == null)
 				{
-					Console.Error.WriteLine("error: no version specified");
+					Console.Error.WriteLine(
+						Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_NoVersion);
 					return 1;
 				}
 				else if (props.version.Length > Buffalo_Lib.ENC_VERSION_LEN - 1)
 				{
-					Console.Error.WriteLine("error: specified version {0} is too long",
+					Console.Error.WriteLine(
+						Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_LongVersion,
 						props.version);
 					return 1;
 				}
@@ -186,7 +199,8 @@ namespace firmware_wintools.Tools
 			PrintInfo(subprops, props.debug);
 			if (bufLib.Encrypt_Buf(ref ep, ref buf, hdrlen) != 0)
 			{
-				Console.Error.WriteLine("error: failed to encrypt");
+				Console.Error.WriteLine(
+					Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_FailEncrypt);
 				CloseStream(ref inFs, ref outFs);
 				return 1;
 			}
@@ -222,7 +236,9 @@ namespace firmware_wintools.Tools
 
 			if (!inFs.CanSeek || src_len < subprops.offset)
 			{
-				Console.Error.WriteLine("error: offset is larger than input file size");
+				Console.Error.WriteLine(
+					Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_LargeOffset,
+					subprops.offset);
 				CloseStream(ref inFs, ref outFs);
 				return 1;
 			}
@@ -237,10 +253,11 @@ namespace firmware_wintools.Tools
 			ep.version = new byte[Buffalo_Lib.ENC_VERSION_LEN];
 			ep.key = Encoding.ASCII.GetBytes(subprops.crypt_key);
 			ep.longstate = subprops.islong;
-
+		
 			Buffalo_Lib bufLib = new Buffalo_Lib();
 			if (bufLib.Decrypt_Buf(ref ep, ref buf, buf.LongLength) != 0){
-				Console.Error.WriteLine("error: failed to decrypt");
+				Console.Error.WriteLine(
+					Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_FailDecrypt);
 				CloseStream(ref inFs, ref outFs);
 				return 1;
 			}
@@ -266,8 +283,8 @@ namespace firmware_wintools.Tools
 			int ret = 0;
 			Properties subprops = new Properties();
 
-			subprops.crypt_key = "Buffalo";
-			subprops.magic = "start";
+			subprops.crypt_key = DEFAULT_KEY;
+			subprops.magic = DEFAULT_MAGIC;
 			subprops.seed = 0x4F;   // Char: O
 
 			ToolsArgMap argMap = new ToolsArgMap();

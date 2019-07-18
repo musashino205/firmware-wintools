@@ -44,6 +44,66 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArgMap.cs" />
+    <Compile Include="Lang\Resource.ja-JP.Designer.cs">
+      <DependentUpon>Resource.ja-JP.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Lang\Resource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Lang\Tools\buffalo-enc\BuffaloEncRes.ja-JP.Designer.cs">
+      <DependentUpon>BuffaloEncRes.ja-JP.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Lang\Tools\buffalo-enc\BuffaloEncRes.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BuffaloEncRes.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Lang\Tools\mkedimaximg\MkEdimaxImgRes.ja-JP.Designer.cs">
+      <DependentUpon>MkEdimaxImgRes.ja-JP.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Lang\Tools\mkedimaximg\MkEdimaxImgRes.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MkEdimaxImgRes.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Lang\Tools\mksenaofw\MkSenaoFwRes.ja-JP.Designer.cs">
+      <DependentUpon>MkSenaoFwRes.ja-JP.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Lang\Tools\mksenaofw\MkSenaoFwRes.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MkSenaoFwRes.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Lang\Tools\nec-enc\NecEncRes.ja-JP.Designer.cs">
+      <DependentUpon>NecEncRes.ja-JP.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Lang\Tools\nec-enc\NecEncRes.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>NecEncRes.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Lang\Tools\xorimage\XorimageRes.ja-JP.Designer.cs">
+      <DependentUpon>XorimageRes.ja-JP.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Lang\Tools\xorimage\XorimageRes.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>XorimageRes.resx</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\buffalo-tools\buffalo-enc.cs" />
@@ -72,6 +132,65 @@
   <ItemGroup>
     <Content Include="Tools\compile_sample.txt" />
     <Content Include="Tools\debug_sample.txt" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Lang\Resource.ja-JP.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.ja-JP.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lang\Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lang\Tools\buffalo-enc\BuffaloEncRes.ja-JP.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>BuffaloEncRes.ja-JP.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lang\Tools\buffalo-enc\BuffaloEncRes.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>BuffaloEncRes.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lang\Tools\mkedimaximg\MkEdimaxImgRes.ja-JP.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MkEdimaxImgRes.ja-JP.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lang\Tools\mkedimaximg\MkEdimaxImgRes.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MkEdimaxImgRes.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lang\Tools\mksenaofw\MkSenaoFwRes.ja-JP.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MkSenaoFwRes.ja-JP.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lang\Tools\mksenaofw\MkSenaoFwRes.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MkSenaoFwRes.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lang\Tools\nec-enc\NecEncRes.ja-JP.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>NecEncRes.ja-JP.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lang\Tools\nec-enc\NecEncRes.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>NecEncRes.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lang\Tools\xorimage\XorimageRes.ja-JP.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>XorimageRes.ja-JP.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lang\Tools\xorimage\XorimageRes.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>XorimageRes.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
