@@ -69,14 +69,14 @@ namespace firmware_wintools.Tools
 		/// mkedimaximgの実行情報を表示します
 		/// </summary>
 		/// <param name="props"></param>
-		private void PrintInfo(Properties props)
+		private void PrintInfo(Properties subprops)
 		{
 			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info);
-			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_Signature, props.signature);
-			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_Model, props.model);
-			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_FlashAddr, props.flash);
-			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_StartAddr, props.start);
-			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_BE, props.isbe.ToString());
+			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_Signature, subprops.signature);
+			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_Model, subprops.model);
+			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_FlashAddr, subprops.flash);
+			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_StartAddr, subprops.start);
+			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_BE, subprops.isbe.ToString());
 		}
 
 		/// <summary>

@@ -7,7 +7,7 @@
 		/// </summary>
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">nec-encの機能プロパティ</param>
-		public void Init_args_NecEnc(string[] args, ref Tools.Nec_Enc.Properties props)
+		public void Init_args_NecEnc(string[] args, ref Tools.Nec_Enc.Properties subprops)
 		{
 			for (int i = 0; i < args.Length; i++)
 			{
@@ -16,7 +16,7 @@
 					switch (args[i].Replace("-", ""))
 					{
 						case "k":
-							if (ArgMap.Set_StrParamFromArgs(args, i, ref props.key) == 0)
+							if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.key) == 0)
 								i++;
 							break;
 					}

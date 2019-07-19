@@ -10,7 +10,7 @@ namespace firmware_wintools.Tools
 		/// </summary>
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">mkedimaximgの機能プロパティ</param>
-		public void Init_args_BuffaloEnc(string[] args, ref Tools.Buffalo_Enc.Properties props)
+		public void Init_args_BuffaloEnc(string[] args, ref Tools.Buffalo_Enc.Properties subprops)
 		{
 			CultureInfo provider = CultureInfo.CurrentCulture;
 			for (int i = 0; i < args.Length; i++)
@@ -20,25 +20,25 @@ namespace firmware_wintools.Tools
 					switch (args[i].Replace("-", ""))
 					{
 						case "d":
-							props.isde = true;
+							subprops.isde = true;
 							break;
 						case "l":
-							props.islong = true;
+							subprops.islong = true;
 							break;
 						case "k":
-							if (ArgMap.Set_StrParamFromArgs(args, i, ref props.crypt_key) == 0)
+							if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.crypt_key) == 0)
 								i++;
 							break;
 						case "m":
-							if (ArgMap.Set_StrParamFromArgs(args, i, ref props.magic) == 0)
+							if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.magic) == 0)
 								i++;
 							break;
 						case "p":
-							if (ArgMap.Set_StrParamFromArgs(args, i, ref props.product) == 0)
+							if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.product) == 0)
 								i++;
 							break;
 						case "v":
-							if (ArgMap.Set_StrParamFromArgs(args, i, ref props.version) == 0)
+							if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.version) == 0)
 								i++;
 							break;
 						case "s":
@@ -47,7 +47,7 @@ namespace firmware_wintools.Tools
 								byte.TryParse((seed.StartsWith("0x") ? seed.Replace("0x", "") : seed),
 								NumberStyles.HexNumber, provider, out byte conv_seed))
 							{
-								props.seed = conv_seed;
+								subprops.seed = conv_seed;
 								i++;
 							}
 							break;
@@ -56,7 +56,7 @@ namespace firmware_wintools.Tools
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref offset) == 0 &&
 								Int32.TryParse(offset, out int conv_offset))
 							{
-								props.offset = conv_offset;
+								subprops.offset = conv_offset;
 								i++;
 							}
 							break;
@@ -65,7 +65,7 @@ namespace firmware_wintools.Tools
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref size) == 0 &&
 								Int32.TryParse(size, out int conv_size))
 							{
-								props.size = conv_size;
+								subprops.size = conv_size;
 								i++;
 							}
 							break;

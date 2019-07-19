@@ -7,7 +7,7 @@
 		/// </summary>
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">xorimageの機能プロパティ</param>
-		public void Init_args_Xorimage(string[] args, ref Tools.XorImage.Properties props)
+		public void Init_args_Xorimage(string[] args, ref Tools.XorImage.Properties subprops)
 		{
 			for (int i = 0; i < args.Length; i++)
 			{
@@ -16,11 +16,11 @@
 					switch (args[i].Replace("-", ""))
 					{
 						case "p":
-							if (ArgMap.Set_StrParamFromArgs(args, i, ref props.pattern) == 0)
+							if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.pattern) == 0)
 								i++;
 							break;
 						case "x":
-							props.ishex = true;
+							subprops.ishex = true;
 							break;
 					}
 				}

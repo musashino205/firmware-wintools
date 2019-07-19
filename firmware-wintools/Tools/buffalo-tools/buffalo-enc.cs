@@ -42,40 +42,40 @@ namespace firmware_wintools.Tools
 				DEFAULT_KEY, DEFAULT_MAGIC);
 		}
 
-		private void PrintInfo(Properties props, bool isdbg)
+		private void PrintInfo(Properties subprops, bool isdbg)
 		{
-			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info, props.isde ?
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info, subprops.isde ?
 				Lang.Tools.BuffaloEncRes.Info_Decrypt : Lang.Tools.BuffaloEncRes.Info_Encrypt);
 			if (isdbg)
 			{
-				Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Longstate, props.islong);
-				Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Key, props.crypt_key);
+				Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Longstate, subprops.islong);
+				Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Key, subprops.crypt_key);
 			}
-			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Magic, props.magic);
-			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Seed, props.seed);
-			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Product, props.product);
-			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Version, props.version);
-			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_DataLen, props.size);
-			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Cksum, props.cksum);
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Magic, subprops.magic);
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Seed, subprops.seed);
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Product, subprops.product);
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Version, subprops.version);
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_DataLen, subprops.size);
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Cksum, subprops.cksum);
 		}
 
-		private int CheckParams(Properties props)
+		private int CheckParams(Properties subprops)
 		{
-			if (props.crypt_key == null || props.crypt_key.Length == 0)
+			if (subprops.crypt_key == null || subprops.crypt_key.Length == 0)
 			{
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_NoKey);
 				return 1;
 			}
-			else if (props.crypt_key.Length > Buffalo_Lib.BCRYPT_MAX_KEYLEN)
+			else if (subprops.crypt_key.Length > Buffalo_Lib.BCRYPT_MAX_KEYLEN)
 			{
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_LongKey,
-					props.crypt_key);
+					subprops.crypt_key);
 				return 1;
 			}
 
-			if (props.magic.Length != Buffalo_Lib.ENC_MAGIC_LEN - 1)
+			if (subprops.magic.Length != Buffalo_Lib.ENC_MAGIC_LEN - 1)
 			{
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_InvalidMagicLen,
@@ -83,33 +83,33 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			if (!props.isde)
+			if (!subprops.isde)
 			{
-				if (props.product == null)
+				if (subprops.product == null)
 				{
 					Console.Error.WriteLine(
 						Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_NoProduct);
 					return 1;
 				}
-				else if (props.product.Length > Buffalo_Lib.ENC_PRODUCT_LEN - 1)
+				else if (subprops.product.Length > Buffalo_Lib.ENC_PRODUCT_LEN - 1)
 				{
 					Console.Error.WriteLine(
 						Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_LongProduct,
-						props.product);
+						subprops.product);
 					return 1;
 				}
 
-				if (props.version == null)
+				if (subprops.version == null)
 				{
 					Console.Error.WriteLine(
 						Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_NoVersion);
 					return 1;
 				}
-				else if (props.version.Length > Buffalo_Lib.ENC_VERSION_LEN - 1)
+				else if (subprops.version.Length > Buffalo_Lib.ENC_VERSION_LEN - 1)
 				{
 					Console.Error.WriteLine(
 						Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_LongVersion,
-						props.version);
+						subprops.version);
 					return 1;
 				}
 			}

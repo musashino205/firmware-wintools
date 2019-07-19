@@ -35,10 +35,10 @@ namespace firmware_wintools.Tools
 		/// nec-encの実行情報を表示します
 		/// </summary>
 		/// <param name="props">nec-encの機能プロパティ</param>
-		private void PrintInfo(Properties props)
+		private void PrintInfo(Properties subprops)
 		{
 			Console.WriteLine(Lang.Tools.NecEncRes.Info);
-			Console.WriteLine(Lang.Tools.NecEncRes.Info_key, props.key);
+			Console.WriteLine(Lang.Tools.NecEncRes.Info_key, subprops.key);
 		}
 
 		/// <summary>

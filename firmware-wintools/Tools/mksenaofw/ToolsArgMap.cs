@@ -10,7 +10,7 @@ namespace firmware_wintools.Tools
 		/// </summary>
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">mkedimaximgの機能プロパティ</param>
-		public void Init_args_MkSenaoFw(string[] args, ref Tools.MkSenaoFw.Properties props)
+		public void Init_args_MkSenaoFw(string[] args, ref Tools.MkSenaoFw.Properties subprops)
 		{
 			CultureInfo provider = CultureInfo.CurrentCulture;
 			for (int i = 0; i < args.Length; i++)
@@ -24,12 +24,12 @@ namespace firmware_wintools.Tools
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref type) == 0 &&
 								byte.TryParse(type, out byte conv_type))
 							{
-								props.fw_type = conv_type;
+								subprops.fw_type = conv_type;
 								i++;
 							}
 							break;
 						case "v":
-							if (ArgMap.Set_StrParamFromArgs(args, i, ref props.version) == 0)
+							if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.version) == 0)
 								i++;
 							break;
 						case "r":
@@ -38,7 +38,7 @@ namespace firmware_wintools.Tools
 								UInt32.TryParse((vendor.StartsWith("0x") ? vendor.Replace("0x", "") : vendor),
 								NumberStyles.HexNumber, provider, out uint conv_vendor))
 							{
-								props.vendor = conv_vendor;
+								subprops.vendor = conv_vendor;
 								i++;
 							}
 							break;
@@ -48,7 +48,7 @@ namespace firmware_wintools.Tools
 								UInt32.TryParse((product.StartsWith("0x") ? product.Replace("0x", "") : product),
 								NumberStyles.HexNumber, provider, out uint conv_product))
 							{
-								props.product = conv_product;
+								subprops.product = conv_product;
 								i++;
 							}
 							break;
@@ -58,24 +58,24 @@ namespace firmware_wintools.Tools
 								UInt32.TryParse((magic.StartsWith("0x") ? magic.Replace("0x", "") : magic),
 								NumberStyles.HexNumber, provider, out uint conv_magic))
 							{
-								props.magic = conv_magic;
+								subprops.magic = conv_magic;
 								i++;
 							}
 							break;
 						case "z":
-							props.pad = true;
+							subprops.pad = true;
 							break;
 						case "b":
 							string bs = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref bs) == 0 &&
 								Int32.TryParse(bs, out int conv_bs))
 							{
-								props.bs = conv_bs;
+								subprops.bs = conv_bs;
 								i++;
 							}
 							break;
 						case "d":
-							props.isde = true;
+							subprops.isde = true;
 							break;
 					}
 				}

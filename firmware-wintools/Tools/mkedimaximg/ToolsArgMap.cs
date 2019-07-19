@@ -10,7 +10,7 @@ namespace firmware_wintools.Tools
 		/// </summary>
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">mkedimaximgの機能プロパティ</param>
-		public void Init_args_MkEdimaxImg(string[] args, ref Tools.MkEdimaxImg.Properties props)
+		public void Init_args_MkEdimaxImg(string[] args, ref Tools.MkEdimaxImg.Properties subprops)
 		{
 			CultureInfo provider = CultureInfo.CurrentCulture;
 			for (int i = 0; i < args.Length; i++)
@@ -20,11 +20,11 @@ namespace firmware_wintools.Tools
 					switch (args[i].Replace("-", ""))
 					{
 						case "s":
-							if (ArgMap.Set_StrParamFromArgs(args, i, ref props.signature) == 0)
+							if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.signature) == 0)
 								i++;
 							break;
 						case "m":
-							if (ArgMap.Set_StrParamFromArgs(args, i, ref props.model) == 0)
+							if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.model) == 0)
 								i++;
 							break;
 						case "f":
@@ -33,7 +33,7 @@ namespace firmware_wintools.Tools
 								Int32.TryParse((flash.StartsWith("0x") ? flash.Replace("0x", "") : flash),
 								NumberStyles.HexNumber, provider, out int conv_flash))
 							{
-								props.flash = conv_flash;
+								subprops.flash = conv_flash;
 								i++;
 							}
 							break;
@@ -43,12 +43,12 @@ namespace firmware_wintools.Tools
 								Int32.TryParse(start.StartsWith("0x") ? start.Replace("0x", "") : start,
 								NumberStyles.HexNumber, provider, out int conv_start))
 							{
-								props.start = conv_start;
+								subprops.start = conv_start;
 								i++;
 							}
 							break;
 						case "b":
-							props.isbe = true;
+							subprops.isbe = true;
 							break;
 					}
 				}

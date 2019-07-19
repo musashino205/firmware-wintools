@@ -40,11 +40,11 @@ namespace firmware_wintools.Tools
 		/// xorimageの実行情報を表示します
 		/// </summary>
 		/// <param name="props"></param>
-		private void PrintInfo(Properties props)
+		private void PrintInfo(Properties subprops)
 		{
 			Console.WriteLine(Lang.Tools.XorimageRes.Info);
-			Console.WriteLine(Lang.Tools.XorimageRes.Info_Pattern, props.pattern);
-			Console.WriteLine(Lang.Tools.XorimageRes.Info_Hex, props.ishex.ToString());
+			Console.WriteLine(Lang.Tools.XorimageRes.Info_Pattern, subprops.pattern);
+			Console.WriteLine(Lang.Tools.XorimageRes.Info_Hex, subprops.ishex.ToString());
 		}
 
 		/// <summary>
@@ -57,25 +57,25 @@ namespace firmware_wintools.Tools
 		/// <param name="p_len">パターン長</param>
 		/// <param name="p_off">パターン オフセット</param>
 		/// <returns></returns>
-		private int XorData(ref byte[] data, int len, Properties props, int p_len, int p_off)
+		private int XorData(ref byte[] data, int len, Properties subprops, int p_len, int p_off)
 		{
 			int data_pos = 0;
 			int offset = p_off;
-			byte[] byteKey = new byte[(props.ishex) ? p_len/2 : p_len];
+			byte[] byteKey = new byte[(subprops.ishex) ? p_len/2 : p_len];
 
-			if (props.ishex)
+			if (subprops.ishex)
 				for (int i = 0; i < (p_len / 2); i++)
 				{
-					byteKey[i] = Convert.ToByte(props.pattern.Substring(i * 2, 2), 16);
+					byteKey[i] = Convert.ToByte(subprops.pattern.Substring(i * 2, 2), 16);
 				}
 			else
-				byteKey = Encoding.UTF8.GetBytes(props.pattern);
+				byteKey = Encoding.UTF8.GetBytes(subprops.pattern);
 
 			while (len-- > 0)
 			{
 				data[data_pos] ^= byteKey[offset];
 				data_pos++;
-				offset = (offset + 1) % ((props.ishex) ? p_len / 2 : p_len);
+				offset = (offset + 1) % ((subprops.ishex) ? p_len / 2 : p_len);
 			}
 
 			return offset;
