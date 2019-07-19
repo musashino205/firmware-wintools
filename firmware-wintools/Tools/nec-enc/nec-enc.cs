@@ -148,9 +148,9 @@ namespace firmware_wintools.Tools
 					xpatFs = new FileStream(@"pattern.xor", FileMode.OpenOrCreate, FileAccess.Write);
 				}
 			}
-			catch (IOException i)
+			catch (IOException e)
 			{
-				Console.Error.WriteLine(i.Message);
+				Console.Error.WriteLine(e.Message);
 				return 1;
 			}
 

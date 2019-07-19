@@ -191,9 +191,9 @@ namespace firmware_wintools.Tools
 				inFs = new FileStream(props.inFile, FileMode.Open, FileAccess.Read, FileShare.Read);
 				outFs = new FileStream(props.outFile, outFMode, FileAccess.Write, FileShare.None);
 			}
-			catch (IOException i)
+			catch (IOException e)
 			{
-				Console.Error.WriteLine(i.Message);
+				Console.Error.WriteLine(e.Message);
 				return 1;
 			}
 
