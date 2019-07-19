@@ -91,7 +91,15 @@ namespace firmware_wintools.Tools
 			new Firmware_Type() { id = 0x02, name = "kernel" },
 			new Firmware_Type() { id = 0x03, name = "kernelapp" },
 			new Firmware_Type() { id = 0x04, name = "apps" },
-			/* 以下実装省略 */
+			/* 以下メーカー依存の値 */
+			new Firmware_Type() { id = 0x05, name = "littleapps (D-Link)/factoryapps (EnGenius)" },
+			new Firmware_Type() { id = 0x06, name = "sounds (D-Link)/littleapps (EnGeinus)" },
+			new Firmware_Type() { id = 0x07, name = "userconfig (D-Link)/appdata (EnGeinus)" },
+			new Firmware_Type() { id = 0x08, name = "userconfig (EnGeinus)" },
+			new Firmware_Type() { id = 0x09, name = "odmapps (EnGeinus)" },
+			new Firmware_Type() { id = 0x0a, name = "factoryapps (D-Link)" },
+			new Firmware_Type() { id = 0x0b, name = "odmapps (D-Link)" },
+			new Firmware_Type() { id = 0x0c, name = "langpack (D-Link)" }
 		};
 
 		/// <summary>
@@ -109,11 +117,15 @@ namespace firmware_wintools.Tools
 				Lang.Resource.Help_Options_o +
 				Lang.Tools.MkSenaoFwRes.Help_Options_t +
 				Lang.Tools.MkSenaoFwRes.Help_Options_t_values);
-			for (int i = 0; i < FIRMWARE_TYPES.Length; i++)			// firmware types
+			for (int i = 0; i < FIRMWARE_TYPES.Length; i++)     // firmware types
+			{
 				Console.WriteLine(Lang.Tools.MkSenaoFwRes.Help_Options_t_TypeFmt,
-					FIRMWARE_TYPES[i].id.ToString(), FIRMWARE_TYPES[i].name, FIRMWARE_TYPES[i].comment);
-			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Help_Options_t_NoImpl +
-				Lang.Tools.MkSenaoFwRes.Help_Options_t_Line +
+					FIRMWARE_TYPES[i].id < 10 ?
+						FIRMWARE_TYPES[i].id.ToString() + " " : FIRMWARE_TYPES[i].id.ToString(),
+					FIRMWARE_TYPES[i].name,
+					FIRMWARE_TYPES[i].comment);
+			}
+			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Help_Options_t_Line +
 				Lang.Tools.MkSenaoFwRes.Help_Options_v +
 				Lang.Tools.MkSenaoFwRes.Help_Options_r +
 				Lang.Tools.MkSenaoFwRes.Help_Options_p +

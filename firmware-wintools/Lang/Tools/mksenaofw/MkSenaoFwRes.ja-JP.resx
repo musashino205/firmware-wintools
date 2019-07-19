@@ -170,10 +170,6 @@
     <value>			----------------------------------
 </value>
   </data>
-  <data name="Help.Options.t.NoImpl" xml:space="preserve">
-    <value>			 (5 - 12: このプログラムでは実装されていません)
-</value>
-  </data>
   <data name="Help.Options.t.TypeFmt" xml:space="preserve">
     <value>			 {0} = {1}	{2}</value>
   </data>

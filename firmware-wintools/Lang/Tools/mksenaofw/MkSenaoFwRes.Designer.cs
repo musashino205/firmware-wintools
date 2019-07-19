@@ -204,16 +204,6 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
-        ///   			(5 - 12: not implemented in this program)
-        /// に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string Help_Options_t_NoImpl {
-            get {
-                return ResourceManager.GetString("Help.Options.t.NoImpl", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   			 {0} = {1}	{2} に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Help_Options_t_TypeFmt {
