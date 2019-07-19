@@ -239,11 +239,12 @@ namespace firmware_wintools.Tools
 		public int Do_BuffaloEnc(string[] args, Program.Properties props)
 		{
 			int ret = 0;
-			Properties subprops = new Properties();
-
-			subprops.crypt_key = DEFAULT_KEY;
-			subprops.magic = DEFAULT_MAGIC;
-			subprops.seed = 0x4F;   // Char: O
+			Properties subprops = new Properties
+			{
+				crypt_key = DEFAULT_KEY,
+				magic = DEFAULT_MAGIC,
+				seed = 0x4F   // Char: O
+			};
 
 			ToolsArgMap argMap = new ToolsArgMap();
 			argMap.Init_args_BuffaloEnc(args, ref subprops);

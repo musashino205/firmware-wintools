@@ -94,9 +94,10 @@ namespace firmware_wintools.Tools
 			int read_len, p_off = 0;
 			byte[] hex_pattern = new byte[128];
 			byte[] buf = new byte[4096];
-			Properties subprops = new Properties();
-
-			subprops.pattern = "12345678";
+			Properties subprops = new Properties
+			{
+				pattern = "12345678"
+			};
 
 			ToolsArgMap argMap = new ToolsArgMap();
 			argMap.Init_args_Xorimage(args, ref subprops);
