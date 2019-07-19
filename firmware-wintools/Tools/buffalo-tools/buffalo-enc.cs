@@ -117,13 +117,7 @@ namespace firmware_wintools.Tools
 			return 0;
 		}
 
-		private void CloseStream(ref FileStream inFs, ref FileStream outFs)
-		{
-			inFs.Close();
-			outFs.Close();
-		}
-
-		private int Encrypt(Program.Properties props, Properties subprops)
+		private int Encrypt(ref FileStream inFs, ref FileStream outFs, Program.Properties props, Properties subprops)
 		{
 			long src_len, tail_dst = 0, tail_len = 0, tail_src;
 			long totlen = 0;
@@ -148,21 +142,6 @@ namespace firmware_wintools.Tools
 				ep.product, 0, subprops.product.Length);
 			Array.Copy(Encoding.ASCII.GetBytes(subprops.version), 0,
 				ep.version, 0, subprops.version.Length);
-
-			FileStream inFs;
-			FileStream outFs;
-			FileMode outFMode =
-				File.Exists(props.outFile) ? FileMode.Truncate : FileMode.Create;
-			try
-			{
-				inFs = new FileStream(props.inFile, FileMode.Open, FileAccess.Read, FileShare.Read);
-				outFs = new FileStream(props.outFile, outFMode, FileAccess.Write, FileShare.None);
-			}
-			catch (IOException e)
-			{
-				Console.Error.WriteLine(e.Message);
-				return 1;
-			}
 
 			src_len = inFs.Length;
 
@@ -201,36 +180,19 @@ namespace firmware_wintools.Tools
 			{
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_FailEncrypt);
-				CloseStream(ref inFs, ref outFs);
 				return 1;
 			}
 
 			outFs.Write(buf, 0, (int)totlen);
 
-			CloseStream(ref inFs, ref outFs);
-
 			return 0;
 		}
 
-		private int Decrypt(Program.Properties props, Properties subprops)
+		private int Decrypt(ref FileStream inFs, ref FileStream outFs, Program.Properties props, Properties subprops)
 		{
 			long src_len;
 			byte[] buf;
 			Buffalo_Lib.Enc_Param ep = new Buffalo_Lib.Enc_Param();
-
-			FileStream inFs;
-			FileStream outFs;
-			FileMode outFMode =
-				File.Exists(props.outFile) ? FileMode.Truncate : FileMode.Create;
-			try
-			{
-				inFs = new FileStream(props.inFile, FileMode.Open, FileAccess.Read, FileShare.Read);
-				outFs = new FileStream(props.outFile, outFMode, FileAccess.Write, FileShare.None);
-			} catch (IOException e)
-			{
-				Console.Error.WriteLine(e.Message);
-				return 1;
-			}
 
 			src_len = inFs.Length;
 
@@ -239,7 +201,6 @@ namespace firmware_wintools.Tools
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_LargeOffset,
 					subprops.offset);
-				CloseStream(ref inFs, ref outFs);
 				return 1;
 			}
 
@@ -258,7 +219,6 @@ namespace firmware_wintools.Tools
 			if (bufLib.Decrypt_Buf(ref ep, ref buf, buf.LongLength) != 0){
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_FailDecrypt);
-				CloseStream(ref inFs, ref outFs);
 				return 1;
 			}
 
@@ -272,8 +232,6 @@ namespace firmware_wintools.Tools
 			PrintInfo(subprops, props.debug);
 
 			outFs.Write(buf, 0, Convert.ToInt32(ep.datalen));
-
-			CloseStream(ref inFs, ref outFs);
 
 			return 0;
 		}
@@ -299,8 +257,27 @@ namespace firmware_wintools.Tools
 			if (CheckParams(subprops) != 0)
 				return 1;
 
+			FileStream inFs;
+			FileStream outFs;
+			FileMode outFMode =
+				File.Exists(props.outFile) ? FileMode.Truncate : FileMode.Create;
+			try
+			{
+				inFs = new FileStream(props.inFile, FileMode.Open, FileAccess.Read, FileShare.Read);
+				outFs = new FileStream(props.outFile, outFMode, FileAccess.Write, FileShare.None);
+			}
+			catch (IOException e)
+			{
+				Console.Error.WriteLine(e.Message);
+				return 1;
+			}
+
 			ret = subprops.isde ?
-				Decrypt(props, subprops) : Encrypt(props, subprops);
+				Decrypt(ref inFs, ref outFs, props, subprops) :
+				Encrypt(ref inFs, ref outFs, props, subprops);
+
+			inFs.Close();
+			outFs.Close();
 
 			return ret;
 		}
