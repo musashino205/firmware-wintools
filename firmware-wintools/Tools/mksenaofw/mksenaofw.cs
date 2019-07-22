@@ -188,7 +188,7 @@ namespace firmware_wintools.Tools
 		/// <param name="data">算出対象データ</param>
 		/// <param name="len">算出対象のデータ長</param>
 		/// <returns>算出成功: チェックサム値, 失敗: -1</returns>
-		private int Calc_HeaderCksum(ref byte[] data, int len)
+		private int Calc_HeaderCksum(in byte[] data, int len)
 		{
 			int sum = 0;
 
@@ -208,7 +208,7 @@ namespace firmware_wintools.Tools
 		/// <param name="inFs">入力ファイルのFileStream</param>
 		/// <param name="outFs">出力ファイルのFileStream</param>
 		/// <returns>成功: 0, 失敗: 1</returns>
-		private int Encode(Properties subprops, FileStream inFs, FileStream outFs)
+		private int Encode(Properties subprops, ref FileStream inFs, ref FileStream outFs)
 		{
 			int filesize, cksum, read_len, pad_len, avail_len;
 			byte[] buf = new byte[BUF_SIZE];
@@ -263,7 +263,7 @@ namespace firmware_wintools.Tools
 			Array.Copy(BitConverter.GetBytes(fw_header.magic), 0,
 				buf, HDR_LEN - sizeof(uint), sizeof(uint));
 
-			if ((cksum = Calc_HeaderCksum(ref buf, HDR_LEN)) < 0)
+			if ((cksum = Calc_HeaderCksum(in buf, HDR_LEN)) < 0)
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 					Lang.Tools.MkSenaoFwRes.Error_FailHeaderCksum);
@@ -301,7 +301,7 @@ namespace firmware_wintools.Tools
 		/// <param name="inFs">入力ファイルのFileStream</param>
 		/// <param name="outFs">出力ファイルのFileStream</param>
 		/// <returns>成功: 0, 失敗: 1</returns>
-		private int Decode(FileStream inFs, FileStream outFs)
+		private int Decode(ref FileStream inFs, ref FileStream outFs)
 		{
 			int read_len, written_len = 0;
 			byte[] buf = new byte[BUF_SIZE];
@@ -427,7 +427,7 @@ namespace firmware_wintools.Tools
 			}
 
 			int ret = subprops.isde ?
-				Decode(inFs, outFs) : Encode(subprops, inFs, outFs);
+				Decode(ref inFs, ref outFs) : Encode(subprops, ref inFs, ref outFs);
 
 			inFs.Close();
 			outFs.Close();
