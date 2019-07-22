@@ -197,7 +197,7 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			if (inFs.Length > 0xFFFFFFFFu)
+			if (inFs.Length > 0x7FFFFFFFu)
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 					Lang.Tools.MkEdimaxImgRes.Error_LargeInFile);
