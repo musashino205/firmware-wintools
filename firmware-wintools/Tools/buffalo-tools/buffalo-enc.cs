@@ -148,16 +148,16 @@ namespace firmware_wintools.Tools
 			Buffalo_Lib bufLib = new Buffalo_Lib();
 			if (subprops.size > 0)
 			{
-				tail_dst = (long)bufLib.Enc_Compute_BufLen(ref ep.product, ref ep.version, (ulong)subprops.size);
+				tail_dst = (long)bufLib.Enc_Compute_BufLen(in ep.product, in ep.version, (ulong)subprops.size);
 				tail_len = src_len - subprops.size;
 				totlen = tail_dst + tail_len;
 			}
 			else
-				totlen = (long)bufLib.Enc_Compute_BufLen(ref ep.product, ref ep.version, (ulong)src_len);
+				totlen = (long)bufLib.Enc_Compute_BufLen(in ep.product, in ep.version, (ulong)src_len);
 
 			buf = new byte[totlen];
 
-			hdrlen = (uint)bufLib.Enc_Compute_HeaderLen(ref ep.product, ref ep.version);
+			hdrlen = (uint)bufLib.Enc_Compute_HeaderLen(in ep.product, in ep.version);
 
 			inFs.Read(buf, (int)hdrlen, (int)src_len);
 
@@ -169,14 +169,14 @@ namespace firmware_wintools.Tools
 				src_len = subprops.size;
 			}
 
-			ep.cksum = bufLib.Buffalo_Csum((uint)src_len, ref buf, hdrlen, (ulong)src_len);
+			ep.cksum = bufLib.Buffalo_Csum((uint)src_len, in buf, hdrlen, (ulong)src_len);
 			ep.datalen = (uint)src_len;
 
 			subprops.cksum = ep.cksum;
 			subprops.size = (int)ep.datalen;
 
 			PrintInfo(subprops, isdbg);
-			if (bufLib.Encrypt_Buf(ref ep, ref buf, hdrlen) != 0)
+			if (bufLib.Encrypt_Buf(in ep, ref buf, hdrlen) != 0)
 			{
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_FailEncrypt);

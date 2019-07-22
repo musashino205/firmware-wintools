@@ -7,7 +7,7 @@ namespace firmware_wintools.Tools
 {
 	partial class Buffalo_Lib
 	{
-		private int Bcrypt_Init(ref Bcrypt_ctx ctx, ref byte[] key, uint keylen,
+		private int Bcrypt_Init(ref Bcrypt_ctx ctx, in byte[] key, uint keylen,
 			ulong state_len)
 		{
 			ulong k = 0;
@@ -80,7 +80,7 @@ namespace firmware_wintools.Tools
 		/// <param name="len"></param>
 		/// <param name="longstate"></param>
 		/// <returns>成功: 0, 失敗: 1</returns>
-		private int Bcrypt_Buf(byte seed, ref byte[] key, ref byte[] src,
+		private int Bcrypt_Buf(byte seed, in byte[] key, ref byte[] src,
 			long offset, ulong len, bool longstate)
 		{
 			byte[] bckey = new byte[BCRYPT_MAX_KEYLEN + 1];
@@ -98,7 +98,7 @@ namespace firmware_wintools.Tools
 			if (key[key.Length - 1] != 0)
 				keylen++;
 
-			if (Bcrypt_Init(ref ctx, ref bckey, keylen,
+			if (Bcrypt_Init(ref ctx, in bckey, keylen,
 				longstate ? len : BCRYPT_DEFAULT_STATE_LEN) != 0)
 				return 1;
 
@@ -107,7 +107,7 @@ namespace firmware_wintools.Tools
 			return 0;
 		}
 
-		public uint Buffalo_Csum(uint csum, ref byte[] buf, ulong offset, ulong len)
+		public uint Buffalo_Csum(uint csum, in byte[] buf, ulong offset, ulong len)
 		{
 			// ref: https://blog.ch3cooh.jp/entry/20111005/1317772085
 			sbyte[] tmp = ((buf as Array) as sbyte[]);
@@ -129,24 +129,24 @@ namespace firmware_wintools.Tools
 		/// <param name="product">productのバイト配列</param>
 		/// <param name="version">versionのバイト配列</param>
 		/// <returns>ヘッダ長</returns>
-		public ulong Enc_Compute_HeaderLen(ref byte[] product, ref byte[] version)
+		public ulong Enc_Compute_HeaderLen(in byte[] product, in byte[] version)
 		{
 			return (ulong)ENC_MAGIC_LEN + 1 + (ulong)product.Length +
 				(ulong)version.Length + 3 * sizeof(uint);
 		}
 
-		public ulong Enc_Compute_BufLen(ref byte[] product, ref byte[] version, ulong datalen)
+		public ulong Enc_Compute_BufLen(in byte[] product, in byte[] version, ulong datalen)
 		{
 			ulong ret;
 
-			ret = Enc_Compute_HeaderLen(ref product, ref version);
+			ret = Enc_Compute_HeaderLen(in product, in version);
 			ret += datalen + sizeof(uint);
 			ret += (4 - ret % 4);
 
 			return ret;
 		}
 
-		private int Check_Magic(ref byte[] buf, int offset)
+		private int Check_Magic(in byte[] buf, int offset)
 		{
 			byte[] magic_buf = new byte[ENC_MAGIC_LEN - 1];
 
@@ -159,7 +159,7 @@ namespace firmware_wintools.Tools
 				return 1;
 		}
 
-		private int CHECKLEN(ref uint len, uint inLen, long remain)
+		private int CHECKLEN(out uint len, uint inLen, long remain)
 		{
 			len = inLen;
 
@@ -172,7 +172,7 @@ namespace firmware_wintools.Tools
 			remain -= len;
 		}
 
-		public int Encrypt_Buf(ref Enc_Param ep, ref byte[] data, long hdrlen)
+		public int Encrypt_Buf(in Enc_Param ep, ref byte[] data, long hdrlen)
 		{
 			int offset = 0;
 			int len;
@@ -196,7 +196,7 @@ namespace firmware_wintools.Tools
 			/* copy and crypt Product name */
 			Array.Copy(ep.product, 0, data, offset, len);
 			if (Bcrypt_Buf(
-				ep.seed, ref ep.key, ref data, -offset, Convert.ToUInt64(len), ep.longstate)
+				ep.seed, in ep.key, ref data, -offset, Convert.ToUInt64(len), ep.longstate)
 				!= 0)
 				return 1;
 			s = data[offset];
@@ -211,7 +211,7 @@ namespace firmware_wintools.Tools
 			/* copy and crypt Version */
 			Array.Copy(ep.version, 0, data, offset, len);
 			if (Bcrypt_Buf(
-				s, ref ep.key, ref data, -offset, Convert.ToUInt64(len), ep.longstate) != 0)
+				s, in ep.key, ref data, -offset, Convert.ToUInt64(len), ep.longstate) != 0)
 				return 1;
 			s = data[offset];
 			offset += len;
@@ -223,7 +223,7 @@ namespace firmware_wintools.Tools
 			offset += sizeof(uint);
 
 			/* encrypt data */
-			if (Bcrypt_Buf(s, ref ep.key, ref data, -offset, ep.datalen, ep.longstate) != 0)
+			if (Bcrypt_Buf(s, in ep.key, ref data, -offset, ep.datalen, ep.longstate) != 0)
 				return 1;
 			offset += (int)ep.datalen;
 
@@ -255,21 +255,21 @@ namespace firmware_wintools.Tools
 			remain = data_len;
 
 			/* Magic */
-			if (CHECKLEN(ref len, ENC_MAGIC_LEN, remain) != 0)
+			if (CHECKLEN(out len, ENC_MAGIC_LEN, remain) != 0)
 				return 1;
-			if (Check_Magic(ref data, offset) != 0)
+			if (Check_Magic(in data, offset) != 0)
 				return 1;
 			Array.Copy(data, offset, ep.magic, 0, ENC_MAGIC_LEN);
 			INCP(ref offset, len, ref remain);
 
 			/* Seed */
-			if (CHECKLEN(ref len, 1, remain) != 0)
+			if (CHECKLEN(out len, 1, remain) != 0)
 				return 1;
 			ep.seed = data[offset];
 			INCP(ref offset, len, ref remain);
 
 			/* product len. */
-			if (CHECKLEN(ref len, sizeof(uint), remain) != 0)
+			if (CHECKLEN(out len, sizeof(uint), remain) != 0)
 				return 1;
 			prod_len =
 				(uint)IPAddress.HostToNetworkOrder(BitConverter.ToInt32(data, offset));
@@ -278,13 +278,13 @@ namespace firmware_wintools.Tools
 			INCP(ref offset, len, ref remain);
 
 			/* Product */
-			if (CHECKLEN(ref len, prod_len, remain) != 0)
+			if (CHECKLEN(out len, prod_len, remain) != 0)
 				return 1;
 			Array.Copy(data, offset, ep.product, 0, prod_len);
 			INCP(ref offset, len, ref remain);
 
 			/* version len. */
-			if (CHECKLEN(ref len, sizeof(uint), remain) != 0)
+			if (CHECKLEN(out len, sizeof(uint), remain) != 0)
 				return 1;
 			ver_len =
 				(uint)IPAddress.HostToNetworkOrder(BitConverter.ToInt32(data, offset));
@@ -293,45 +293,45 @@ namespace firmware_wintools.Tools
 			INCP(ref offset, len, ref remain);
 
 			/* Version */
-			if (CHECKLEN(ref len, ver_len, remain) != 0)
+			if (CHECKLEN(out len, ver_len, remain) != 0)
 				return 1;
 			Array.Copy(data, offset, ep.version, 0, ver_len);
 			INCP(ref offset, len, ref remain);
 
 			/* Data Len. */
-			if (CHECKLEN(ref len, sizeof(uint), remain) != 0)
+			if (CHECKLEN(out len, sizeof(uint), remain) != 0)
 				return 1;
 			ep.datalen =
 				(uint)IPAddress.HostToNetworkOrder(BitConverter.ToInt32(data, offset));
 			INCP(ref offset, len, ref remain);
 
 			/* decrypt data */
-			if (CHECKLEN(ref len, ep.datalen, remain) != 0)
+			if (CHECKLEN(out len, ep.datalen, remain) != 0)
 				return 1;
 			if (
-				Bcrypt_Buf(ep.version[0], ref ep.key, ref data, offset, ep.datalen, ep.longstate)
+				Bcrypt_Buf(ep.version[0], in ep.key, ref data, offset, ep.datalen, ep.longstate)
 				!= 0)
 				return 1;
 			INCP(ref offset, len, ref remain);
 
 			/* Checksum */
-			if (CHECKLEN(ref len, sizeof(uint), remain) != 0)
+			if (CHECKLEN(out len, sizeof(uint), remain) != 0)
 				return 1;
 			ep.cksum =
 				(uint)IPAddress.HostToNetworkOrder(BitConverter.ToInt32(data, offset));
 			INCP(ref offset, len, ref remain);
 
 			/* calc and compare checksum */
-			cksum = Buffalo_Csum(ep.datalen, ref data, 0, ep.datalen);
+			cksum = Buffalo_Csum(ep.datalen, in data, 0, ep.datalen);
 			if (cksum != ep.cksum)
 				return 1;
 
 			/* decrypt "Version" */
-			if (Bcrypt_Buf(ep.product[0], ref ep.key, ref ep.version, 0, ver_len, ep.longstate) != 0)
+			if (Bcrypt_Buf(ep.product[0], in ep.key, ref ep.version, 0, ver_len, ep.longstate) != 0)
 				return 1;
 
 			/* decrypt "Product" */
-			if (Bcrypt_Buf(ep.seed, ref ep.key, ref ep.product, 0, prod_len, ep.longstate) != 0)
+			if (Bcrypt_Buf(ep.seed, in ep.key, ref ep.product, 0, prod_len, ep.longstate) != 0)
 				return 1;
 
 			return 0;
