@@ -50,7 +50,7 @@ namespace firmware_wintools.Tools
 		/// <param name="k_len">キー長</param>
 		/// <param name="k_off">キー オフセット</param>
 		/// <returns></returns>
-		private int XorPattern(ref byte[] data, int len, ref string key, int k_len, int k_off)
+		private int XorPattern(ref byte[] data, int len, in string key, int k_len, int k_off)
 		{
 			int data_pos = 0;
 			int offset = k_off;
@@ -73,7 +73,7 @@ namespace firmware_wintools.Tools
 		/// <param name="data">xor対象データ</param>
 		/// <param name="len">xor対象データの長さ</param>
 		/// <param name="pattern">xorに用いるpattern</param>
-		private void XorData(ref byte[] data, int len, ref byte[] pattern)
+		private void XorData(ref byte[] data, int len, in byte[] pattern)
 		{
 			int data_pos = 0;
 
@@ -168,11 +168,11 @@ namespace firmware_wintools.Tools
 				if (props.debug)
 					patFs.Write(buf_pattern, 0, read_len);
 
-				k_off = XorPattern(ref buf_pattern, read_len, ref subprops.key, k_len, k_off);
+				k_off = XorPattern(ref buf_pattern, read_len, in subprops.key, k_len, k_off);
 				if (props.debug)
 					xpatFs.Write(buf_pattern, 0, read_len);
 
-				XorData(ref buf, read_len, ref buf_pattern);
+				XorData(ref buf, read_len, in buf_pattern);
 
 				outFs.Write(buf, 0, read_len);
 			}
