@@ -118,11 +118,11 @@ namespace firmware_wintools.Tools
 			Header header = new Header()
 			{
 				sign = new byte[4],
-				model = new byte[4]
+				model = new byte[4],
+				flash = 0,
+				start = 0,
+				size = 0
 			};
-
-			header.flash = header.start = 0;
-			header.size = 0;
 
 			if (props.help)
 			{
