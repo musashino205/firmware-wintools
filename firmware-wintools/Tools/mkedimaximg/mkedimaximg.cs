@@ -85,7 +85,7 @@ namespace firmware_wintools.Tools
 		/// <param name="buf">checksum算出対象データ</param>
 		/// <param name="isbe">BEでの算出</param>
 		/// <returns></returns>
-		private ushort CalcCkSum(byte[] buf, bool isbe)
+		private ushort CalcCkSum(in byte[] buf, bool isbe)
 		{
 			ushort cksum = 0;
 
@@ -229,7 +229,7 @@ namespace firmware_wintools.Tools
 			read_len = inFs.Read(buf, 0, buf.Length);
 			outFs.Write(buf, 0, read_len);
 
-			cksum = CalcCkSum(buf, subprops.isbe);
+			cksum = CalcCkSum(in buf, subprops.isbe);
 			if (props.debug)
 				Console.WriteLine(" checksum:\t{0:X}\n", cksum);
 			if (subprops.isbe)
