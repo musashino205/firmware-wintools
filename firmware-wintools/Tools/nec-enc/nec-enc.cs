@@ -53,16 +53,15 @@ namespace firmware_wintools.Tools
 		private int XorPattern(ref byte[] data, int len, byte[] key, int k_len, int k_off)
 		{
 			int data_pos = 0;
-			int offset = k_off;
 
 			while (len-- > 0)
 			{
-				data[data_pos] ^= key[offset];
+				data[data_pos] ^= key[k_off];
 				data_pos++;
-				offset = (offset + 1) % k_len;
+				k_off = (k_off + 1) % k_len;
 			}
 
-			return offset;
+			return k_off;
 		}
 
 		/// <summary>
