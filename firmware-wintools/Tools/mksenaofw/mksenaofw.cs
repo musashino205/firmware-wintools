@@ -20,6 +20,8 @@ namespace firmware_wintools.Tools
 		const string DEFAULT_VERSION = "123";
 		const int DEFAULT_MAGIC = 0x12345678;
 
+		byte[] md5sum;
+
 		/// <summary>
 		/// mksenaofwの機能プロパティ
 		/// </summary>
@@ -49,10 +51,6 @@ namespace firmware_wintools.Tools
 			/// ファームウェアマジック値
 			/// </summary>
 			internal uint magic;
-			/// <summary>
-			/// MD5 sum
-			/// </summary>
-			internal byte[] md5sum;
 			/// <summary>
 			/// ファームウェア末尾パディング有無
 			/// </summary>
@@ -145,7 +143,7 @@ namespace firmware_wintools.Tools
 			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_Vendor, subprops.vendor);
 			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_Product, subprops.product);
 			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_MD5,
-				BitConverter.ToString(subprops.md5sum).Replace("-", ""));
+				BitConverter.ToString(md5sum).Replace("-", ""));
 			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_Magic, subprops.magic);
 
 			if (!subprops.isde)
@@ -239,7 +237,7 @@ namespace firmware_wintools.Tools
 			}
 			filesize = Convert.ToInt32(inFs.Length);
 
-			subprops.md5sum = fw_header.md5sum;
+			md5sum = fw_header.md5sum;
 
 			PrintInfo(subprops);
 
@@ -335,8 +333,8 @@ namespace firmware_wintools.Tools
 			subprops.vendor = fw_header.vendor_id;
 			subprops.product = fw_header.product_id;
 			subprops.version = Encoding.ASCII.GetString(fw_header.version);
-			subprops.md5sum = fw_header.md5sum;
 			subprops.magic = fw_header.magic;
+			md5sum = fw_header.md5sum;
 
 			PrintInfo(subprops);
 			if (ChkFwType(fw_header.fw_type) != 0)
