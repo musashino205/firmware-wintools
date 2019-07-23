@@ -90,14 +90,14 @@ namespace firmware_wintools.Tools
 				pattern = "12345678"
 			};
 
-			ToolsArgMap argMap = new ToolsArgMap();
-			argMap.Init_args_Xorimage(args, ref subprops);
-
 			if (props.help)
 			{
 				PrintHelp();
 				return 0;
 			}
+
+			ToolsArgMap argMap = new ToolsArgMap();
+			argMap.Init_args_Xorimage(args, ref subprops);
 
 			int p_len = subprops.pattern.Length;
 
