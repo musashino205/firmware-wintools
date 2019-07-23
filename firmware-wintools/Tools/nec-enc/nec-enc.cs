@@ -50,15 +50,14 @@ namespace firmware_wintools.Tools
 		/// <param name="k_len">キー長</param>
 		/// <param name="k_off">キー オフセット</param>
 		/// <returns></returns>
-		private int XorPattern(ref byte[] data, int len, in string key, int k_len, int k_off)
+		private int XorPattern(ref byte[] data, int len, byte[] key, int k_len, int k_off)
 		{
 			int data_pos = 0;
 			int offset = k_off;
-			byte[] byteKey = Encoding.UTF8.GetBytes(key);
 
 			while (len-- > 0)
 			{
-				data[data_pos] ^= byteKey[offset];
+				data[data_pos] ^= key[offset];
 				data_pos++;
 				offset = (offset + 1) % k_len;
 			}
@@ -100,6 +99,7 @@ namespace firmware_wintools.Tools
 			int read_len;
 			int ptn = 1;
 			int k_off = 0;
+			byte[] key;
 			byte[] buf_pattern = new byte[4096];
 			byte[] buf = new byte[4096];
 			Properties subprops = new Properties();
@@ -128,6 +128,8 @@ namespace firmware_wintools.Tools
 					max_key_len);
 				return 1;
 			}
+
+			key = Encoding.ASCII.GetBytes(subprops.key);
 
 			PrintInfo(subprops.key);
 
@@ -168,7 +170,7 @@ namespace firmware_wintools.Tools
 				if (props.debug)
 					patFs.Write(buf_pattern, 0, read_len);
 
-				k_off = XorPattern(ref buf_pattern, read_len, in subprops.key, k_len, k_off);
+				k_off = XorPattern(ref buf_pattern, read_len, key, k_len, k_off);
 				if (props.debug)
 					xpatFs.Write(buf_pattern, 0, read_len);
 
