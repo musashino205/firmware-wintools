@@ -9,6 +9,8 @@ namespace firmware_wintools.Tools
 		const string DEFAULT_KEY = "Buffalo";
 		const string DEFAULT_MAGIC = "start";
 
+		private uint cksum;
+
 		public struct Properties
 		{
 			public string crypt_key;
@@ -20,7 +22,6 @@ namespace firmware_wintools.Tools
 			public bool isde;
 			public int offset;
 			public int size;
-			public uint cksum;
 		}
 
 		private void PrintHelp()
@@ -56,7 +57,7 @@ namespace firmware_wintools.Tools
 			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Product, subprops.product);
 			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Version, subprops.version);
 			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_DataLen, subprops.size);
-			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Cksum, subprops.cksum);
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Cksum, cksum);
 		}
 
 		private int CheckParams(Properties subprops)
@@ -169,10 +170,10 @@ namespace firmware_wintools.Tools
 				src_len = subprops.size;
 			}
 
-			ep.cksum = bufLib.Buffalo_Csum((uint)src_len, in buf, hdrlen, (ulong)src_len);
+			cksum = ep.cksum =
+				bufLib.Buffalo_Csum((uint)src_len, in buf, hdrlen, (ulong)src_len);
 			ep.datalen = (uint)src_len;
 
-			subprops.cksum = ep.cksum;
 			subprops.size = (int)ep.datalen;
 
 			PrintInfo(subprops, isdbg);
@@ -227,7 +228,7 @@ namespace firmware_wintools.Tools
 			subprops.product = Encoding.ASCII.GetString(ep.product).TrimEnd('\0');
 			subprops.version = Encoding.ASCII.GetString(ep.version).TrimEnd('\0');
 			subprops.size = Convert.ToInt32(ep.datalen);
-			subprops.cksum = ep.cksum;
+			cksum = ep.cksum;
 
 			PrintInfo(subprops, isdbg);
 
