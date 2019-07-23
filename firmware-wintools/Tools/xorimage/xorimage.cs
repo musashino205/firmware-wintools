@@ -57,28 +57,18 @@ namespace firmware_wintools.Tools
 		/// <param name="p_len">パターン長</param>
 		/// <param name="p_off">パターン オフセット</param>
 		/// <returns></returns>
-		private int XorData(ref byte[] data, int len, Properties subprops, int p_len, int p_off)
+		private int XorData(ref byte[] data, int len, in byte[] pattern, int p_len, int p_off, bool ishex)
 		{
 			int data_pos = 0;
-			int offset = p_off;
-			byte[] byteKey = new byte[(subprops.ishex) ? p_len/2 : p_len];
-
-			if (subprops.ishex)
-				for (int i = 0; i < (p_len / 2); i++)
-				{
-					byteKey[i] = Convert.ToByte(subprops.pattern.Substring(i * 2, 2), 16);
-				}
-			else
-				byteKey = Encoding.UTF8.GetBytes(subprops.pattern);
 
 			while (len-- > 0)
 			{
-				data[data_pos] ^= byteKey[offset];
+				data[data_pos] ^= pattern[p_off];
 				data_pos++;
-				offset = (offset + 1) % ((subprops.ishex) ? p_len / 2 : p_len);
+				p_off = (p_off + 1) % (ishex ? p_len / 2 : p_len);
 			}
 
-			return offset;
+			return p_off;
 		}
 
 		/// <summary>
@@ -92,6 +82,7 @@ namespace firmware_wintools.Tools
 		public int Do_Xor(string[] args, Program.Properties props)
 		{
 			int read_len, p_off = 0;
+			byte[] pattern;
 			byte[] hex_pattern = new byte[128];
 			byte[] buf = new byte[4096];
 			Properties subprops = new Properties
@@ -109,6 +100,7 @@ namespace firmware_wintools.Tools
 			}
 
 			int p_len = subprops.pattern.Length;
+
 			if (p_len == 0)
 			{
 				Console.Error.WriteLine(
@@ -135,6 +127,15 @@ namespace firmware_wintools.Tools
 				}
 			}
 
+			if (subprops.ishex)
+			{
+				pattern = new byte[p_len / 2];
+				for (int i = 0; i < (p_len / 2); i++)
+					pattern[i] = Convert.ToByte(subprops.pattern.Substring(i * 2, 2), 16);
+			}
+			else
+				pattern = Encoding.ASCII.GetBytes(subprops.pattern);
+
 			FileStream inFs;
 			FileStream outFs;
 			FileMode outFMode =
@@ -151,7 +152,7 @@ namespace firmware_wintools.Tools
 
 			while ((read_len = inFs.Read(buf, 0, buf.Length)) > 0)
 			{
-				p_off = XorData(ref buf, read_len, subprops, p_len, p_off);
+				p_off = XorData(ref buf, read_len, in pattern, p_len, p_off, subprops.ishex);
 
 				outFs.Write(buf, 0, read_len);
 			}
