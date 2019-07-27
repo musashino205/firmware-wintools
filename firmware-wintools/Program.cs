@@ -59,8 +59,8 @@ namespace firmware_wintools
 				"mksenaofw", Lang.Tools.MkSenaoFwRes.FuncDesc);
 			Console.WriteLine(Lang.Tools.NecEncRes.Main_FuncDesc_Fmt,		// nec-enc
 				"nec-enc", Lang.Tools.NecEncRes.FuncDesc);
-			Console.WriteLine(Lang.Tools.XorimageRes.Main_FuncDesc_Fmt,		// xorimage
-				"xorimage", Lang.Tools.XorimageRes.FuncDesc);
+			Console.WriteLine(Lang.Tools.XorImageRes.Main_FuncDesc_Fmt,		// xorimage
+				"xorimage", Lang.Tools.XorImageRes.FuncDesc);
 			Console.WriteLine(Environment.NewLine +
 				Lang.Resource.Main_Help_DetailsMsg);
 		}
@@ -141,7 +141,7 @@ namespace firmware_wintools
 					break;
 				case "xorimage":
 					Tools.XorImage xorimage = new Tools.XorImage();
-					ret = xorimage.Do_Xor(args, props);
+					ret = xorimage.Do_XorImage(args, props);
 					break;
 				default:
 					if (args[0].StartsWith("-") && props.help)

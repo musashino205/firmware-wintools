@@ -94,15 +94,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>NecEncRes.resx</DependentUpon>
     </Compile>
-    <Compile Include="Lang\Tools\xorimage\XorimageRes.ja-JP.Designer.cs">
-      <DependentUpon>XorimageRes.ja-JP.resx</DependentUpon>
+    <Compile Include="Lang\Tools\xorimage\XorImageRes.ja-JP.Designer.cs">
+      <DependentUpon>XorImageRes.ja-JP.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Lang\Tools\xorimage\XorimageRes.Designer.cs">
+    <Compile Include="Lang\Tools\xorimage\XorImageRes.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>XorimageRes.resx</DependentUpon>
+      <DependentUpon>XorImageRes.resx</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -182,13 +182,13 @@
       <LastGenOutput>NecEncRes.Designer.cs</LastGenOutput>
       <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lang\Tools\xorimage\XorimageRes.ja-JP.resx">
+    <EmbeddedResource Include="Lang\Tools\xorimage\XorImageRes.ja-JP.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>XorimageRes.ja-JP.Designer.cs</LastGenOutput>
+      <LastGenOutput>XorImageRes.ja-JP.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lang\Tools\xorimage\XorimageRes.resx">
+    <EmbeddedResource Include="Lang\Tools\xorimage\XorImageRes.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>XorimageRes.Designer.cs</LastGenOutput>
+      <LastGenOutput>XorImageRes.Designer.cs</LastGenOutput>
       <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
     </EmbeddedResource>
   </ItemGroup>

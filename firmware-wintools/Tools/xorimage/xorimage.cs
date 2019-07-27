@@ -26,14 +26,14 @@ namespace firmware_wintools.Tools
 		/// </summary>
 		private void PrintHelp()
 		{
-			Console.WriteLine(Lang.Tools.XorimageRes.Help_Usage +
-				Lang.Tools.XorimageRes.FuncDesc +
+			Console.WriteLine(Lang.Tools.XorImageRes.Help_Usage +
+				Lang.Tools.XorImageRes.FuncDesc +
 				Environment.NewLine + Environment.NewLine +
-				Lang.Tools.XorimageRes.Help_Options +
+				Lang.Tools.XorImageRes.Help_Options +
 				Lang.Resource.Help_Options_i +
 				Lang.Resource.Help_Options_o +
-				Lang.Tools.XorimageRes.Help_Options_Pattern +
-				Lang.Tools.XorimageRes.Help_Options_Hex);
+				Lang.Tools.XorImageRes.Help_Options_Pattern +
+				Lang.Tools.XorImageRes.Help_Options_Hex);
 		}
 
 		/// <summary>
@@ -42,9 +42,9 @@ namespace firmware_wintools.Tools
 		/// <param name="props"></param>
 		private void PrintInfo(Properties subprops)
 		{
-			Console.WriteLine(Lang.Tools.XorimageRes.Info);
-			Console.WriteLine(Lang.Tools.XorimageRes.Info_Pattern, subprops.pattern);
-			Console.WriteLine(Lang.Tools.XorimageRes.Info_Hex, subprops.ishex.ToString());
+			Console.WriteLine(Lang.Tools.XorImageRes.Info);
+			Console.WriteLine(Lang.Tools.XorImageRes.Info_Pattern, subprops.pattern);
+			Console.WriteLine(Lang.Tools.XorImageRes.Info_Hex, subprops.ishex.ToString());
 		}
 
 		/// <summary>
@@ -79,7 +79,7 @@ namespace firmware_wintools.Tools
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">Program内のメインプロパティ</param>
 		/// <returns></returns>
-		public int Do_Xor(string[] args, Program.Properties props)
+		public int Do_XorImage(string[] args, Program.Properties props)
 		{
 			int read_len, p_off = 0;
 			byte[] pattern;
@@ -104,7 +104,7 @@ namespace firmware_wintools.Tools
 			if (p_len == 0)
 			{
 				Console.Error.WriteLine(
-					Lang.Resource.Main_Error_Prefix + Lang.Tools.XorimageRes.Error_InvalidPatternLen);
+					Lang.Resource.Main_Error_Prefix + Lang.Tools.XorImageRes.Error_InvalidPatternLen);
 				return 1;
 			}
 
@@ -115,14 +115,14 @@ namespace firmware_wintools.Tools
 				if ((p_len / 2) > hex_pattern.Length)
 				{
 					Console.Error.WriteLine(
-						Lang.Resource.Main_Error_Prefix + Lang.Tools.XorimageRes.Error_LongHexPattern);
+						Lang.Resource.Main_Error_Prefix + Lang.Tools.XorImageRes.Error_LongHexPattern);
 					return 1;
 				}
 
 				if (p_len % 2 != 0)
 				{
 					Console.Error.WriteLine(
-						Lang.Resource.Main_Error_Prefix + Lang.Tools.XorimageRes.Error_InvalidHexPatternLen);
+						Lang.Resource.Main_Error_Prefix + Lang.Tools.XorImageRes.Error_InvalidHexPatternLen);
 					return 1;
 				}
 			}
