@@ -2,6 +2,9 @@
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace firmware_wintools
 {
@@ -74,8 +77,38 @@ namespace firmware_wintools
 		{
 			int ret;
 			Properties props = new Properties();
+			string lc_all, lang, shell;
 
-			//Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
+			lc_all = Environment.GetEnvironmentVariable("LC_ALL");
+			lang = Environment.GetEnvironmentVariable("LANG");
+			shell = Path.GetFileName(Environment.GetEnvironmentVariable("SHELL"));
+
+			lang = lc_all != null ? lc_all : (lang != null ? lang : "");
+			shell = shell != null ? shell : "";
+
+			if (lang == "" && shell == "") {	// PowerShell or CMD
+				CultureInfo curCul = CultureInfo.CurrentCulture;
+				/* How to get current encoding in console? */
+				//Console.OutputEncoding = 
+			} else {							// MinGW or others
+				Regex langReg = new Regex(".*\\.");
+				lang = langReg.Replace(lang, "");
+
+				switch (lang.ToLower()) {
+					case "eucjp":	// EUC-JP
+						Console.OutputEncoding = Encoding.GetEncoding(lang.ToLower());
+						break;
+					case "sjis":	// Shift-JIS
+						Console.OutputEncoding = Encoding.GetEncoding(lang.ToLower());
+						break;
+					case "utf-8":
+					case "c":
+					default:
+						Console.OutputEncoding = Encoding.UTF8;
+						break;
+				}
+			}
+
 			if (args.Length == 0)		// 引数が0ならヘルプ表示して終了
 			{
 				PrintHelp();
