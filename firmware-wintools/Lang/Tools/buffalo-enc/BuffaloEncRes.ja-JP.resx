@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Error.FailDecrypt" xml:space="preserve">
-    <value>復号化に失敗しました</value>
+    <value>復号に失敗しました</value>
   </data>
   <data name="Error.FailEncrypt" xml:space="preserve">
     <value>暗号化に失敗しました</value>
@@ -148,14 +148,14 @@
     <value>バージョンが指定されていません</value>
   </data>
   <data name="FuncDesc" xml:space="preserve">
-    <value>バッファロー製デバイスのファームウェアを暗号化/復号化します</value>
+    <value>バッファロー製デバイスのファームウェアを暗号化/復号します</value>
   </data>
   <data name="Help.Options" xml:space="preserve">
     <value>オプション:
 </value>
   </data>
   <data name="Help.Options.d" xml:space="preserve">
-    <value>  -d			復号化モードを使用します
+    <value>  -d			復号モードを使用します
 </value>
   </data>
   <data name="Help.Options.k" xml:space="preserve">
@@ -163,7 +163,7 @@
 </value>
   </data>
   <data name="Help.Options.l" xml:space="preserve">
-    <value>  -l			ロングステート 暗号化/復号化メソッドを使用します
+    <value>  -l			ロングステート 暗号化/復号メソッドを使用します
 </value>
   </data>
   <data name="Help.Options.m" xml:space="preserve">
@@ -171,7 +171,7 @@
 </value>
   </data>
   <data name="Help.Options.o2" xml:space="preserve">
-    <value>  -O &lt;オフセット&gt;	ファイル内における暗号化されたデータのオフセットを指定します（復号化用）
+    <value>  -O &lt;オフセット&gt;	ファイル内における暗号化されたデータのオフセットを指定します（復号用）
 </value>
   </data>
   <data name="Help.Options.p" xml:space="preserve">
@@ -200,7 +200,7 @@
     <value> データ長	: {0} bytes</value>
   </data>
   <data name="Info.Decrypt" xml:space="preserve">
-    <value>復号化</value>
+    <value>復号</value>
   </data>
   <data name="Info.Encrypt" xml:space="preserve">
     <value>暗号化</value>
