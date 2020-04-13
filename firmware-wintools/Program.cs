@@ -42,6 +42,59 @@ namespace firmware_wintools
 			public bool param_invalid;
 		}
 
+		public static int StrToInt(string val, out int cnv, int numstyle)
+		{
+			CultureInfo provider = CultureInfo.CurrentCulture;
+
+			cnv = 0;
+			if (numstyle == 0)
+			{
+				if (val.StartsWith("0x"))
+					numstyle = 16;
+				else
+					numstyle = 10;
+			}
+
+			switch(numstyle) {
+				case 16:
+					if (!Int32.TryParse(val.Replace("0x", ""), NumberStyles.HexNumber, provider, out cnv))
+						return 1;
+					break;
+				default:
+					if (!Int32.TryParse(val, out cnv))
+						return 1;
+					break;
+			}
+
+			return 0;
+		}
+
+		public static uint StrToUInt(string val, out uint cnv, int numstyle)
+		{
+			CultureInfo provider = CultureInfo.CurrentCulture;
+
+			cnv = 0;
+			if (numstyle == 0) {
+				if (val.StartsWith("0x"))
+					numstyle = 16;
+				else
+					numstyle = 10;
+			}
+
+			switch(numstyle) {
+				case 16:
+					if (!UInt32.TryParse(val.Replace("0x", ""), NumberStyles.HexNumber, provider, out cnv))
+						return 1;
+					break;
+				default:
+					if (!UInt32.TryParse(val, out cnv))
+						return 1;
+					break;
+			}
+
+			return 0;
+		}
+
 		/// <summary>
 		/// 本体ヘルプを表示
 		/// </summary>

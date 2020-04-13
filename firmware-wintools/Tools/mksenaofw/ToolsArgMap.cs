@@ -35,8 +35,7 @@ namespace firmware_wintools.Tools
 						case "r":
 							string vendor = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref vendor) == 0 &&
-								UInt32.TryParse((vendor.StartsWith("0x") ? vendor.Replace("0x", "") : vendor),
-								NumberStyles.HexNumber, provider, out uint conv_vendor))
+								Program.StrToUInt(vendor, out uint conv_vendor, 0) == 0)
 							{
 								subprops.vendor = conv_vendor;
 								i++;
@@ -45,8 +44,7 @@ namespace firmware_wintools.Tools
 						case "p":
 							string product = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref product) == 0 &&
-								UInt32.TryParse((product.StartsWith("0x") ? product.Replace("0x", "") : product),
-								NumberStyles.HexNumber, provider, out uint conv_product))
+								Program.StrToUInt(product, out uint conv_product, 0) == 0)
 							{
 								subprops.product = conv_product;
 								i++;
@@ -55,8 +53,7 @@ namespace firmware_wintools.Tools
 						case "m":
 							string magic = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref magic) == 0 &&
-								UInt32.TryParse((magic.StartsWith("0x") ? magic.Replace("0x", "") : magic),
-								NumberStyles.HexNumber, provider, out uint conv_magic))
+								Program.StrToUInt(magic, out uint conv_magic, 0) == 0)
 							{
 								subprops.magic = conv_magic;
 								i++;

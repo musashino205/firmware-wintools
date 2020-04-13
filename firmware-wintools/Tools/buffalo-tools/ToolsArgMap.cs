@@ -54,7 +54,7 @@ namespace firmware_wintools.Tools
 						case "O":
 							string offset = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref offset) == 0 &&
-								Int32.TryParse(offset, out int conv_offset))
+								Program.StrToInt(offset, out int conv_offset, 0) == 0)
 							{
 								subprops.offset = conv_offset;
 								i++;
@@ -63,7 +63,7 @@ namespace firmware_wintools.Tools
 						case "S":
 							string size = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref size) == 0 &&
-								Int32.TryParse(size, out int conv_size))
+								Program.StrToInt(size, out int conv_size, 0) == 0)
 							{
 								subprops.size = conv_size;
 								i++;
