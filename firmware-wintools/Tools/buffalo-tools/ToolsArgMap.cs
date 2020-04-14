@@ -51,6 +51,9 @@ namespace firmware_wintools.Tools
 								i++;
 							}
 							break;
+						case "F":
+							subprops.force = true;
+							break;
 						case "O":
 							string offset = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref offset) == 0 &&

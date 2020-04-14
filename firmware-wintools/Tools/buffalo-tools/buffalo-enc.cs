@@ -22,6 +22,7 @@ namespace firmware_wintools.Tools
 			public bool isde;
 			public int offset;
 			public int size;
+			public bool force;
 		}
 
 		private void PrintHelp()
@@ -39,7 +40,8 @@ namespace firmware_wintools.Tools
 				Lang.Tools.BuffaloEncRes.Help_Options_p +
 				Lang.Tools.BuffaloEncRes.Help_Options_v +
 				Lang.Tools.BuffaloEncRes.Help_Options_o2 +
-				Lang.Tools.BuffaloEncRes.help_Options_S,
+				Lang.Tools.BuffaloEncRes.help_Options_S +
+				Lang.Tools.BuffaloEncRes.Help_Options_F,
 				DEFAULT_KEY, DEFAULT_MAGIC);
 		}
 
@@ -217,7 +219,7 @@ namespace firmware_wintools.Tools
 			ep.longstate = subprops.islong;
 		
 			Buffalo_Lib bufLib = new Buffalo_Lib();
-			if (bufLib.Decrypt_Buf(ref ep, ref buf, buf.LongLength) != 0){
+			if (bufLib.Decrypt_Buf(ref ep, ref buf, buf.LongLength, subprops.force) != 0){
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_FailDecrypt);
 				return 1;

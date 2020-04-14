@@ -186,6 +186,10 @@
     <value>  -v &lt;バージョン&gt;	暗号化に用いる &lt;バージョン&gt; を指定します
 </value>
   </data>
+  <data name="Help.Options.F" xml:space="preserve">
+    <value>  -F			チェックサム エラーを無視して復号します
+</value>
+  </data>
   <data name="Help.Usage" xml:space="preserve">
     <value>使用方法: firmware-wintools buffalo-enc [オプション...]
 </value>

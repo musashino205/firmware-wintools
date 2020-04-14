@@ -242,8 +242,9 @@ namespace firmware_wintools.Tools
 		/// <param name="data">decrypt対象データ</param>
 		/// <param name="data_off">decrypt開始offset</param>
 		/// <param name="data_len">decrypt対象データ長（offset関係なくデータの長さ）</param>
+		/// <param name="force">checksumエラーに関わらず強制的に復号</param>
 		/// <returns></returns>
-		public int Decrypt_Buf(ref Enc_Param ep, ref byte[] data, long data_len)
+		public int Decrypt_Buf(ref Enc_Param ep, ref byte[] data, long data_len, bool force)
 		{
 			int offset = 0;
 			uint prod_len;
@@ -323,7 +324,7 @@ namespace firmware_wintools.Tools
 
 			/* calc and compare checksum */
 			cksum = Buffalo_Csum(ep.datalen, in data, 0, ep.datalen);
-			if (cksum != ep.cksum)
+			if (cksum != ep.cksum && !force)
 				return 1;
 
 			/* decrypt "Version" */

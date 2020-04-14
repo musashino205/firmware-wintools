@@ -180,6 +180,15 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
+        ///     -F			force decryption if checksum is error に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Help_Options_F {
+            get {
+                return ResourceManager.GetString("Help.Options.F", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///     -k &lt;key&gt;		use &lt;key&gt; for encryption (default: &quot;{0}&quot;)
         /// に類似しているローカライズされた文字列を検索します。
         /// </summary>

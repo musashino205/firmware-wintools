@@ -158,6 +158,9 @@
     <value>  -d			use decrypt mode instead of encrypt
 </value>
   </data>
+  <data name="Help.Options.F" xml:space="preserve">
+    <value>  -F			force decryption if checksum is error</value>
+  </data>
   <data name="Help.Options.k" xml:space="preserve">
     <value>  -k &lt;key&gt;		use &lt;key&gt; for encryption (default: "{0}")
 </value>
