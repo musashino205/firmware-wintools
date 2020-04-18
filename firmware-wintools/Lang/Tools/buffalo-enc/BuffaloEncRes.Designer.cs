@@ -61,6 +61,15 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
+        ///   specified file is too big (&gt;= 2GiB) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Error_BigFile {
+            get {
+                return ResourceManager.GetString("Error.BigFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   failed to decrypt に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Error_FailDecrypt {

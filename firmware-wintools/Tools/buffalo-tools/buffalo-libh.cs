@@ -22,7 +22,7 @@
 			public byte[] version;
 			public byte seed;
 			public bool longstate;
-			public uint datalen;
+			public int datalen;
 			public uint cksum;
 		}
 
@@ -34,7 +34,7 @@
 			public ulong i;
 			public ulong j;
 			public byte[] buf;
-			public ulong buf_len;
+			public long buf_len;
 		}
 	}
 }

@@ -227,4 +227,7 @@
   <data name="Info.Version" xml:space="preserve">
     <value> バージョン	: '{0}'</value>
   </data>
+  <data name="Error.BigFile" xml:space="preserve">
+    <value>指定されたファイルは大きすぎます（2GiB以上）</value>
+  </data>
 </root>

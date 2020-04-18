@@ -122,10 +122,10 @@ namespace firmware_wintools.Tools
 
 		private int Encrypt(ref FileStream inFs, ref FileStream outFs, Properties subprops, bool isdbg)
 		{
-			long src_len, tail_dst = 0, tail_len = 0, tail_src;
+			int src_len, tail_dst = 0, tail_len = 0, tail_src;
 			long totlen = 0;
 			byte[] buf;
-			uint hdrlen;
+			int hdrlen;
 			Buffalo_Lib.Enc_Param ep = new Buffalo_Lib.Enc_Param()
 			{
 				key = new byte[subprops.crypt_key.Length + 1],
@@ -146,21 +146,21 @@ namespace firmware_wintools.Tools
 			Array.Copy(Encoding.ASCII.GetBytes(subprops.version), 0,
 				ep.version, 0, subprops.version.Length);
 
-			src_len = inFs.Length;
+			src_len = (int)inFs.Length;
 
 			Buffalo_Lib bufLib = new Buffalo_Lib();
 			if (subprops.size > 0)
 			{
-				tail_dst = (long)bufLib.Enc_Compute_BufLen(in ep.product, in ep.version, (ulong)subprops.size);
+				tail_dst = bufLib.Enc_Compute_BufLen(in ep.product, in ep.version, subprops.size);
 				tail_len = src_len - subprops.size;
 				totlen = tail_dst + tail_len;
 			}
 			else
-				totlen = (long)bufLib.Enc_Compute_BufLen(in ep.product, in ep.version, (ulong)src_len);
+				totlen = bufLib.Enc_Compute_BufLen(in ep.product, in ep.version, src_len);
 
 			buf = new byte[totlen];
 
-			hdrlen = (uint)bufLib.Enc_Compute_HeaderLen(in ep.product, in ep.version);
+			hdrlen = bufLib.Enc_Compute_HeaderLen(in ep.product, in ep.version);
 
 			inFs.Read(buf, (int)hdrlen, (int)src_len);
 
@@ -173,8 +173,8 @@ namespace firmware_wintools.Tools
 			}
 
 			cksum = ep.cksum =
-				bufLib.Buffalo_Csum((uint)src_len, in buf, hdrlen, (ulong)src_len);
-			ep.datalen = (uint)src_len;
+				bufLib.Buffalo_Csum((uint)src_len, in buf, hdrlen, src_len);
+			ep.datalen = src_len;
 
 			subprops.size = (int)ep.datalen;
 
@@ -219,7 +219,7 @@ namespace firmware_wintools.Tools
 			ep.longstate = subprops.islong;
 		
 			Buffalo_Lib bufLib = new Buffalo_Lib();
-			if (bufLib.Decrypt_Buf(ref ep, ref buf, buf.LongLength, subprops.force) != 0){
+			if (bufLib.Decrypt_Buf(ref ep, ref buf, buf.Length, subprops.force) != 0){
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_FailDecrypt);
 				return 1;
@@ -273,6 +273,11 @@ namespace firmware_wintools.Tools
 			catch (IOException e)
 			{
 				Console.Error.WriteLine(e.Message);
+				return 1;
+			}
+
+			if (inFs.Length >= 0x80000000L) {
+				Console.WriteLine(Lang.Tools.BuffaloEncRes.Error_BigFile);
 				return 1;
 			}
 
