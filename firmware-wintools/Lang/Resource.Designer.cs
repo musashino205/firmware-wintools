@@ -171,5 +171,14 @@ namespace firmware_wintools.Lang {
                 return ResourceManager.GetString("Main.Info", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   warning:  に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Main_Warning_Prefix {
+            get {
+                return ResourceManager.GetString("Main.Warning.Prefix", resourceCulture);
+            }
+        }
     }
 }

@@ -117,53 +117,117 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Help.Options.i" xml:space="preserve">
-    <value>  -i &lt;file&gt;		input file
+  <data name="Error.InvalidIVLenHex" xml:space="preserve">
+    <value>16進モードにおける、指定された IV の長さが正しくありません</value>
+  </data>
+  <data name="Error.InvalidKeyLenHex" xml:space="preserve">
+    <value>16進モードにおける、指定されたキーの長さが正しくありません</value>
+  </data>
+  <data name="Error.LargeFile" xml:space="preserve">
+    <value>指定された入力ファイルのサイズが大きすぎます (&gt; {0} バイト)</value>
+  </data>
+  <data name="Error.LongIVLen" xml:space="preserve">
+    <value>指定された IV は 16 バイトを超えています</value>
+  </data>
+  <data name="Error.LongIVLenHex" xml:space="preserve">
+    <value>指定された IV は 16 バイト（32文字）を超えています</value>
+  </data>
+  <data name="Error.LongKeyLen" xml:space="preserve">
+    <value>指定されたキーはキー長 {0} バイトを超えています</value>
+  </data>
+  <data name="Error.LongKeyLenHex" xml:space="preserve">
+    <value>指定されたキーはキー長 {0} バイト（{1} 文字）を超えています</value>
+  </data>
+  <data name="Error.NoKey" xml:space="preserve">
+    <value>キーが指定されていません</value>
+  </data>
+  <data name="FuncDesc" xml:space="preserve">
+    <value>128/256 bit AES CBC によってイメージを暗号化 / 復号します</value>
+  </data>
+  <data name="Help.Options" xml:space="preserve">
+    <value>オプション:
 </value>
   </data>
-  <data name="Help.Options.o" xml:space="preserve">
-    <value>  -o &lt;file&gt;		output file
+  <data name="Help.Options.d" xml:space="preserve">
+    <value>  -d			復号モードを使用します
 </value>
   </data>
-  <data name="Main.Error.InvalidParam" xml:space="preserve">
-    <value>invalid parameter is specified</value>
-  </data>
-  <data name="Main.Error.NoInOutFile" xml:space="preserve">
-    <value>input or output file is not specified</value>
-  </data>
-  <data name="Main.Error.NoInvalidMode" xml:space="preserve">
-    <value>no or invalid mode is specified</value>
-  </data>
-  <data name="Main.Error.Prefix" xml:space="preserve">
-    <value>error: </value>
-  </data>
-  <data name="Main.Help.DetailsMsg" xml:space="preserve">
-    <value>For details in each functions, please run following:
-  firmware-wintools &lt;func&gt; -h
+  <data name="Help.Options.k" xml:space="preserve">
+    <value>  -k &lt;キー&gt;		イメージの暗号化 / 復号に使用する &lt;キー&gt;（テキスト）を指定します
 </value>
   </data>
-  <data name="Main.Help.Functions" xml:space="preserve">
-    <value>Functions:
+  <data name="Help.Options.K2" xml:space="preserve">
+    <value>  -K &lt;キー&gt;		イメージの暗号化 / 復号に使用する &lt;キー&gt;（16進数）を指定します
 </value>
   </data>
-  <data name="Main.Help.NameVer" xml:space="preserve">
-    <value>{0}  Version: {1}
+  <data name="Help.Options.l" xml:space="preserve">
+    <value>  -l &lt;長さ&gt;		入力ファイルの暗号化 / 復号を行う長さを指定します
 </value>
   </data>
-  <data name="Main.Help.Usage" xml:space="preserve">
-    <value>Usage: firmware-wintools &lt;func&gt; [OPTIONS...]
+  <data name="Help.Options.O2" xml:space="preserve">
+    <value>  -O &lt;オフセット&gt;	入力ファイルの暗号化 / 復号を開始するオフセットを指定します
 </value>
   </data>
-  <data name="Main.Info" xml:space="preserve">
-    <value>********** Info **********
- input file:	{0}
-		({1})
-
- output file:	{2}
-		({3})
+  <data name="Help.Options.s" xml:space="preserve">
+    <value>  -s			128 bit の鍵長を使用します（デフォルト: 256 bit）
 </value>
   </data>
-  <data name="Main.Warning.Prefix" xml:space="preserve">
-    <value>warning: </value>
+  <data name="Help.Options.v" xml:space="preserve">
+    <value>  -v &lt;iv&gt;		イメージの暗号化 / 復号に使用する &lt;iv&gt;（テキスト）を指定します
+</value>
+  </data>
+  <data name="Help.Options.V2" xml:space="preserve">
+    <value>  -V &lt;iv&gt;		イメージの暗号化 / 復号に使用する &lt;iv&gt;（16進数）を指定します
+</value>
+  </data>
+  <data name="Help.Usage" xml:space="preserve">
+    <value>使用方法: firmware-wintools aes [オプション...]
+</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>===== aes モード（{0}） =====</value>
+  </data>
+  <data name="Info.Decrypt" xml:space="preserve">
+    <value>復号</value>
+  </data>
+  <data name="Info.Encrypt" xml:space="preserve">
+    <value>暗号化</value>
+  </data>
+  <data name="Info.iv" xml:space="preserve">
+    <value> IV		: {0}
+		  ({1})</value>
+  </data>
+  <data name="Info.iv2" xml:space="preserve">
+    <value> IV		: {0} （16進数）</value>
+  </data>
+  <data name="Info.key" xml:space="preserve">
+    <value> キー		: {0}
+		  ({1})</value>
+  </data>
+  <data name="Info.key2" xml:space="preserve">
+    <value> キー		: {0} （16進数）</value>
+  </data>
+  <data name="Info.len" xml:space="preserve">
+    <value> 長さ		: {0:N0} バイト
+		  (0x{0:X})</value>
+  </data>
+  <data name="Info.mode" xml:space="preserve">
+    <value> モード		: {0}</value>
+  </data>
+  <data name="Info.offset" xml:space="preserve">
+    <value> オフセット	: {0:N0} バイト
+		  (0x{0:X})</value>
+  </data>
+  <data name="Main.FuncDesc.Fmt" xml:space="preserve">
+    <value>    {0}			: {1}</value>
+  </data>
+  <data name="Warning.InvalidLength" xml:space="preserve">
+    <value>指定された長さが正しくありません。デフォルト（フルサイズ - オフセット）を使用します</value>
+  </data>
+  <data name="Warning.LargeOffset" xml:space="preserve">
+    <value>指定されたオフセットはファイルサイズを超えています。 '0' を使用します</value>
+  </data>
+  <data name="Warning.NoIV" xml:space="preserve">
+    <value>IV が指定されていません。デフォルト ('0') を使用します</value>
   </data>
 </root>

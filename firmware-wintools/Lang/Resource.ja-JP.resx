@@ -163,4 +163,7 @@
 			({3})
 </value>
   </data>
+  <data name="Main.Warning.Prefix" xml:space="preserve">
+    <value>警告: </value>
+  </data>
 </root>

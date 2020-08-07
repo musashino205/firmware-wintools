@@ -12,11 +12,32 @@ OpenWrtのfirmware-utilsのWindows移植（という名の適当再現）
 
 ## 機能
 
+- aes
 - buffalo-enc
 - mkedimaximg
 - mksenaofw
 - nec-enc
 - xorimage
+
+---
+
+### aes
+
+OpenWrtのfirmware-utilsには存在しない独自機能です。AES-128-CBCまたはAES-256-CBCによる暗号化/復号を提供します。
+
+使用方法:
+
+encryption: ```firmware-wintools aes -i <input file> -o <output file> -k <text key> [-v <text iv>] [-l <length>] [-O <offset>] [-s]```
+
+(or ```firmware-wintools aes -i <input file> -o <output file> -K <hex key> [-V <hex iv>] [-l <length>] [-O <offset>] [-s]```)
+
+decryption: ```firmware-wintools aes -d -i <input file> -o <output file> -k <text key> [-v <text iv>] [-l <length>] [-O <offset>] [-s]```
+
+(or ```firmware-wintools aes -d -i <input file> -o <output file> -K <hex key> [-V <hex iv>] [-l <length>] [-O <offset>] [-s]```)
+
+注意:
+
+- デフォルトでは256bitの鍵長を使用します。128bitを使用する場合、 ```-s``` を指定してください。
 
 ---
 

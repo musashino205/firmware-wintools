@@ -107,6 +107,8 @@ namespace firmware_wintools
 			Console.WriteLine(Lang.Resource.Main_Help_Usage +
 				Environment.NewLine +
 				Lang.Resource.Main_Help_Functions);
+			Console.WriteLine(Lang.Tools.AesRes.Main_FuncDesc_Fmt,		// aes
+				"aes", Lang.Tools.AesRes.FuncDesc);
 			Console.WriteLine(Lang.Tools.BuffaloEncRes.Main_FuncDesc_Fmt,	// buffalo-enc
 				"buffalo-enc", Lang.Tools.BuffaloEncRes.FuncDesc);
 			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Main_FuncDesc_Fmt,	// mkedimaximg
@@ -209,6 +211,10 @@ namespace firmware_wintools
 
 			switch (args[0])
 			{
+				case "aes":
+					Tools.Aes aes = new Tools.Aes();
+					ret = aes.Do_Aes(args, props);
+					break;
 				case "buffalo-enc":
 					Tools.Buffalo_Enc buffalo_enc = new Tools.Buffalo_Enc();
 					ret = buffalo_enc.Do_BuffaloEnc(args, props);

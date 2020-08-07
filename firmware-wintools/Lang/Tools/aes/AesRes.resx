@@ -117,53 +117,117 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Help.Options.i" xml:space="preserve">
-    <value>  -i &lt;file&gt;		input file
+  <data name="Error.InvalidIVLenHex" xml:space="preserve">
+    <value>the length of specified IV is invalid for hex mode</value>
+  </data>
+  <data name="Error.InvalidKeyLenHex" xml:space="preserve">
+    <value>the length of specified key is invalid for hex mode</value>
+  </data>
+  <data name="Error.LargeFile" xml:space="preserve">
+    <value>the length of specified input file is large (&gt; {0} bytes)</value>
+  </data>
+  <data name="Error.LongIVLen" xml:space="preserve">
+    <value>the length of specified IV exceeds 16 bytes</value>
+  </data>
+  <data name="Error.LongIVLenHex" xml:space="preserve">
+    <value>the length of specified IV exceeds 16 bytes (32 characters)</value>
+  </data>
+  <data name="Error.LongKeyLen" xml:space="preserve">
+    <value>the length of specified key exceeds the key length {0} bytes</value>
+  </data>
+  <data name="Error.LongKeyLenHex" xml:space="preserve">
+    <value>the length of specified key exceeds the key length {0} bytes ({1} characters)</value>
+  </data>
+  <data name="Error.NoKey" xml:space="preserve">
+    <value>no key specified</value>
+  </data>
+  <data name="FuncDesc" xml:space="preserve">
+    <value>encrypt/decrypt firmware with 128/256 bit AES CBC</value>
+  </data>
+  <data name="Help.Options" xml:space="preserve">
+    <value>Options:
 </value>
   </data>
-  <data name="Help.Options.o" xml:space="preserve">
-    <value>  -o &lt;file&gt;		output file
+  <data name="Help.Options.d" xml:space="preserve">
+    <value>  -d			use decryption mode
 </value>
   </data>
-  <data name="Main.Error.InvalidParam" xml:space="preserve">
-    <value>invalid parameter is specified</value>
-  </data>
-  <data name="Main.Error.NoInOutFile" xml:space="preserve">
-    <value>input or output file is not specified</value>
-  </data>
-  <data name="Main.Error.NoInvalidMode" xml:space="preserve">
-    <value>no or invalid mode is specified</value>
-  </data>
-  <data name="Main.Error.Prefix" xml:space="preserve">
-    <value>error: </value>
-  </data>
-  <data name="Main.Help.DetailsMsg" xml:space="preserve">
-    <value>For details in each functions, please run following:
-  firmware-wintools &lt;func&gt; -h
+  <data name="Help.Options.k" xml:space="preserve">
+    <value>  -k &lt;key&gt;		use text &lt;key&gt; for encryption/decryption the image
 </value>
   </data>
-  <data name="Main.Help.Functions" xml:space="preserve">
-    <value>Functions:
+  <data name="Help.Options.K2" xml:space="preserve">
+    <value>  -K &lt;key&gt;		use hex &lt;key&gt; for encryption/decryption the image
 </value>
   </data>
-  <data name="Main.Help.NameVer" xml:space="preserve">
-    <value>{0}  Version: {1}
+  <data name="Help.Options.l" xml:space="preserve">
+    <value>  -l &lt;length&gt;		encrypt/decrypt specified length of the input image
 </value>
   </data>
-  <data name="Main.Help.Usage" xml:space="preserve">
-    <value>Usage: firmware-wintools &lt;func&gt; [OPTIONS...]
+  <data name="Help.Options.O2" xml:space="preserve">
+    <value>  -O &lt;offset&gt;		encrypt/decrypt from specified offset of the input image
 </value>
   </data>
-  <data name="Main.Info" xml:space="preserve">
-    <value>********** Info **********
- input file:	{0}
-		({1})
-
- output file:	{2}
-		({3})
+  <data name="Help.Options.s" xml:space="preserve">
+    <value>  -s			use 128-bit key (default: 256-bit)
 </value>
   </data>
-  <data name="Main.Warning.Prefix" xml:space="preserve">
-    <value>warning: </value>
+  <data name="Help.Options.v" xml:space="preserve">
+    <value>  -v &lt;iv&gt;		use text &lt;iv&gt; for encryption/decryption the image
+</value>
+  </data>
+  <data name="Help.Options.V2" xml:space="preserve">
+    <value>  -V &lt;iv&gt;		use hex &lt;iv&gt; for encryption/decryption the image
+</value>
+  </data>
+  <data name="Help.Usage" xml:space="preserve">
+    <value>Usage: firmware-wintools aes [OPTIONS...]
+</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>===== aes mode ({0}) =====</value>
+  </data>
+  <data name="Info.Decrypt" xml:space="preserve">
+    <value>decrypt</value>
+  </data>
+  <data name="Info.Encrypt" xml:space="preserve">
+    <value>encrypt</value>
+  </data>
+  <data name="Info.iv" xml:space="preserve">
+    <value> IV		: {0}
+		  ({1})</value>
+  </data>
+  <data name="Info.iv2" xml:space="preserve">
+    <value> IV		: {0} (hex)</value>
+  </data>
+  <data name="Info.key" xml:space="preserve">
+    <value> Key		: {0}
+		  ({1})</value>
+  </data>
+  <data name="Info.key2" xml:space="preserve">
+    <value> Key		: {0} (hex)</value>
+  </data>
+  <data name="Info.len" xml:space="preserve">
+    <value> Length		: {0:N0} bytes
+		  (0x{0:X})</value>
+  </data>
+  <data name="Info.mode" xml:space="preserve">
+    <value> Mode		: {0}</value>
+  </data>
+  <data name="Info.offset" xml:space="preserve">
+    <value> Offset		: {0:N0} bytes
+		  (0x{0:X})</value>
+  </data>
+  <data name="Main.FuncDesc.Fmt" xml:space="preserve">
+    <value>    {0}			: {1}</value>
+  </data>
+  <data name="Warning.InvalidLength" xml:space="preserve">
+    <value>the specified length is invalid, use default (fullsize - offset)</value>
+  </data>
+  <data name="Warning.LargeOffset" xml:space="preserve">
+    <value>the specified offset exceeds the file length, use '0'</value>
+  </data>
+  <data name="Warning.NoIV" xml:space="preserve">
+    <value>no iv specified, use default ('0')</value>
   </data>
 </root>
