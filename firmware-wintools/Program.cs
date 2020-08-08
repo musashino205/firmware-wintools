@@ -79,6 +79,16 @@ namespace firmware_wintools
 			return 0;
 		}
 
+		public static long StrToLong(string val, out long cnv, int numstyle)
+		{
+			CultureInfo provider = CultureInfo.CurrentCulture;
+
+			if (!Int64.TryParse(val.Replace("0x", ""), SetNumStyle(numstyle, val), provider, out cnv))
+				return 1;
+
+			return 0;
+		}
+
 		/// <summary>
 		/// 本体ヘルプを表示
 		/// </summary>
