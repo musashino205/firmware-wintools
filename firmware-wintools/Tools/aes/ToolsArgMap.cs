@@ -21,7 +21,7 @@ namespace firmware_wintools.Tools
 						case "d":	// decryption mode
 							subprops.decrypt = true;
 							break;
-						case "K":       // aes key (hex)
+						case "K":	// aes key (hex)
 							subprops.hex_key = true;
 							goto case "k";
 						case "k":	// aes key (text)
@@ -42,10 +42,10 @@ namespace firmware_wintools.Tools
 								i++;
 							}
 							break;
-						case "s":       // key length (short, 128)
+						case "s":	// key length (short, 128)
 							subprops.keylen = 128;
 							break;
-						case "V":       // aes iv (hex)
+						case "V":	// aes iv (hex)
 							subprops.hex_iv = true;
 							goto case "v";
 						case "v":	// aes iv (text)

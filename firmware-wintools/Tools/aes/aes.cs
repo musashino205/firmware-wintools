@@ -162,7 +162,7 @@ namespace firmware_wintools.Tools
 			if (!subprops.hex_key && subprops.key.Length > key.Length)
 			{
 				Console.Error.WriteLine(
-					Lang.Resource.Main_Error_Prefix + 
+					Lang.Resource.Main_Error_Prefix +
 					Lang.Tools.AesRes.Error_LongKeyLen, key.Length);
 				return 1;
 			}
