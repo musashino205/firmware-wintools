@@ -61,9 +61,11 @@ namespace firmware_wintools
 
 		public static int StrToInt(string val, out int cnv, int numstyle)
 		{
+			cnv = 0;
 			CultureInfo provider = CultureInfo.CurrentCulture;
 
-			if (!Int32.TryParse(val.Replace("0x", ""), SetNumStyle(numstyle, val), provider, out cnv))
+			if (val == null ||
+				!Int32.TryParse(val.Replace("0x", ""), SetNumStyle(numstyle, val), provider, out cnv))
 				return 1;
 
 			return 0;
@@ -71,9 +73,11 @@ namespace firmware_wintools
 
 		public static uint StrToUInt(string val, out uint cnv, int numstyle)
 		{
+			cnv = 0;
 			CultureInfo provider = CultureInfo.CurrentCulture;
 
-			if (!UInt32.TryParse(val.Replace("0x", ""), SetNumStyle(numstyle, val), provider, out cnv))
+			if (val == null ||
+				!UInt32.TryParse(val.Replace("0x", ""), SetNumStyle(numstyle, val), provider, out cnv))
 				return 1;
 
 			return 0;
@@ -81,9 +85,11 @@ namespace firmware_wintools
 
 		public static long StrToLong(string val, out long cnv, int numstyle)
 		{
+			cnv = 0;
 			CultureInfo provider = CultureInfo.CurrentCulture;
 
-			if (!Int64.TryParse(val.Replace("0x", ""), SetNumStyle(numstyle, val), provider, out cnv))
+			if (val == null ||
+				!Int64.TryParse(val.Replace("0x", ""), SetNumStyle(numstyle, val), provider, out cnv))
 				return 1;
 
 			return 0;
