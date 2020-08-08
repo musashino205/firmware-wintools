@@ -21,7 +21,7 @@ namespace firmware_wintools.Tools
 
 		private void PrintHelp()
 		{
-			Console.Error.WriteLine(Lang.Tools.AesRes.Help_Usage +
+			Console.WriteLine(Lang.Tools.AesRes.Help_Usage +
 				Lang.Tools.AesRes.FuncDesc +
 				Environment.NewLine + Environment.NewLine +
 				Lang.Tools.AesRes.Help_Options +
@@ -39,37 +39,37 @@ namespace firmware_wintools.Tools
 
 		private void PrintInfo(Properties subprops, byte[] key, byte[] iv, int filelen)
 		{
-			Console.Error.WriteLine(Lang.Tools.AesRes.Info,		// mode info
+			Console.WriteLine(Lang.Tools.AesRes.Info,		// mode info
 				subprops.decrypt ?
 				Lang.Tools.AesRes.Info_Decrypt :
 				Lang.Tools.AesRes.Info_Encrypt);
-			Console.Error.WriteLine(				// aes mode (128/256)
+			Console.WriteLine(					// aes mode (128/256)
 				Lang.Tools.AesRes.Info_mode,
 				"AES-" + subprops.keylen + "-CBC");
 			if (subprops.hex_key)					// key
-				Console.Error.WriteLine(
+				Console.WriteLine(
 					Lang.Tools.AesRes.Info_key2,
 					BitConverter.ToString(key).Replace("-", ""));
 			else
-				Console.Error.WriteLine(
+				Console.WriteLine(
 					Lang.Tools.AesRes.Info_key,
 					subprops.key,
 					BitConverter.ToString(key).Replace("-", ""));
 			if (subprops.hex_iv || subprops.iv == null)
-				Console.Error.WriteLine(			// iv
+				Console.WriteLine(				// iv
 					Lang.Tools.AesRes.Info_iv2,
 					BitConverter.ToString(iv).Replace("-", ""));
 			else
-				Console.Error.WriteLine(
+				Console.WriteLine(
 					Lang.Tools.AesRes.Info_iv,
 					subprops.iv,
 					BitConverter.ToString(iv).Replace("-", ""));
-			Console.Error.WriteLine(				// length
+			Console.WriteLine(					// length
 				Lang.Tools.AesRes.Info_len,
 				subprops.len > 0 ?
 					subprops.len :
 					filelen);
-			Console.Error.WriteLine(				// offset
+			Console.WriteLine(					// offset
 				Lang.Tools.AesRes.Info_offset,
 				subprops.offset);
 		}

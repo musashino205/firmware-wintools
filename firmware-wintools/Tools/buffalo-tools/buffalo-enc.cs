@@ -277,7 +277,7 @@ namespace firmware_wintools.Tools
 			}
 
 			if (inFs.Length >= 0x80000000L) {
-				Console.WriteLine(Lang.Tools.BuffaloEncRes.Error_BigFile);
+				Console.Error.WriteLine(Lang.Tools.BuffaloEncRes.Error_BigFile);
 				return 1;
 			}
 

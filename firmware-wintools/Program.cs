@@ -253,7 +253,7 @@ namespace firmware_wintools
 			if (ret != 0)
 				Console.Error.WriteLine("ERROR");
 			else
-				Console.WriteLine("DONE");
+				Console.Error.WriteLine("DONE");
 
 			if (props.debug)
 				Thread.Sleep(4000);
