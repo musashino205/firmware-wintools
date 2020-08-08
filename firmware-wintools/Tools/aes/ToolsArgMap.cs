@@ -30,13 +30,8 @@ namespace firmware_wintools.Tools
 								i++;
 							break;
 						case "l":	// length
-							string len = null;
-							if (ArgMap.Set_StrParamFromArgs(args, i, ref len) == 0 &&
-								Program.StrToInt(len, out int conv_len, 0) == 0)
-							{
-								subprops.len = conv_len;
+							if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.len) == 0)
 								i++;
-							}
 							break;
 						case "O":	// offset
 							string offset = null;

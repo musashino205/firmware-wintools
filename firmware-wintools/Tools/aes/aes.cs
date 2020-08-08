@@ -14,8 +14,8 @@ namespace firmware_wintools.Tools
 			public bool hex_iv;
 			public bool hex_key;
 			public int keylen;
-			public int offset;
-			public int len;
+			public long offset;
+			public string len;
 			public bool decrypt;
 		}
 
@@ -37,7 +37,7 @@ namespace firmware_wintools.Tools
 				Lang.Tools.AesRes.Help_Options_s);
 		}
 
-		private void PrintInfo(Properties subprops, byte[] key, byte[] iv, int filelen)
+		private void PrintInfo(Properties subprops, byte[] key, byte[] iv, long filelen)
 		{
 			Console.WriteLine(Lang.Tools.AesRes.Info,		// mode info
 				subprops.decrypt ?
@@ -66,9 +66,7 @@ namespace firmware_wintools.Tools
 					BitConverter.ToString(iv).Replace("-", ""));
 			Console.WriteLine(					// length
 				Lang.Tools.AesRes.Info_len,
-				subprops.len > 0 ?
-					subprops.len :
-					filelen);
+				filelen);
 			Console.WriteLine(					// offset
 				Lang.Tools.AesRes.Info_offset,
 				subprops.offset);
@@ -79,12 +77,11 @@ namespace firmware_wintools.Tools
 			byte[] iv;
 			byte[] key;
 			int keylen;
-			int offset = 0;
-			int len = -1;	// not specified
+			long offset = 0;
+			long len = 0;
 			Properties subprops = new Properties()
 			{
 				keylen = 256,
-				len = -1
 			};
 			CryptoStream Cs;
 
@@ -221,15 +218,6 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			/* check file size for int */
-			if (inFs.Length > 0x7FFFFFFFL)
-			{
-				Console.Error.WriteLine(
-					Lang.Resource.Main_Error_Prefix +
-					Lang.Tools.AesRes.Error_LargeFile, 0x7FFFFFFFL);
-				return 1;
-			}
-
 			/* check offset/length */
 			if (subprops.offset > inFs.Length)
 				Console.Error.WriteLine(
@@ -238,19 +226,21 @@ namespace firmware_wintools.Tools
 			else
 				offset = subprops.offset;
 
-			if (subprops.len == 0 || subprops.len > inFs.Length - offset)
+
+			if (subprops.len != null &&					// something is specified for len
+				(Program.StrToLong(subprops.len, out len, 0) != 0 ||	// fail to convert (invalid chars for num)
+				len <= 0 ||						// equal or smaller than 0
+				len > inFs.Length - offset))				// larger than valid length
+			{
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Warning_Prefix +
 					Lang.Tools.AesRes.Warning_InvalidLength);
-			else
-				len = subprops.len;
+				subprops.len = null;
+			}
 			/* check offset/length end */
 
-			PrintInfo(subprops, key, iv, (int)inFs.Length);
-
-			byte[] inData = new byte[len != -1 ? len : inFs.Length - offset];
-			inFs.Seek(offset, SeekOrigin.Begin);
-			inFs.Read(inData, 0, len != -1 ? len : (int)inFs.Length - offset);
+			PrintInfo(subprops, key, iv,
+				subprops.len != null ? len : inFs.Length - offset);
 
 			AesManaged aes = new AesManaged
 			{
@@ -266,8 +256,27 @@ namespace firmware_wintools.Tools
 				aes.CreateEncryptor(aes.Key, aes.IV);
 			Cs = new CryptoStream(outFs, endec, CryptoStreamMode.Write);
 
-			Cs.Write(inData, 0, inData.Length);
+			inFs.Seek(offset, SeekOrigin.Begin);
 
+			byte[] buf = new byte[0x10000];
+			int readlen;
+			while ((readlen = inFs.Read(buf, 0, buf.Length)) > 0)
+			{
+				if (subprops.len == null)
+					Cs.Write(buf, 0, readlen);
+				else if (len > readlen)
+				{
+					len -= readlen;
+					Cs.Write(buf, 0, readlen);
+				}
+				else
+				{
+					Cs.Write(buf, 0, (int)len);
+					break;
+				}
+			}
+
+			Cs.Close();
 			inFs.Close();
 			outFs.Close();
 
