@@ -42,29 +42,29 @@ namespace firmware_wintools
 			public bool param_invalid;
 		}
 
+		public static NumberStyles SetNumStyle(int numstyle, string valStr)
+		{
+			switch (numstyle)
+			{
+				case 0:		// auto
+					if (valStr.StartsWith("0x"))
+						goto case 16;
+					else
+						goto case 10;
+				case 16:	// hex
+					return NumberStyles.HexNumber;
+				case 10:	// decimal
+				default:	// octal（8進数）は.NETで非サポート、10進数として強制解釈
+					return NumberStyles.Integer;
+			}
+		}
+
 		public static int StrToInt(string val, out int cnv, int numstyle)
 		{
 			CultureInfo provider = CultureInfo.CurrentCulture;
 
-			cnv = 0;
-			if (numstyle == 0)
-			{
-				if (val.StartsWith("0x"))
-					numstyle = 16;
-				else
-					numstyle = 10;
-			}
-
-			switch(numstyle) {
-				case 16:
-					if (!Int32.TryParse(val.Replace("0x", ""), NumberStyles.HexNumber, provider, out cnv))
-						return 1;
-					break;
-				default:
-					if (!Int32.TryParse(val, out cnv))
-						return 1;
-					break;
-			}
+			if (!Int32.TryParse(val.Replace("0x", ""), SetNumStyle(numstyle, val), provider, out cnv))
+				return 1;
 
 			return 0;
 		}
@@ -73,24 +73,8 @@ namespace firmware_wintools
 		{
 			CultureInfo provider = CultureInfo.CurrentCulture;
 
-			cnv = 0;
-			if (numstyle == 0) {
-				if (val.StartsWith("0x"))
-					numstyle = 16;
-				else
-					numstyle = 10;
-			}
-
-			switch(numstyle) {
-				case 16:
-					if (!UInt32.TryParse(val.Replace("0x", ""), NumberStyles.HexNumber, provider, out cnv))
-						return 1;
-					break;
-				default:
-					if (!UInt32.TryParse(val, out cnv))
-						return 1;
-					break;
-			}
+			if (!UInt32.TryParse(val.Replace("0x", ""), SetNumStyle(numstyle, val), provider, out cnv))
+				return 1;
 
 			return 0;
 		}
