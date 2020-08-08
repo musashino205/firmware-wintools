@@ -79,15 +79,6 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
-        ///   the length of specified input file is large (&gt; {0} bytes) に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string Error_LargeFile {
-            get {
-                return ResourceManager.GetString("Error.LargeFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   the length of specified IV exceeds 16 bytes に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Error_LongIVLen {

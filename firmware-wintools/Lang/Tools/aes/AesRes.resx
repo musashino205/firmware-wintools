@@ -123,9 +123,6 @@
   <data name="Error.InvalidKeyLenHex" xml:space="preserve">
     <value>the length of specified key is invalid for hex mode</value>
   </data>
-  <data name="Error.LargeFile" xml:space="preserve">
-    <value>the length of specified input file is large (&gt; {0} bytes)</value>
-  </data>
   <data name="Error.LongIVLen" xml:space="preserve">
     <value>the length of specified IV exceeds 16 bytes</value>
   </data>

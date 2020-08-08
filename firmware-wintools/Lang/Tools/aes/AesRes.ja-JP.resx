@@ -123,9 +123,6 @@
   <data name="Error.InvalidKeyLenHex" xml:space="preserve">
     <value>16進モードにおける、指定されたキーの長さが正しくありません</value>
   </data>
-  <data name="Error.LargeFile" xml:space="preserve">
-    <value>指定された入力ファイルのサイズが大きすぎます (&gt; {0} バイト)</value>
-  </data>
   <data name="Error.LongIVLen" xml:space="preserve">
     <value>指定された IV は 16 バイトを超えています</value>
   </data>
