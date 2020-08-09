@@ -149,7 +149,9 @@ OpenWrtにおけるxorimageの機能を提供します。
 
 ### 動作確認済環境
 
-- Windows 10 64bit (1903)
+- Windows 10 64bit
+  - 1903
+  - 2004
 - .NET Framework 4.8
 
 ## バージョン履歴
