@@ -237,6 +237,25 @@ namespace firmware_wintools.Tools
 					Lang.Tools.AesRes.Warning_InvalidLength);
 				subprops.len = null;
 			}
+
+			if (subprops.len != null ?
+				len % 16 != 0 :				// if "length" specified
+				(inFs.Length - offset) % 16 != 0)	// no length specified
+			{
+				if (subprops.decrypt)
+				{
+					Console.Error.WriteLine(
+						Lang.Resource.Main_Error_Prefix +
+						Lang.Tools.AesRes.Error_InvalidDecLen);
+					return 1;
+				}
+				else
+				{
+					Console.Error.WriteLine(
+						Lang.Resource.Main_Warning_Prefix +
+						Lang.Tools.AesRes.Warning_ShortEncLen);
+				}
+			}
 			/* check offset/length end */
 
 			PrintInfo(subprops, key, iv,

@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Error.InvalidDecLen" xml:space="preserve">
+    <value>対象データの長さが 16 の倍数ではありません</value>
+  </data>
   <data name="Error.InvalidIVLenHex" xml:space="preserve">
     <value>16進モードにおける、指定された IV の長さが正しくありません</value>
   </data>
@@ -226,5 +229,8 @@
   </data>
   <data name="Warning.NoIV" xml:space="preserve">
     <value>IV が指定されていません。デフォルト ('0') を使用します</value>
+  </data>
+  <data name="Warning.ShortEncLen" xml:space="preserve">
+    <value>対象データの最終ブロックにおける長さが 16 バイト未満です。 0 により 16 バイトまで埋め合わされます</value>
   </data>
 </root>

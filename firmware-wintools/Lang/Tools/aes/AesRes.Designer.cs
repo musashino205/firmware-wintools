@@ -61,6 +61,15 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
+        ///   the length of target data is not a multiple of 16 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Error_InvalidDecLen {
+            get {
+                return ResourceManager.GetString("Error.InvalidDecLen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   the length of specified IV is invalid for hex mode に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Error_InvalidIVLenHex {
@@ -359,6 +368,15 @@ namespace firmware_wintools.Lang.Tools {
         internal static string Warning_NoIV {
             get {
                 return ResourceManager.GetString("Warning.NoIV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   the length of the last block on the target data is shorter than 16 bytes, will padded by zero に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Warning_ShortEncLen {
+            get {
+                return ResourceManager.GetString("Warning.ShortEncLen", resourceCulture);
             }
         }
     }
