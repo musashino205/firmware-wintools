@@ -15,6 +15,7 @@ namespace firmware_wintools.Tools
 			/// patternのxorに用いるキー
 			/// </summary>
 			public string key;
+			public bool half;
 		}
 
 		/// <summary>
@@ -35,10 +36,11 @@ namespace firmware_wintools.Tools
 		/// nec-encの実行情報を表示します
 		/// </summary>
 		/// <param name="props">nec-encの機能プロパティ</param>
-		private void PrintInfo(string key)
+		private void PrintInfo(Properties subprops)
 		{
 			Console.WriteLine(Lang.Tools.NecEncRes.Info);
-			Console.WriteLine(Lang.Tools.NecEncRes.Info_key, key);
+			Console.WriteLine(Lang.Tools.NecEncRes.Info_key,
+				!subprops.half ? subprops.key : "(none)");
 		}
 
 		/// <summary>
@@ -98,7 +100,8 @@ namespace firmware_wintools.Tools
 			int read_len;
 			int ptn = 1;
 			int k_off = 0;
-			byte[] key;
+			int k_len = 0;
+			byte[] key = new byte[] {};
 			byte[] buf_pattern = new byte[4096];
 			byte[] buf = new byte[4096];
 			Properties subprops = new Properties();
@@ -112,25 +115,28 @@ namespace firmware_wintools.Tools
 				return 0;
 			}
 
-			if (subprops.key == null)
+			if (!subprops.half)
 			{
-				Console.Error.WriteLine(
-					Lang.Resource.Main_Error_Prefix + Lang.Tools.NecEncRes.Error_NoKey);
-				return 1;
+				if (subprops.key == null)
+				{
+					Console.Error.WriteLine(
+						Lang.Resource.Main_Error_Prefix + Lang.Tools.NecEncRes.Error_NoKey);
+					return 1;
+				}
+
+				k_len = subprops.key.Length;
+				if (k_len == 0 || k_len > max_key_len)
+				{
+					Console.Error.WriteLine(
+						Lang.Resource.Main_Error_Prefix + Lang.Tools.NecEncRes.Error_InvalidKeyLen,
+						max_key_len);
+					return 1;
+				}
+
+				key = Encoding.ASCII.GetBytes(subprops.key);
 			}
 
-			int k_len = subprops.key.Length;
-			if (k_len == 0 || k_len > max_key_len)
-			{
-				Console.Error.WriteLine(
-					Lang.Resource.Main_Error_Prefix + Lang.Tools.NecEncRes.Error_InvalidKeyLen,
-					max_key_len);
-				return 1;
-			}
-
-			key = Encoding.ASCII.GetBytes(subprops.key);
-
-			PrintInfo(subprops.key);
+			PrintInfo(subprops);
 
 			FileStream inFs;
 			FileStream outFs;
@@ -146,7 +152,8 @@ namespace firmware_wintools.Tools
 				if (props.debug)
 				{
 					patFs = new FileStream(@"pattern.bin", FileMode.OpenOrCreate, FileAccess.Write);
-					xpatFs = new FileStream(@"pattern.xor", FileMode.OpenOrCreate, FileAccess.Write);
+					if (!subprops.half)
+						xpatFs = new FileStream(@"pattern.xor", FileMode.OpenOrCreate, FileAccess.Write);
 				}
 			}
 			catch (IOException e)
@@ -169,9 +176,12 @@ namespace firmware_wintools.Tools
 				if (props.debug)
 					patFs.Write(buf_pattern, 0, read_len);
 
-				k_off = XorPattern(ref buf_pattern, read_len, key, k_len, k_off);
-				if (props.debug)
-					xpatFs.Write(buf_pattern, 0, read_len);
+				if (!subprops.half)
+				{
+					k_off = XorPattern(ref buf_pattern, read_len, key, k_len, k_off);
+					if (props.debug)
+						xpatFs.Write(buf_pattern, 0, read_len);
+				}
 
 				XorData(ref buf, read_len, in buf_pattern);
 
@@ -183,7 +193,8 @@ namespace firmware_wintools.Tools
 			if (props.debug)
 			{
 				patFs.Close();
-				xpatFs.Close();
+				if (!subprops.half)
+					xpatFs.Close();
 			}
 
 			return 0;

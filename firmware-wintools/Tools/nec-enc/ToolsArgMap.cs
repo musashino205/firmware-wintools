@@ -19,6 +19,9 @@
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.key) == 0)
 								i++;
 							break;
+						case "H":
+							subprops.half = true;
+							break;
 					}
 				}
 			}
