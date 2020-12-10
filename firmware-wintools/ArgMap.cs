@@ -45,6 +45,7 @@
 								i++;
 							break;
 						case "h":
+						case "help":
 							props.help = true;
 							break;
 						case "D":
