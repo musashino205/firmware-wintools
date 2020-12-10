@@ -27,7 +27,7 @@ namespace firmware_wintools.Tools
 			// 共通オプション表示
 			Program.PrintCommonOption();
 			// 機能オプション表示
-			Console.WriteLine(Lang.Tools.AesRes.Help_Options +
+			Console.WriteLine(Lang.CommonRes.Help_FunctionOpts +
 				Lang.Tools.AesRes.Help_Options_d +
 				Lang.Tools.AesRes.Help_Options_k +
 				Lang.Tools.AesRes.Help_Options_K2 +

@@ -144,10 +144,6 @@
   <data name="FuncDesc" xml:space="preserve">
     <value>encrypt/decrypt firmware with 128/256 bit AES CBC</value>
   </data>
-  <data name="Help.Options" xml:space="preserve">
-    <value>Options:
-</value>
-  </data>
   <data name="Help.Options.d" xml:space="preserve">
     <value>  -d			use decryption mode
 </value>

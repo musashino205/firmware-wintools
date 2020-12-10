@@ -141,10 +141,6 @@
   <data name="FuncDesc" xml:space="preserve">
     <value>add Edimax header and checksum</value>
   </data>
-  <data name="Help.Options" xml:space="preserve">
-    <value>Options:
-</value>
-  </data>
   <data name="Help.Options.b" xml:space="preserve">
     <value>  -b			use "big endian" mode
 </value>

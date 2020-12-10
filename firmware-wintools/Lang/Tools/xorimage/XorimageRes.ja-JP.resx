@@ -129,10 +129,6 @@
   <data name="FuncDesc" xml:space="preserve">
     <value>ファームウェアをxorによりパターンを用いてエンコード/デコードします</value>
   </data>
-  <data name="Help.Options" xml:space="preserve">
-    <value>オプション:
-</value>
-  </data>
   <data name="Help.Options.Hex" xml:space="preserve">
     <value>  -x			"16進数パターン" モードを使用します
 </value>

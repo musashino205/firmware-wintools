@@ -141,10 +141,6 @@
   <data name="FuncDesc" xml:space="preserve">
     <value>ファームウェアにEdimax ヘッダーとチェックサムを追加します</value>
   </data>
-  <data name="Help.Options" xml:space="preserve">
-    <value>オプション:
-</value>
-  </data>
   <data name="Help.Options.b" xml:space="preserve">
     <value>  -b			"ビッグ エンディアン" モードを使用します
 </value>

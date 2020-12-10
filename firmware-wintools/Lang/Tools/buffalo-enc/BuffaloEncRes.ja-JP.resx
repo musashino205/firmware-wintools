@@ -150,10 +150,6 @@
   <data name="FuncDesc" xml:space="preserve">
     <value>バッファロー製デバイスのファームウェアを暗号化/復号します</value>
   </data>
-  <data name="Help.Options" xml:space="preserve">
-    <value>オプション:
-</value>
-  </data>
   <data name="Help.Options.d" xml:space="preserve">
     <value>  -d			復号モードを使用します
 </value>

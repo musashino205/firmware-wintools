@@ -126,10 +126,6 @@
   <data name="FuncDesc" xml:space="preserve">
     <value>NEC Atermシリーズ用ファームウェアをエンコード/デコードします</value>
   </data>
-  <data name="Help.Options" xml:space="preserve">
-    <value>オプション:
-</value>
-  </data>
   <data name="Help.Options.k" xml:space="preserve">
     <value>  -k &lt;key&gt;		ファームウェアのエンコード/デコードに使用するキーを指定します
 </value>

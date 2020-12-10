@@ -33,7 +33,7 @@ namespace firmware_wintools.Tools
 			// 共通オプション表示
 			Program.PrintCommonOption();
 			// 機能オプション表示
-			Console.WriteLine(Lang.Tools.BuffaloEncRes.Help_Options +
+			Console.WriteLine(Lang.CommonRes.Help_FunctionOpts +
 				Lang.Tools.BuffaloEncRes.Help_Options_d +
 				Lang.Tools.BuffaloEncRes.Help_Options_l +
 				Lang.Tools.BuffaloEncRes.Help_Options_k +

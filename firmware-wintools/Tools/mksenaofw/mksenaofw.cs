@@ -113,7 +113,7 @@ namespace firmware_wintools.Tools
 			// 共通オプション表示
 			Program.PrintCommonOption();
 			// 機能オプション表示
-			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Help_Options +
+			Console.WriteLine(Lang.CommonRes.Help_FunctionOpts +
 				Lang.Tools.MkSenaoFwRes.Help_Options_t +
 				Lang.Tools.MkSenaoFwRes.Help_Options_t_values);
 			for (int i = 0; i < FIRMWARE_TYPES.Length; i++)     // firmware types

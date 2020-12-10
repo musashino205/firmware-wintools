@@ -121,6 +121,10 @@
     <value>Common Options:
 </value>
   </data>
+  <data name="Help.FunctionOpts" xml:space="preserve">
+    <value>Function Options:
+</value>
+  </data>
   <data name="Help.Options.i" xml:space="preserve">
     <value>  -i &lt;file&gt;		input file
 </value>

@@ -133,16 +133,6 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
-        ///   Options:
-        /// に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string Help_Options {
-            get {
-                return ResourceManager.GetString("Help.Options", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///     -b			use &quot;big endian&quot; mode
         /// に類似しているローカライズされた文字列を検索します。
         /// </summary>

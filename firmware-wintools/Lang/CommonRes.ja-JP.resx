@@ -121,6 +121,10 @@
     <value>共通オプション:
 </value>
   </data>
+  <data name="Help.FunctionOpts" xml:space="preserve">
+    <value>機能オプション:
+</value>
+  </data>
   <data name="Help.Options.i" xml:space="preserve">
     <value>  -i &lt;ファイル&gt;		入力元ファイル
 </value>

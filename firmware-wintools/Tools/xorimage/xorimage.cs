@@ -32,7 +32,7 @@ namespace firmware_wintools.Tools
 			// 共通オプション表示
 			Program.PrintCommonOption();
 			// 機能オプション表示
-			Console.WriteLine(Lang.Tools.XorImageRes.Help_Options +
+			Console.WriteLine(Lang.CommonRes.Help_FunctionOpts +
 				Lang.Tools.XorImageRes.Help_Options_Pattern +
 				Lang.Tools.XorImageRes.Help_Options_Hex);
 		}

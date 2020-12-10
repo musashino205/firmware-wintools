@@ -129,10 +129,6 @@
   <data name="FuncDesc" xml:space="preserve">
     <value>encode/decode firmware by xor with a pattern</value>
   </data>
-  <data name="Help.Options" xml:space="preserve">
-    <value>Options:
-</value>
-  </data>
   <data name="Help.Options.Hex" xml:space="preserve">
     <value>  -x			use "hex pattern" mode
 </value>

@@ -58,7 +58,7 @@ namespace firmware_wintools.Tools
 			// 共通オプション表示
 			Program.PrintCommonOption();
 			// 機能オプション表示
-			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Help_Options +
+			Console.WriteLine(Lang.CommonRes.Help_FunctionOpts +
 				Lang.Tools.MkEdimaxImgRes.Help_Options_s +
 				Lang.Tools.MkEdimaxImgRes.Help_Options_m +
 				Lang.Tools.MkEdimaxImgRes.Help_Options_f +

@@ -71,6 +71,16 @@ namespace firmware_wintools.Lang {
         }
         
         /// <summary>
+        ///   Function Options:
+        /// に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Help_FunctionOpts {
+            get {
+                return ResourceManager.GetString("Help.FunctionOpts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///     -i &lt;file&gt;		input file
         /// に類似しているローカライズされた文字列を検索します。
         /// </summary>

@@ -138,10 +138,6 @@
   <data name="FuncDesc" xml:space="preserve">
     <value>Senao によって製造されたデバイスのファームウェアをエンコード/デコードします</value>
   </data>
-  <data name="Help.Options" xml:space="preserve">
-    <value>オプション:
-</value>
-  </data>
   <data name="Help.Options.b" xml:space="preserve">
     <value>  -b &lt;ブロックサイズ&gt;	イメージのパディングに使用する &lt;ブロックサイズ&gt; の値を指定します
 </value>

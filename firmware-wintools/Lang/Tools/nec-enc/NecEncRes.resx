@@ -126,10 +126,6 @@
   <data name="FuncDesc" xml:space="preserve">
     <value>encode/decode firmware for NEC Aterm series</value>
   </data>
-  <data name="Help.Options" xml:space="preserve">
-    <value>Options:
-</value>
-  </data>
   <data name="Help.Options.k" xml:space="preserve">
     <value>  -k &lt;key&gt;		use &lt;key&gt; for encode/decode the firmware
 </value>

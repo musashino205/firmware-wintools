@@ -124,16 +124,6 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
-        ///   Options:
-        /// に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string Help_Options {
-            get {
-                return ResourceManager.GetString("Help.Options", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///     -b &lt;blocksize&gt;	use the &lt;blocksize&gt; for padding image
         /// に類似しているローカライズされた文字列を検索します。
         /// </summary>
