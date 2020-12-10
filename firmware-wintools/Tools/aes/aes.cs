@@ -23,11 +23,11 @@ namespace firmware_wintools.Tools
 		{
 			Console.WriteLine(Lang.Tools.AesRes.Help_Usage +
 				Lang.Tools.AesRes.FuncDesc +
-				Environment.NewLine + Environment.NewLine +
-				Lang.Tools.AesRes.Help_Options +
-				Lang.Resource.Help_Options_i +
-				Lang.Resource.Help_Options_o +
-				Lang.CommonRes.Help_Options_Q +
+				Environment.NewLine);
+			// 共通オプション表示
+			Program.PrintCommonOption();
+			// 機能オプション表示
+			Console.WriteLine(Lang.Tools.AesRes.Help_Options +
 				Lang.Tools.AesRes.Help_Options_d +
 				Lang.Tools.AesRes.Help_Options_k +
 				Lang.Tools.AesRes.Help_Options_K2 +

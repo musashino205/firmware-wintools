@@ -61,26 +61,6 @@ namespace firmware_wintools.Lang {
         }
         
         /// <summary>
-        ///     -i &lt;file&gt;		input file
-        /// に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string Help_Options_i {
-            get {
-                return ResourceManager.GetString("Help.Options.i", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///     -o &lt;file&gt;		output file
-        /// に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string Help_Options_o {
-            get {
-                return ResourceManager.GetString("Help.Options.o", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   invalid parameter is specified に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Main_Error_InvalidParam {

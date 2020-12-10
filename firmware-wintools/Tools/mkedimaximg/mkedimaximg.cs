@@ -54,11 +54,11 @@ namespace firmware_wintools.Tools
 		{
 			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Help_Usage +
 				Lang.Tools.MkEdimaxImgRes.FuncDesc +
-				Environment.NewLine + Environment.NewLine +
-				Lang.Tools.MkEdimaxImgRes.Help_Options +
-				Lang.Resource.Help_Options_i +
-				Lang.Resource.Help_Options_o +
-				Lang.CommonRes.Help_Options_Q +
+				Environment.NewLine);
+			// 共通オプション表示
+			Program.PrintCommonOption();
+			// 機能オプション表示
+			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Help_Options +
 				Lang.Tools.MkEdimaxImgRes.Help_Options_s +
 				Lang.Tools.MkEdimaxImgRes.Help_Options_m +
 				Lang.Tools.MkEdimaxImgRes.Help_Options_f +

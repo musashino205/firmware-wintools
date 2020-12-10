@@ -109,11 +109,11 @@ namespace firmware_wintools.Tools
 		{
 			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Help_Usage +
 				Lang.Tools.MkSenaoFwRes.FuncDesc +
-				Environment.NewLine + Environment.NewLine +
-				Lang.Tools.MkSenaoFwRes.Help_Options +
-				Lang.Resource.Help_Options_i +
-				Lang.Resource.Help_Options_o +
-				Lang.CommonRes.Help_Options_Q +
+				Environment.NewLine);
+			// 共通オプション表示
+			Program.PrintCommonOption();
+			// 機能オプション表示
+			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Help_Options +
 				Lang.Tools.MkSenaoFwRes.Help_Options_t +
 				Lang.Tools.MkSenaoFwRes.Help_Options_t_values);
 			for (int i = 0; i < FIRMWARE_TYPES.Length; i++)     // firmware types

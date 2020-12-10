@@ -117,14 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Help.Options.i" xml:space="preserve">
-    <value>  -i &lt;file&gt;		input file
-</value>
-  </data>
-  <data name="Help.Options.o" xml:space="preserve">
-    <value>  -o &lt;file&gt;		output file
-</value>
-  </data>
   <data name="Main.Error.InvalidParam" xml:space="preserve">
     <value>invalid parameter is specified</value>
   </data>

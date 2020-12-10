@@ -29,11 +29,11 @@ namespace firmware_wintools.Tools
 		{
 			Console.WriteLine(Lang.Tools.BuffaloEncRes.Help_Usage +
 				Lang.Tools.BuffaloEncRes.FuncDesc +
-				Environment.NewLine + Environment.NewLine +
-				Lang.Tools.BuffaloEncRes.Help_Options +
-				Lang.Resource.Help_Options_i +
-				Lang.Resource.Help_Options_o +
-				Lang.CommonRes.Help_Options_Q +
+				Environment.NewLine);
+			// 共通オプション表示
+			Program.PrintCommonOption();
+			// 機能オプション表示
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Help_Options +
 				Lang.Tools.BuffaloEncRes.Help_Options_d +
 				Lang.Tools.BuffaloEncRes.Help_Options_l +
 				Lang.Tools.BuffaloEncRes.Help_Options_k +

@@ -117,6 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Help.CommonOpts" xml:space="preserve">
+    <value>共通オプション:
+</value>
+  </data>
+  <data name="Help.Options.i" xml:space="preserve">
+    <value>  -i &lt;ファイル&gt;		入力元ファイル
+</value>
+  </data>
+  <data name="Help.Options.o" xml:space="preserve">
+    <value>  -o &lt;ファイル&gt;		出力先ファイル
+</value>
+  </data>
   <data name="Help.Options.Q" xml:space="preserve">
     <value>  -Q			情報関連メッセージの出力を抑制します
 </value>

@@ -125,6 +125,19 @@ namespace firmware_wintools
 				"xorimage", Lang.Tools.XorImageRes.FuncDesc);
 			Console.WriteLine(Environment.NewLine +
 				Lang.Resource.Main_Help_DetailsMsg);
+
+			PrintCommonOption();
+		}
+
+		/// <summary>
+		/// 共通ヘルプを表示
+		/// </summary>
+		public static void PrintCommonOption()
+		{
+			Console.WriteLine(Lang.CommonRes.Help_CommonOpts +
+				Lang.CommonRes.Help_Options_i +
+				Lang.CommonRes.Help_Options_o +
+				Lang.CommonRes.Help_Options_Q);
 		}
 
 		/// <summary>
