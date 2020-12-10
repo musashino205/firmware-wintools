@@ -33,6 +33,7 @@ namespace firmware_wintools.Tools
 				Lang.Tools.BuffaloEncRes.Help_Options +
 				Lang.Resource.Help_Options_i +
 				Lang.Resource.Help_Options_o +
+				Lang.CommonRes.Help_Options_Q +
 				Lang.Tools.BuffaloEncRes.Help_Options_d +
 				Lang.Tools.BuffaloEncRes.Help_Options_l +
 				Lang.Tools.BuffaloEncRes.Help_Options_k +
@@ -120,7 +121,7 @@ namespace firmware_wintools.Tools
 			return 0;
 		}
 
-		private int Encrypt(ref FileStream inFs, ref FileStream outFs, Properties subprops, bool isdbg)
+		private int Encrypt(ref FileStream inFs, ref FileStream outFs, Properties subprops, Program.Properties props)
 		{
 			int src_len, tail_dst = 0, tail_len = 0, tail_src;
 			long totlen = 0;
@@ -178,7 +179,8 @@ namespace firmware_wintools.Tools
 
 			subprops.size = (int)ep.datalen;
 
-			PrintInfo(subprops, isdbg);
+			if (!props.quiet)
+				PrintInfo(subprops, props.debug);
 			if (bufLib.Encrypt_Buf(in ep, ref buf, hdrlen) != 0)
 			{
 				Console.Error.WriteLine(
@@ -191,7 +193,7 @@ namespace firmware_wintools.Tools
 			return 0;
 		}
 
-		private int Decrypt(ref FileStream inFs, ref FileStream outFs, Properties subprops, bool isdbg)
+		private int Decrypt(ref FileStream inFs, ref FileStream outFs, Properties subprops, Program.Properties props)
 		{
 			long src_len;
 			byte[] buf;
@@ -232,7 +234,8 @@ namespace firmware_wintools.Tools
 			subprops.size = Convert.ToInt32(ep.datalen);
 			cksum = ep.cksum;
 
-			PrintInfo(subprops, isdbg);
+			if (!props.quiet)
+				PrintInfo(subprops, props.debug);
 
 			outFs.Write(buf, 0, Convert.ToInt32(ep.datalen));
 
@@ -282,8 +285,8 @@ namespace firmware_wintools.Tools
 			}
 
 			ret = subprops.isde ?
-				Decrypt(ref inFs, ref outFs, subprops, props.debug) :
-				Encrypt(ref inFs, ref outFs, subprops, props.debug);
+				Decrypt(ref inFs, ref outFs, subprops, props) :
+				Encrypt(ref inFs, ref outFs, subprops, props);
 
 			inFs.Close();
 			outFs.Close();

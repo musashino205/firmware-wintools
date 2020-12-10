@@ -29,6 +29,7 @@ namespace firmware_wintools.Tools
 				Lang.Tools.NecEncRes.Help_Options +
 				Lang.Resource.Help_Options_i +
 				Lang.Resource.Help_Options_o +
+				Lang.CommonRes.Help_Options_Q +
 				Lang.Tools.NecEncRes.Help_Options_k);
 		}
 
@@ -136,7 +137,8 @@ namespace firmware_wintools.Tools
 				key = Encoding.ASCII.GetBytes(subprops.key);
 			}
 
-			PrintInfo(subprops);
+			if (!props.quiet)
+				PrintInfo(subprops);
 
 			FileStream inFs;
 			FileStream outFs;

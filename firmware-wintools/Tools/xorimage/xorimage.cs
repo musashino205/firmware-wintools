@@ -32,6 +32,7 @@ namespace firmware_wintools.Tools
 				Lang.Tools.XorImageRes.Help_Options +
 				Lang.Resource.Help_Options_i +
 				Lang.Resource.Help_Options_o +
+				Lang.CommonRes.Help_Options_Q +
 				Lang.Tools.XorImageRes.Help_Options_Pattern +
 				Lang.Tools.XorImageRes.Help_Options_Hex);
 		}
@@ -108,7 +109,8 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			PrintInfo(subprops);
+			if (!props.quiet)
+				PrintInfo(subprops);
 
 			if (subprops.ishex)
 			{

@@ -44,6 +44,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArgMap.cs" />
+    <Compile Include="Lang\CommonRes.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CommonRes.resx</DependentUpon>
+    </Compile>
     <Compile Include="Lang\Resource.ja-JP.Designer.cs">
       <DependentUpon>Resource.ja-JP.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -147,6 +152,11 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <EmbeddedResource Include="Lang\CommonRes.ja-JP.resx" />
+    <EmbeddedResource Include="Lang\CommonRes.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CommonRes.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Lang\Resource.ja-JP.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.ja-JP.Designer.cs</LastGenOutput>

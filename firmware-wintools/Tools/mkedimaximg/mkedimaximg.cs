@@ -58,6 +58,7 @@ namespace firmware_wintools.Tools
 				Lang.Tools.MkEdimaxImgRes.Help_Options +
 				Lang.Resource.Help_Options_i +
 				Lang.Resource.Help_Options_o +
+				Lang.CommonRes.Help_Options_Q +
 				Lang.Tools.MkEdimaxImgRes.Help_Options_s +
 				Lang.Tools.MkEdimaxImgRes.Help_Options_m +
 				Lang.Tools.MkEdimaxImgRes.Help_Options_f +
@@ -173,7 +174,8 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			PrintInfo(subprops);
+			if (!props.quiet)
+				PrintInfo(subprops);
 
 			header.sign = Encoding.ASCII.GetBytes(subprops.signature);
 			header.flash = (subprops.isbe) ? IPAddress.HostToNetworkOrder(subprops.flash) : subprops.flash;

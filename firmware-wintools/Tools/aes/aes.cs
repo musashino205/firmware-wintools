@@ -27,6 +27,7 @@ namespace firmware_wintools.Tools
 				Lang.Tools.AesRes.Help_Options +
 				Lang.Resource.Help_Options_i +
 				Lang.Resource.Help_Options_o +
+				Lang.CommonRes.Help_Options_Q +
 				Lang.Tools.AesRes.Help_Options_d +
 				Lang.Tools.AesRes.Help_Options_k +
 				Lang.Tools.AesRes.Help_Options_K2 +
@@ -258,8 +259,9 @@ namespace firmware_wintools.Tools
 			}
 			/* check offset/length end */
 
-			PrintInfo(subprops, key, iv,
-				subprops.len != null ? len : inFs.Length - offset);
+			if (!props.quiet)
+				PrintInfo(subprops, key, iv,
+					subprops.len != null ? len : inFs.Length - offset);
 
 			AesManaged aes = new AesManaged
 			{

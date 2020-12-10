@@ -24,6 +24,10 @@ namespace firmware_wintools
 			/// ヘルプ フラグ
 			/// </summary>
 			public bool help;
+			/// <summery>
+			/// コンソール出力低減
+			/// </summery>
+			public bool quiet;
 			/// <summary>
 			/// 入力ファイル パス
 			/// </summary>
@@ -204,9 +208,10 @@ namespace firmware_wintools
 					return 1;
 				}
 
-				Console.WriteLine(Lang.Resource.Main_Info + Environment.NewLine,
-					Path.GetFileName(props.inFile), Directory.GetParent(props.inFile),
-					Path.GetFileName(props.outFile), Directory.GetParent(props.outFile));
+				if (!props.quiet)
+					Console.WriteLine(Lang.Resource.Main_Info + Environment.NewLine,
+						Path.GetFileName(props.inFile), Directory.GetParent(props.inFile),
+						Path.GetFileName(props.outFile), Directory.GetParent(props.outFile));
 			}
 
 			switch (args[0])
@@ -250,13 +255,15 @@ namespace firmware_wintools
 					break;
 			}
 
-			if (ret != 0)
-				Console.Error.WriteLine("ERROR");
-			else
-				Console.Error.WriteLine("DONE");
-
 			if (props.debug)
+			{
+				if (ret != 0)
+					Console.Error.WriteLine("ERROR");
+				else
+					Console.Error.WriteLine("DONE");
+
 				Thread.Sleep(4000);
+			}
 			return ret;
 		}
 	}

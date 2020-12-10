@@ -113,6 +113,7 @@ namespace firmware_wintools.Tools
 				Lang.Tools.MkSenaoFwRes.Help_Options +
 				Lang.Resource.Help_Options_i +
 				Lang.Resource.Help_Options_o +
+				Lang.CommonRes.Help_Options_Q +
 				Lang.Tools.MkSenaoFwRes.Help_Options_t +
 				Lang.Tools.MkSenaoFwRes.Help_Options_t_values);
 			for (int i = 0; i < FIRMWARE_TYPES.Length; i++)     // firmware types
@@ -206,7 +207,7 @@ namespace firmware_wintools.Tools
 		/// <param name="inFs">入力ファイルのFileStream</param>
 		/// <param name="outFs">出力ファイルのFileStream</param>
 		/// <returns>成功: 0, 失敗: 1</returns>
-		private int Encode(Properties subprops, ref FileStream inFs, ref FileStream outFs)
+		private int Encode(Properties subprops, ref FileStream inFs, ref FileStream outFs, bool quiet)
 		{
 			int filesize, cksum, read_len, pad_len, avail_len;
 			byte[] buf = new byte[BUF_SIZE];
@@ -239,7 +240,8 @@ namespace firmware_wintools.Tools
 
 			md5sum = fw_header.md5sum;
 
-			PrintInfo(subprops);
+			if (!quiet)
+				PrintInfo(subprops);
 
 			/* パディングサイズ */
 			pad_len = subprops.pad && subprops.bs > 0 ? 
@@ -299,7 +301,7 @@ namespace firmware_wintools.Tools
 		/// <param name="inFs">入力ファイルのFileStream</param>
 		/// <param name="outFs">出力ファイルのFileStream</param>
 		/// <returns>成功: 0, 失敗: 1</returns>
-		private int Decode(ref FileStream inFs, ref FileStream outFs)
+		private int Decode(ref FileStream inFs, ref FileStream outFs, bool quiet)
 		{
 			int read_len, written_len = 0;
 			byte[] buf = new byte[BUF_SIZE];
@@ -336,7 +338,8 @@ namespace firmware_wintools.Tools
 			subprops.magic = fw_header.magic;
 			md5sum = fw_header.md5sum;
 
-			PrintInfo(subprops);
+			if (!quiet)
+				PrintInfo(subprops);
 			if (ChkFwType(fw_header.fw_type) != 0)
 				return 1;
 
@@ -425,7 +428,8 @@ namespace firmware_wintools.Tools
 			}
 
 			int ret = subprops.isde ?
-				Decode(ref inFs, ref outFs) : Encode(subprops, ref inFs, ref outFs);
+				Decode(ref inFs, ref outFs, props.quiet) :
+				Encode(subprops, ref inFs, ref outFs, props.quiet);
 
 			inFs.Close();
 			outFs.Close();

@@ -50,6 +50,9 @@
 						case "D":
 							props.debug = true;
 							break;
+						case "Q":
+							props.quiet = true;
+							break;
 						case "":    // ハイフンのみ ('-') 対策
 							props.param_invalid = true;
 							break;
