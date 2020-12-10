@@ -15,6 +15,19 @@
 				{
 					switch (args[i].Replace("-", ""))
 					{
+						case "l":	// length
+							if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.len) == 0)
+								i++;
+							break;
+						case "O":	// offset
+							string offset = null;
+							if (ArgMap.Set_StrParamFromArgs(args, i, ref offset) == 0 &&
+								Program.StrToInt(offset, out int conv_offset, 0) == 0)
+							{
+								subprops.offset = conv_offset;
+								i++;
+							}
+							break;
 						case "p":
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.pattern) == 0)
 								i++;

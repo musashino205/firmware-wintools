@@ -145,6 +145,26 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
+        ///    Length		: {0:N0} bytes
+        ///		  (0x{0:X}) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Info_len {
+            get {
+                return ResourceManager.GetString("Info.len", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Offset		: {0:N0} bytes
+        ///		  (0x{0:X}) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Info_offset {
+            get {
+                return ResourceManager.GetString("Info.offset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///    pattern	: {0} に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Info_Pattern {
@@ -159,6 +179,24 @@ namespace firmware_wintools.Lang.Tools {
         internal static string Main_FuncDesc_Fmt {
             get {
                 return ResourceManager.GetString("Main.FuncDesc.Fmt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   the specified length is invalid, use default (fullsize - offset) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Warning_InvalidLength {
+            get {
+                return ResourceManager.GetString("Warning.InvalidLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   the specified offset exceeds the file length, use &apos;0&apos; に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Warning_LargeOffset {
+            get {
+                return ResourceManager.GetString("Warning.LargeOffset", resourceCulture);
             }
         }
     }

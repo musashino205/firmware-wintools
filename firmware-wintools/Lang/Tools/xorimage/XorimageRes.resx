@@ -147,10 +147,24 @@
   <data name="Info.Hex" xml:space="preserve">
     <value> hex mode	: {0}</value>
   </data>
+  <data name="Info.len" xml:space="preserve">
+    <value> Length		: {0:N0} bytes
+		  (0x{0:X})</value>
+  </data>
+  <data name="Info.offset" xml:space="preserve">
+    <value> Offset		: {0:N0} bytes
+		  (0x{0:X})</value>
+  </data>
   <data name="Info.Pattern" xml:space="preserve">
     <value> pattern	: {0}</value>
   </data>
   <data name="Main.FuncDesc.Fmt" xml:space="preserve">
     <value>    {0}		: {1}</value>
+  </data>
+  <data name="Warning.InvalidLength" xml:space="preserve">
+    <value>the specified length is invalid, use default (fullsize - offset)</value>
+  </data>
+  <data name="Warning.LargeOffset" xml:space="preserve">
+    <value>the specified offset exceeds the file length, use '0'</value>
   </data>
 </root>

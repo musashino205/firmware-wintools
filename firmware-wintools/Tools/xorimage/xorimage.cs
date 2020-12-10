@@ -12,6 +12,14 @@ namespace firmware_wintools.Tools
 		public struct Properties
 		{
 			/// <summary>
+			/// xorを行うデータ長
+			/// </summary>
+			public string len;
+			/// <summary>
+			/// xorを開始するデータのオフセット
+			/// </summary>
+			public long offset;
+			/// <summary>
 			/// xorに用いるpattern
 			/// </summary>
 			public string pattern;
@@ -41,11 +49,17 @@ namespace firmware_wintools.Tools
 		/// xorimageの実行情報を表示します
 		/// </summary>
 		/// <param name="props"></param>
-		private void PrintInfo(Properties subprops)
+		private void PrintInfo(Properties subprops, long datalen)
 		{
 			Console.WriteLine(Lang.Tools.XorImageRes.Info);
 			Console.WriteLine(Lang.Tools.XorImageRes.Info_Pattern, subprops.pattern);
 			Console.WriteLine(Lang.Tools.XorImageRes.Info_Hex, subprops.ishex.ToString());
+			Console.WriteLine(			// length
+				Lang.Tools.XorImageRes.Info_len,
+				datalen);
+			Console.WriteLine(			// offset
+				Lang.Tools.XorImageRes.Info_offset,
+				subprops.offset);
 		}
 
 		/// <summary>
@@ -82,7 +96,8 @@ namespace firmware_wintools.Tools
 		/// <returns></returns>
 		public int Do_XorImage(string[] args, Program.Properties props)
 		{
-			int read_len, p_off = 0;
+			int read_len, write_len, p_off = 0;
+			long offset = 0, len = long.MaxValue;
 			byte[] pattern;
 			byte[] hex_pattern = new byte[128];
 			byte[] buf = new byte[4096];
@@ -108,9 +123,6 @@ namespace firmware_wintools.Tools
 					Lang.Resource.Main_Error_Prefix + Lang.Tools.XorImageRes.Error_InvalidPatternLen);
 				return 1;
 			}
-
-			if (!props.quiet)
-				PrintInfo(subprops);
 
 			if (subprops.ishex)
 			{
@@ -152,11 +164,48 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
+			/* check offset/length */
+			if (subprops.offset > inFs.Length)
+				Console.Error.WriteLine(
+					Lang.Resource.Main_Warning_Prefix +
+					Lang.Tools.XorImageRes.Warning_LargeOffset);
+			else
+				offset = subprops.offset;
+
+			if (subprops.len != null &&					// something is specified for len
+				(Program.StrToLong(subprops.len, out len, 0) != 0 ||	// fail to convert (invalid chars for num)
+				len <= 0 ||						// equal or smaller than 0
+				len > inFs.Length - offset))				// larger than valid length
+			{
+				Console.Error.WriteLine(
+					Lang.Resource.Main_Warning_Prefix +
+					Lang.Tools.XorImageRes.Warning_InvalidLength);
+				len = long.MaxValue;
+			}
+			/* check offset/length end */
+
+			if (!props.quiet)
+				PrintInfo(subprops, len != long.MaxValue ? len : inFs.Length - offset);
+
+			inFs.Seek(offset, SeekOrigin.Begin);
+
 			while ((read_len = inFs.Read(buf, 0, buf.Length)) > 0)
 			{
-				p_off = XorData(ref buf, read_len, in pattern, p_len, p_off, subprops.ishex);
+				write_len = read_len;
 
-				outFs.Write(buf, 0, read_len);
+				if (len != long.MaxValue)
+					if (len > read_len)
+						len -= read_len;	// 読み取った長さよりも残りの対象データ長が長い場合差し引く
+					else
+						write_len = (int)len;	// 残りデータ長が読み取った長さ以下である場合残りデータ長を使う
+
+				p_off = XorData(ref buf, write_len, in pattern, p_len, p_off, subprops.ishex);
+
+				outFs.Write(buf, 0, write_len);
+
+				/* 読み取った長さが対象データ長以下である場合breakしてXorと書き込みを終了 */
+				if (len <= read_len)
+					break;
 			}
 
 			inFs.Close();

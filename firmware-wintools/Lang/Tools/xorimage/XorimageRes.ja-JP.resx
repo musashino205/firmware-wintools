@@ -147,7 +147,21 @@
   <data name="Info.Hex" xml:space="preserve">
     <value> 16進数モード	: {0}</value>
   </data>
+  <data name="Info.len" xml:space="preserve">
+    <value> 長さ		: {0:N0} バイト
+		  (0x{0:X})</value>
+  </data>
+  <data name="Info.offset" xml:space="preserve">
+    <value> オフセット	: {0:N0} バイト
+		  (0x{0:X})</value>
+  </data>
   <data name="Info.Pattern" xml:space="preserve">
     <value> パターン	: {0}</value>
+  </data>
+  <data name="Warning.InvalidLength" xml:space="preserve">
+    <value>指定された長さが正しくありません。デフォルト（フルサイズ - オフセット）を使用します</value>
+  </data>
+  <data name="Warning.LargeOffset" xml:space="preserve">
+    <value>指定されたオフセットはファイルサイズを超えています。 '0' を使用します</value>
   </data>
 </root>
