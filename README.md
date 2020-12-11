@@ -115,11 +115,12 @@ OpenWrtにおけるxorimageの機能を提供します。
 
 使用方法:
 
-```firmware-wintools xorimage -i <input file> -o <output file> -p <pattern> [-x]```
+```firmware-wintools xorimage -i <input file> -o <output file> -p <pattern> [-x] [-O <offset>] [-l <length>] [-r]```
 
 注意:
 
-```-x``` オプションは、patternに文字列で表現することができない16進数を使用する必要がある場合に用います。
+- ```-x``` オプションは、patternに文字列で表現することができない16進数を使用する必要がある場合に用います。
+- ```-r``` オプションは、入力ファイル内の一部データにのみXorを行う場合に用います。
 
 ---
 
