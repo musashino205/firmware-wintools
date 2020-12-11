@@ -27,6 +27,10 @@ namespace firmware_wintools.Tools
 			/// 指定されたパターンがhex値であるか否か
 			/// </summary>
 			public bool ishex;
+			/// <summary>
+			/// 部分書き換えモード
+			/// </summary>
+			public bool rewrite;
 		}
 
 		/// <summary>
@@ -42,7 +46,8 @@ namespace firmware_wintools.Tools
 			// 機能オプション表示
 			Console.WriteLine(Lang.CommonRes.Help_FunctionOpts +
 				Lang.Tools.XorImageRes.Help_Options_Pattern +
-				Lang.Tools.XorImageRes.Help_Options_Hex);
+				Lang.Tools.XorImageRes.Help_Options_Hex +
+				Lang.Tools.XorImageRes.Help_Options_Rewrite);
 		}
 
 		/// <summary>
@@ -60,6 +65,9 @@ namespace firmware_wintools.Tools
 			Console.WriteLine(			// offset
 				Lang.Tools.XorImageRes.Info_offset,
 				subprops.offset);
+			Console.WriteLine(
+				Lang.Tools.XorImageRes.Info_Rewrite,
+				subprops.rewrite);
 		}
 
 		/// <summary>
@@ -187,6 +195,21 @@ namespace firmware_wintools.Tools
 			if (!props.quiet)
 				PrintInfo(subprops, len != long.MaxValue ? len : inFs.Length - offset);
 
+			/* copy data of the range 0x0 to offset to outFs if rewrite mode */
+			if (subprops.rewrite)
+				while ((read_len = inFs.Read(buf, 0, buf.Length)) > 0)
+				{
+					if (inFs.Position <= offset)
+					{
+						outFs.Write(buf, 0, read_len);
+					}
+					else
+					{
+						outFs.Write(buf, 0, read_len - (int)(inFs.Position - offset));
+						break;
+					}
+				}
+
 			inFs.Seek(offset, SeekOrigin.Begin);
 
 			while ((read_len = inFs.Read(buf, 0, buf.Length)) > 0)
@@ -203,10 +226,23 @@ namespace firmware_wintools.Tools
 
 				outFs.Write(buf, 0, write_len);
 
-				/* 読み取った長さが対象データ長以下である場合breakしてXorと書き込みを終了 */
+				/*
+				 * 読み取った長さが対象データ長以下である場合breakしてXorと書き込みを終了
+				 * len <= read_lenであるならばlengthが正しい数値で指定され（long.MaxValueでない）、
+				 * なおかつ最後のブロックであるので、inFsから残りをoutFsへコピーするため読み取った
+				 * データ長から実際に書き込んだデータ長を差し引いたサイズで現在位置からマイナス方向に
+				 * Seekする
+				 */
 				if (len <= read_len)
+				{
+					inFs.Seek(-(read_len - write_len), SeekOrigin.Current);
 					break;
+				}
 			}
+
+			/* copy remaining data in inFs to outFs if rewrite mode */
+			if (subprops.rewrite)
+				inFs.CopyTo(outFs);
 
 			inFs.Close();
 			outFs.Close();

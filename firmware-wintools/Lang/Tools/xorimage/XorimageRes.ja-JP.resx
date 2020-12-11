@@ -137,6 +137,10 @@
     <value>  -p &lt;パターン&gt;		xorによるファームウェアのエンコード/デコードに使用する &lt;パターン&gt; を指定します
 </value>
   </data>
+  <data name="Help.Options.Rewrite" xml:space="preserve">
+    <value>  -r			"部分書き換え" モードを使用します
+</value>
+  </data>
   <data name="Help.Usage" xml:space="preserve">
     <value>使用方法: firmware-wintools xorimage [オプション...]
 </value>
@@ -157,6 +161,9 @@
   </data>
   <data name="Info.Pattern" xml:space="preserve">
     <value> パターン	: {0}</value>
+  </data>
+  <data name="Info.Rewrite" xml:space="preserve">
+    <value> 書き換えモード	: {0}</value>
   </data>
   <data name="Warning.InvalidLength" xml:space="preserve">
     <value>指定された長さが正しくありません。デフォルト（フルサイズ - オフセット）を使用します</value>

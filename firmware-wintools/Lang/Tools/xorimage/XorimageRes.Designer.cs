@@ -117,6 +117,16 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
+        ///     -r			use &quot;partial rewrite&quot; mode
+        /// に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Help_Options_Rewrite {
+            get {
+                return ResourceManager.GetString("Help.Options.Rewrite", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Usage: firmware-wintools xorimage [OPTIONS...]
         /// に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -170,6 +180,15 @@ namespace firmware_wintools.Lang.Tools {
         internal static string Info_Pattern {
             get {
                 return ResourceManager.GetString("Info.Pattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    rewrite mode	: {0} に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Info_Rewrite {
+            get {
+                return ResourceManager.GetString("Info.Rewrite", resourceCulture);
             }
         }
         

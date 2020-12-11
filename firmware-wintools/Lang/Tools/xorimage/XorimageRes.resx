@@ -137,6 +137,10 @@
     <value>  -p &lt;pattern&gt;		use &lt;pattern&gt; for encode/decode the firmware by xor
 </value>
   </data>
+  <data name="Help.Options.Rewrite" xml:space="preserve">
+    <value>  -r			use "partial rewrite" mode
+</value>
+  </data>
   <data name="Help.Usage" xml:space="preserve">
     <value>Usage: firmware-wintools xorimage [OPTIONS...]
 </value>
@@ -157,6 +161,9 @@
   </data>
   <data name="Info.Pattern" xml:space="preserve">
     <value> pattern	: {0}</value>
+  </data>
+  <data name="Info.Rewrite" xml:space="preserve">
+    <value> rewrite mode	: {0}</value>
   </data>
   <data name="Main.FuncDesc.Fmt" xml:space="preserve">
     <value>    {0}		: {1}</value>

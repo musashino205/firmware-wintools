@@ -32,6 +32,9 @@
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.pattern) == 0)
 								i++;
 							break;
+						case "r":
+							subprops.rewrite = true;
+							break;
 						case "x":
 							subprops.ishex = true;
 							break;
