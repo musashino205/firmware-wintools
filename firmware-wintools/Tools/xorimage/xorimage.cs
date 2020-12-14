@@ -47,6 +47,8 @@ namespace firmware_wintools.Tools
 			Console.WriteLine(Lang.CommonRes.Help_FunctionOpts +
 				Lang.Tools.XorImageRes.Help_Options_Pattern +
 				Lang.Tools.XorImageRes.Help_Options_Hex +
+				Lang.Tools.XorImageRes.Help_Options_Length +
+				Lang.Tools.XorImageRes.Help_Options_Offset +
 				Lang.Tools.XorImageRes.Help_Options_Rewrite);
 		}
 

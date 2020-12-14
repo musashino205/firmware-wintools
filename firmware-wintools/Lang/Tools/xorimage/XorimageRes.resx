@@ -133,6 +133,14 @@
     <value>  -x			use "hex pattern" mode
 </value>
   </data>
+  <data name="Help.Options.Length" xml:space="preserve">
+    <value>  -l &lt;length&gt;		perform xor specified length of the input image
+</value>
+  </data>
+  <data name="Help.Options.Offset" xml:space="preserve">
+    <value>  -O &lt;offset&gt;		perform xor from specified offset of the input image
+</value>
+  </data>
   <data name="Help.Options.Pattern" xml:space="preserve">
     <value>  -p &lt;pattern&gt;		use &lt;pattern&gt; for encode/decode the firmware by xor
 </value>

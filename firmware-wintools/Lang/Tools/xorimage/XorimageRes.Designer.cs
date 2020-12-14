@@ -107,6 +107,26 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
+        ///     -l &lt;length&gt;		perform xor specified length of the input image
+        /// に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Help_Options_Length {
+            get {
+                return ResourceManager.GetString("Help.Options.Length", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///     -O &lt;offset&gt;		perform xor from specified offset of the input image
+        /// に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Help_Options_Offset {
+            get {
+                return ResourceManager.GetString("Help.Options.Offset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///     -p &lt;pattern&gt;		use &lt;pattern&gt; for encode/decode the firmware by xor
         /// に類似しているローカライズされた文字列を検索します。
         /// </summary>
