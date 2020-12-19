@@ -389,7 +389,7 @@ namespace firmware_wintools.Tools
 			}
 
 			ToolsArgMap argMap = new ToolsArgMap();
-			argMap.Init_args_MkSenaoFw(args, ref subprops);
+			argMap.Init_args_MkSenaoFw(args, arg_idx, ref subprops);
 
 			if (!subprops.isde)	// エンコード時
 			{

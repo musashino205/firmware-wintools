@@ -133,7 +133,7 @@ namespace firmware_wintools.Tools
 			}
 
 			ToolsArgMap argMap = new ToolsArgMap();
-			argMap.Init_args_MkEdimaxImg(args, ref subprops);
+			argMap.Init_args_MkEdimaxImg(args, arg_idx, ref subprops);
 
 			if (subprops.signature == null || subprops.signature == "")
 			{

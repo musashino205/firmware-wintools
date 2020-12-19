@@ -88,7 +88,7 @@ namespace firmware_wintools.Tools
 			CryptoStream Cs;
 
 			ToolsArgMap argMap = new ToolsArgMap();
-			argMap.Init_args_Aes(args, ref subprops);
+			argMap.Init_args_Aes(args, arg_idx, ref subprops);
 
 			if (props.help)
 			{

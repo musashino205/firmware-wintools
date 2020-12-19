@@ -109,7 +109,7 @@ namespace firmware_wintools.Tools
 			Properties subprops = new Properties();
 
 			ToolsArgMap argMap = new ToolsArgMap();
-			argMap.Init_args_NecEnc(args, ref subprops);
+			argMap.Init_args_NecEnc(args, arg_idx, ref subprops);
 
 			if (props.help)
 			{

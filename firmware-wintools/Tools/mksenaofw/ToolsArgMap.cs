@@ -10,10 +10,10 @@ namespace firmware_wintools.Tools
 		/// </summary>
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">mkedimaximgの機能プロパティ</param>
-		public void Init_args_MkSenaoFw(string[] args, ref Tools.MkSenaoFw.Properties subprops)
+		public void Init_args_MkSenaoFw(string[] args, int arg_idx, ref Tools.MkSenaoFw.Properties subprops)
 		{
 			CultureInfo provider = CultureInfo.CurrentCulture;
-			for (int i = 1; i < args.Length; i++)
+			for (int i = arg_idx; i < args.Length; i++)
 			{
 				if (args[i].StartsWith("-"))
 				{

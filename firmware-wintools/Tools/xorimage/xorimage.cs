@@ -124,7 +124,7 @@ namespace firmware_wintools.Tools
 			}
 
 			ToolsArgMap argMap = new ToolsArgMap();
-			argMap.Init_args_Xorimage(args, ref subprops);
+			argMap.Init_args_Xorimage(args, arg_idx, ref subprops);
 
 			int p_len = subprops.pattern.Length;
 
