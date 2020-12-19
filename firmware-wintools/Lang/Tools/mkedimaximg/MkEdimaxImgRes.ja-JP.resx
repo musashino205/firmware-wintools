@@ -162,7 +162,7 @@
 </value>
   </data>
   <data name="Help.Usage" xml:space="preserve">
-    <value>使用方法: firmware-wintools mkedimaximg [オプション...]
+    <value>使用方法: {0}mkedimaximg [オプション...]
 </value>
   </data>
   <data name="Info" xml:space="preserve">

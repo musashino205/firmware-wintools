@@ -50,11 +50,12 @@ namespace firmware_wintools.Tools
 		/// <summary>
 		/// mkedimaximgの機能ヘルプを表示します
 		/// </summary>
-		private void PrintHelp()
+		private void PrintHelp(int arg_idx)
 		{
 			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Help_Usage +
 				Lang.Tools.MkEdimaxImgRes.FuncDesc +
-				Environment.NewLine);
+				Environment.NewLine,
+				arg_idx < 2 ? "" : "firmware-wintools ");	// 引数インデックスが2未満（symlink呼び出し）の場合機能名のみ
 			// 共通オプション表示
 			Program.PrintCommonOption();
 			// 機能オプション表示
@@ -109,7 +110,7 @@ namespace firmware_wintools.Tools
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">メインプロパティ</param>
 		/// <returns></returns>
-		public int Do_MkEdimaxImage(string[] args, Program.Properties props)
+		public int Do_MkEdimaxImage(string[] args, int arg_idx, Program.Properties props)
 		{
 			int read_len;
 			ushort cksum;
@@ -127,7 +128,7 @@ namespace firmware_wintools.Tools
 
 			if (props.help)
 			{
-				PrintHelp();
+				PrintHelp(arg_idx);
 				return 0;
 			}
 

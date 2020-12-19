@@ -131,7 +131,7 @@
 </value>
   </data>
   <data name="Help.Usage" xml:space="preserve">
-    <value>Usage: firmware-wintools nec-enc [OPTIONS...]
+    <value>Usage: {0}nec-enc [OPTIONS...]
 </value>
   </data>
   <data name="Info" xml:space="preserve">

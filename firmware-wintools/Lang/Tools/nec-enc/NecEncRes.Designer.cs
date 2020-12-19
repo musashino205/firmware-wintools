@@ -98,7 +98,7 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
-        ///   Usage: firmware-wintools nec-enc [OPTIONS...]
+        ///   Usage: {0}nec-enc [OPTIONS...]
         /// に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Help_Usage {

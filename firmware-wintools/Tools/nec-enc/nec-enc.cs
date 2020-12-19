@@ -21,11 +21,12 @@ namespace firmware_wintools.Tools
 		/// <summary>
 		/// nec-encの機能ヘルプを表示します
 		/// </summary>
-		private void PrintHelp()
+		private void PrintHelp(int arg_idx)
 		{
 			Console.WriteLine(Lang.Tools.NecEncRes.Help_Usage +
 				Lang.Tools.NecEncRes.FuncDesc +
-				Environment.NewLine);
+				Environment.NewLine,
+				arg_idx < 2 ? "" : "firmware-wintools ");	// 引数インデックスが2未満（symlink呼び出し）の場合機能名のみ
 			// 共通オプション表示
 			Program.PrintCommonOption();
 			// 機能オプション表示
@@ -94,7 +95,7 @@ namespace firmware_wintools.Tools
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">Program内メインプロパティ</param>
 		/// <returns>実行結果</returns>
-		public int Do_NecEnc(string[] args, Program.Properties props)
+		public int Do_NecEnc(string[] args, int arg_idx, Program.Properties props)
 		{
 			int max_key_len = 16;
 			int pattern_len = 251;
@@ -112,7 +113,7 @@ namespace firmware_wintools.Tools
 
 			if (props.help)
 			{
-				PrintHelp();
+				PrintHelp(arg_idx);
 				return 0;
 			}
 

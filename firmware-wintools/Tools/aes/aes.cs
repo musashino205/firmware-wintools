@@ -19,11 +19,12 @@ namespace firmware_wintools.Tools
 			public bool decrypt;
 		}
 
-		private void PrintHelp()
+		private void PrintHelp(int arg_idx)
 		{
 			Console.WriteLine(Lang.Tools.AesRes.Help_Usage +
 				Lang.Tools.AesRes.FuncDesc +
-				Environment.NewLine);
+				Environment.NewLine,
+				arg_idx < 2 ? "" : "firmware-wintools ");	// 引数インデックスが2未満（symlink呼び出し）の場合機能名のみ
 			// 共通オプション表示
 			Program.PrintCommonOption();
 			// 機能オプション表示
@@ -73,7 +74,7 @@ namespace firmware_wintools.Tools
 				subprops.offset);
 		}
 
-		public int Do_Aes(string[] args, Program.Properties props)
+		public int Do_Aes(string[] args, int arg_idx, Program.Properties props)
 		{
 			byte[] iv;
 			byte[] key;
@@ -91,7 +92,7 @@ namespace firmware_wintools.Tools
 
 			if (props.help)
 			{
-				PrintHelp();
+				PrintHelp(arg_idx);
 				return 0;
 			}
 

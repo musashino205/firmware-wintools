@@ -105,11 +105,12 @@ namespace firmware_wintools.Tools
 		/// </summary>
 		const byte FIRMEARE_TYPE_NONE = 0xFF;
 
-		private void PrintHelp()
+		private void PrintHelp(int arg_idx)
 		{
 			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Help_Usage +
 				Lang.Tools.MkSenaoFwRes.FuncDesc +
-				Environment.NewLine);
+				Environment.NewLine,
+				arg_idx < 2 ? "" : "firmware-wintools ");	// 引数インデックスが2未満（symlink呼び出し）の場合機能名のみ
 			// 共通オプション表示
 			Program.PrintCommonOption();
 			// 機能オプション表示
@@ -371,7 +372,7 @@ namespace firmware_wintools.Tools
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">メインプロパティ</param>
 		/// <returns>成功: 0, 失敗: 1</returns>
-		public int Do_MkSenaoFw(string[] args, Program.Properties props)
+		public int Do_MkSenaoFw(string[] args, int arg_idx, Program.Properties props)
 		{
 			Properties subprops = new Properties()
 			{
@@ -383,7 +384,7 @@ namespace firmware_wintools.Tools
 
 			if (props.help)
 			{
-				PrintHelp();
+				PrintHelp(arg_idx);
 				return 0;
 			}
 

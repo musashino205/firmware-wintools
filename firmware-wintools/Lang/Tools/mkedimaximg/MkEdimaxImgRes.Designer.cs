@@ -183,7 +183,7 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
-        ///   Usage: firmware-wintools mkedimaximg [OPTIONS...]
+        ///   Usage: {0}mkedimaximg [OPTIONS...]
         /// に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Help_Usage {

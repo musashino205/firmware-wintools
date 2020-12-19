@@ -187,7 +187,7 @@
 </value>
   </data>
   <data name="Help.Usage" xml:space="preserve">
-    <value>使用方法: firmware-wintools buffalo-enc [オプション...]
+    <value>使用方法: {0}buffalo-enc [オプション...]
 </value>
   </data>
   <data name="Info" xml:space="preserve">

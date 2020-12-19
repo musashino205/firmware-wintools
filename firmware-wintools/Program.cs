@@ -147,10 +147,11 @@ namespace firmware_wintools
 		/// <returns>実行結果</returns>
 		static int Main()
 		{
-			int ret;
+			int ret, arg_idx = 1;
 			string[] args;
 			Properties props = new Properties();
 			string lc_all, lang, shell;
+			string mode;
 
 			lc_all = Environment.GetEnvironmentVariable("LC_ALL");
 			lang = Environment.GetEnvironmentVariable("LANG");
@@ -184,14 +185,18 @@ namespace firmware_wintools
 
 			args = Environment.GetCommandLineArgs();
 
-			if (args.Length == 1)		// 引数が1（firmware-wintoolsのパス）ならヘルプ表示して終了
+			if (Path.GetFileName(args[0]) != "firmware-wintools.exe")
+				arg_idx = 0;			// symlinkからの呼び出しまたはバイナリ名が機能名の場合、機能名を取る為0スタート
+			else
+				if (args.Length == 1)		// 引数が1（firmware-wintoolsのパス）ならヘルプ表示して終了
 			{
 				PrintHelp();
 				return 0;
 			}
 
+
 			ArgMap argMap = new ArgMap();
-			argMap.Init_args(args, ref props);
+			argMap.Init_args(args, arg_idx, ref props);
 
 			if (props.param_invalid)
 			{
@@ -230,34 +235,44 @@ namespace firmware_wintools
 						Path.GetFileName(props.outFile), Directory.GetParent(props.outFile));
 			}
 
-			switch (args[1])
+			mode = args[arg_idx];
+			/*
+			 * symlinkからの呼び出しまたはfirmware-wintools.exeを機能名に変更した場合、
+			 * 実行ファイルパスからディレクトリパスと拡張子を除去して機能名を取得
+			 */
+			if (arg_idx == 0)
+				mode = Path.GetFileNameWithoutExtension(mode);
+
+			arg_idx += 1;	// インデックスをモード名の次（オプション）へ進める
+
+			switch (mode)
 			{
 				case "aes":
 					Tools.Aes aes = new Tools.Aes();
-					ret = aes.Do_Aes(args, props);
+					ret = aes.Do_Aes(args, arg_idx, props);
 					break;
 				case "buffalo-enc":
 					Tools.Buffalo_Enc buffalo_enc = new Tools.Buffalo_Enc();
-					ret = buffalo_enc.Do_BuffaloEnc(args, props);
+					ret = buffalo_enc.Do_BuffaloEnc(args, arg_idx, props);
 					break;
 				case "mkedimaximg":
 					Tools.MkEdimaxImg mkedimaximg = new Tools.MkEdimaxImg();
-					ret = mkedimaximg.Do_MkEdimaxImage(args, props);
+					ret = mkedimaximg.Do_MkEdimaxImage(args, arg_idx, props);
 					break;
 				case "mksenaofw":
 					Tools.MkSenaoFw mksenaofw = new Tools.MkSenaoFw();
-					ret = mksenaofw.Do_MkSenaoFw(args, props);
+					ret = mksenaofw.Do_MkSenaoFw(args, arg_idx, props);
 					break;
 				case "nec-enc":
 					Tools.Nec_Enc nec_enc = new Tools.Nec_Enc();
-					ret = nec_enc.Do_NecEnc(args, props);
+					ret = nec_enc.Do_NecEnc(args, arg_idx, props);
 					break;
 				case "xorimage":
 					Tools.XorImage xorimage = new Tools.XorImage();
-					ret = xorimage.Do_XorImage(args, props);
+					ret = xorimage.Do_XorImage(args, arg_idx, props);
 					break;
 				default:
-					if (args[1].StartsWith("-") && props.help)
+					if (mode.StartsWith("-") && props.help)
 					{
 						PrintHelp();
 						ret = 0;

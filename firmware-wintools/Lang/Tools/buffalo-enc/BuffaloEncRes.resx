@@ -189,7 +189,7 @@
 </value>
   </data>
   <data name="Help.Usage" xml:space="preserve">
-    <value>Usage: firmware-wintools buffalo-enc [OPTIONS...]
+    <value>Usage: {0}buffalo-enc [OPTIONS...]
 </value>
   </data>
   <data name="Info" xml:space="preserve">

@@ -222,7 +222,7 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
-        ///   Usage: firmware-wintools aes [OPTIONS...]
+        ///   Usage: {0}aes [OPTIONS...]
         /// に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Help_Usage {

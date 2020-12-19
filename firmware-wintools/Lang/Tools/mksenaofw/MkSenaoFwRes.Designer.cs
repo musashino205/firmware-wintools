@@ -232,7 +232,7 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
-        ///   Usage: firmware-wintools mksenaofw [OPTIONS...]
+        ///   Usage: {0}mksenaofw [OPTIONS...]
         /// に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Help_Usage {

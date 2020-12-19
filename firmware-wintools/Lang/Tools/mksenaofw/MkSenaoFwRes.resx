@@ -181,7 +181,7 @@
 </value>
   </data>
   <data name="Help.Usage" xml:space="preserve">
-    <value>Usage: firmware-wintools mksenaofw [OPTIONS...]
+    <value>Usage: {0}mksenaofw [OPTIONS...]
 </value>
   </data>
   <data name="Info" xml:space="preserve">
