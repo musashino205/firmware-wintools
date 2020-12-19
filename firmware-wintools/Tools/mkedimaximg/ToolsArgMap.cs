@@ -12,7 +12,6 @@ namespace firmware_wintools.Tools
 		/// <param name="props">mkedimaximgの機能プロパティ</param>
 		public void Init_args_MkEdimaxImg(string[] args, int arg_idx, ref Tools.MkEdimaxImg.Properties subprops)
 		{
-			CultureInfo provider = CultureInfo.CurrentCulture;
 			for (int i = arg_idx; i < args.Length; i++)
 			{
 				if (args[i].StartsWith("-"))
