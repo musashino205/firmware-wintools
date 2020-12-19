@@ -13,6 +13,7 @@ OpenWrtのfirmware-utilsのWindows移植（という名の適当再現）
 ## 機能
 
 - aes
+- bincut
 - buffalo-enc
 - mkedimaximg
 - mksenaofw
@@ -38,6 +39,22 @@ decryption: ```firmware-wintools aes -d -i <input file> -o <output file> -k <tex
 注意:
 
 - デフォルトでは256bitの鍵長を使用します。128bitを使用する場合、 ```-s``` を指定してください。
+
+---
+
+### bincut
+
+OpenWrtのfirmware-utilsには存在しない独自機能です。指定された長さ/オフセットによるファームウェアの切り出しや、パディングサイズまたはブロックサイズによるパディングを提供します。
+
+使用方法:
+
+```firmware-wintools bincut -i <input file> -o <output file> [-l <length>] [-O <offset>] [-p <padding size]```
+
+(or ```firmware-wintools bincut -i <input file> -o <output file> [-l <length>] [-O <offset>] [-P <blocksize]```)
+
+注意:
+
+- パディングは、長さやオフセットが同時に指定されている場合は、それにより切り出された後の長さを基準にして行われます。
 
 ---
 
