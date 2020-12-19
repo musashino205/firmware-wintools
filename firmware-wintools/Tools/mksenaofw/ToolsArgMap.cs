@@ -65,7 +65,7 @@ namespace firmware_wintools.Tools
 						case "b":
 							string bs = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref bs) == 0 &&
-								Int32.TryParse(bs, out int conv_bs))
+								Program.StrToInt(bs, out int conv_bs, 0) == 0)
 							{
 								subprops.bs = conv_bs;
 								i++;
