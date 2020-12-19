@@ -9,7 +9,7 @@
 		/// <param name="props">xorimageの機能プロパティ</param>
 		public void Init_args_Xorimage(string[] args, ref Tools.XorImage.Properties subprops)
 		{
-			for (int i = 0; i < args.Length; i++)
+			for (int i = 1; i < args.Length; i++)
 			{
 				if (args[i].StartsWith("-"))
 				{

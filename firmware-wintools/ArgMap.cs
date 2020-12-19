@@ -30,7 +30,7 @@
 		/// <param name="props">取得したオプションを格納するターゲット</param>
 		public void Init_args(string[] args, ref Program.Properties props)
 		{
-			for (int i = 0; i < args.Length; i++)
+			for (int i = 1; i < args.Length; i++)
 			{
 				if (args[i].StartsWith("-"))
 				{

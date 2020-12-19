@@ -145,9 +145,10 @@ namespace firmware_wintools
 		/// </summary>
 		/// <param name="args">コマンドライン引数</param>
 		/// <returns>実行結果</returns>
-		static int Main(string[] args)
+		static int Main()
 		{
 			int ret;
+			string[] args;
 			Properties props = new Properties();
 			string lc_all, lang, shell;
 
@@ -181,7 +182,9 @@ namespace firmware_wintools
 				}
 			}
 
-			if (args.Length == 0)		// 引数が0ならヘルプ表示して終了
+			args = Environment.GetCommandLineArgs();
+
+			if (args.Length == 1)		// 引数が1（firmware-wintoolsのパス）ならヘルプ表示して終了
 			{
 				PrintHelp();
 				return 0;
@@ -227,7 +230,7 @@ namespace firmware_wintools
 						Path.GetFileName(props.outFile), Directory.GetParent(props.outFile));
 			}
 
-			switch (args[0])
+			switch (args[1])
 			{
 				case "aes":
 					Tools.Aes aes = new Tools.Aes();
@@ -254,7 +257,7 @@ namespace firmware_wintools
 					ret = xorimage.Do_XorImage(args, props);
 					break;
 				default:
-					if (args[0].StartsWith("-") && props.help)
+					if (args[1].StartsWith("-") && props.help)
 					{
 						PrintHelp();
 						ret = 0;

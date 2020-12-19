@@ -13,7 +13,7 @@ namespace firmware_wintools.Tools
 		public void Init_args_MkEdimaxImg(string[] args, ref Tools.MkEdimaxImg.Properties subprops)
 		{
 			CultureInfo provider = CultureInfo.CurrentCulture;
-			for (int i = 0; i < args.Length; i++)
+			for (int i = 1; i < args.Length; i++)
 			{
 				if (args[i].StartsWith("-"))
 				{
