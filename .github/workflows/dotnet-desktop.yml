@@ -131,5 +131,5 @@ jobs:
       if: success()
       with:
         name: ${{ env.Solution_Name }}_${{ env.REL_GIT_TAG }}
-        path: ${{ env.Solution_Name }}\bin\${{ env.Solution_Name }}
+        path: ${{ env.Solution_Name }}\bin
         retention-days: 5
