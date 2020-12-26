@@ -1,0 +1,35 @@
+# Rules in this file were initially inferred by Visual Studio IntelliCode from the D:\git\musashino205\firmware-wintools codebase based on best match to current usage at 2020/12/26
+# You can modify the rules from these initially generated values to suit your own policies
+# You can learn more about editorconfig here: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
+[*.cs]
+
+
+#Core editorconfig formatting - indentation
+
+#use hard tabs for indentation
+indent_style = tab
+#use lf for line ending
+end_of_line = lf
+#use utf-8 for charset
+charset = utf-8
+
+#Formatting - new line options
+
+#place catch statements on a new line
+new_line_before_catch = true
+#place else statements on a new line
+new_line_before_else = true
+#require members of object initializers to be on the same line
+new_line_before_members_in_object_initializers = false
+
+#Formatting - organize using options
+
+#sort System.* using directives alphabetically, and place them before other usings
+dotnet_sort_system_directives_first = true
+
+#Formatting - spacing options
+
+#require NO space between a cast and the value
+space_after_cast = false
+#require a space after a keyword in a control flow statement such as a for loop
+space_after_keywords_in_control_flow_statements = true
