@@ -133,3 +133,44 @@ jobs:
         name: ${{ env.Solution_Name }}_${{ env.REL_GIT_TAG }}
         path: ${{ env.Solution_Name }}\bin
         retention-days: 5
+
+    - name: Compress Release Binaries by ZIP
+      if: success()
+      run: |
+        Compress-Archive `
+          -Path $env:Solution_Name\bin\$env:Solution_Name `
+          -DestinationPath $env:Solution_Name\bin\${env:Solution_Name}_${env:REL_GIT_TAG}.zip
+
+    - name: Create Release Draft
+      id: create_release
+      uses: actions/create-release@v1
+      if: success()
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: ${{ env.REL_GIT_TAG }}
+        draft: true
+        body: |
+          ## 変更内容 (<prev> -> ${{ env.REL_GIT_TAG }})
+
+          - 実装追加
+
+          - 機能追加
+
+          - 仕様変更
+
+          - 修正
+
+          - その他
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      if: success()
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ env.Solution_Name }}\bin\${{ env.Solution_Name }}_${{ env.REL_GIT_TAG }}.zip
+        asset_name: ${{ env.Solution_Name }}_${{ env.REL_GIT_TAG }}.zip
+        asset_content_type: application/zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
