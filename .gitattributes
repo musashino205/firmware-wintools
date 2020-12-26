@@ -1,7 +1,12 @@
 ###############################################################################
 # Set default behavior to automatically normalize line endings.
 ###############################################################################
-* text=auto
+* -text
+*.resx text eol=lf
+*.Designer.cs text eol=lf
+*.csproj text eol=lf
+*.sln text eol=lf
+AssemblyInfo.cs text eol=lf
 
 ###############################################################################
 # Set default behavior for command prompt diff.
