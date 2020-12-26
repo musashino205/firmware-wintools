@@ -137,7 +137,7 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
-        ///   Usage: {0}buffalo-enc [OPTIONS...]
+        ///   Usage: {0}bincut [OPTIONS...]
         /// に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Help_Usage {
