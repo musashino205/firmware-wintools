@@ -1,0 +1,138 @@
+name: Test tag & Build Release
+
+on:
+  push:
+    tags: '*'
+
+jobs:
+
+  # Build with Debug configuration for Test
+  dbg_build:
+
+    strategy:
+      matrix:
+        Dbg_conf: [Debug]
+
+    runs-on: windows-latest  # For a list of available runner types, refer to
+                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+
+    env:
+      Solution_Name: firmware-wintools
+      Project_csproj_Path: firmware-wintools/firmware-wintools.csproj
+
+    steps:
+    - name: チェックアウト
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: MSBuild.exe のセットアップ
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    # Execute all unit tests in the solution
+    - name: ユニットテストの実行
+      run: dotnet test
+
+    - name: プロジェクトのビルド (Debug)
+      run: msbuild $env:Project_csproj_Path /p:Configuration=$env:Configuration
+      env:
+        Configuration: ${{ matrix.Dbg_conf }}
+
+  # Build with Release configuration for Release
+  rel_build:
+
+    strategy:
+      matrix:
+        Rel_conf: [Release]
+
+    runs-on: windows-latest  # For a list of available runner types, refer to
+                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+
+    needs: [dbg_build]
+
+    env:
+      Solution_Name: firmware-wintools
+      Project_csproj_Path: firmware-wintools/firmware-wintools.csproj
+
+    steps:
+    - name: チェックアウト
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    # ref for "Out-File": https://github.community/t/environmental-files-on-windows/137631
+    - name: Gitのタグバージョンを取得
+      run: |
+        $rel_git_tag=$env:GITHUB_REF.Replace("refs/tags/", "")
+        echo $rel_git_tag
+        echo "REL_GIT_TAG=$rel_git_tag" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
+
+    # Add MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: MSBuild.exe のセットアップ
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: プロジェクトのビルド (Release)
+      run: |
+        msbuild $env:Project_csproj_Path /p:Configuration=$env:Configuration
+      env:
+        Configuration: ${{ matrix.Rel_conf }}
+
+    - name: フォルダのリネームと不要なファイルのクリーンアップ
+      if: success()
+      run: |
+        ren $env:Solution_Name\bin\Release $env:Solution_Name
+        rm $env:Solution_Name\bin\$env:Solution_Name\*.pdb -ErrorAction $env:ErrAct
+        rm $env:Solution_Name\bin\$env:Solution_Name\*.exe.config -ErrorAction $env:ErrAct
+      env:
+        ErrAct: SilentlyContinue
+
+    # Upload the release binaries: https://github.com/marketplace/actions/upload-artifact
+    - name: アーティファクトのアップロード
+      uses: actions/upload-artifact@v2
+      if: success()
+      with:
+        name: ${{ env.Solution_Name }}_${{ env.REL_GIT_TAG }}
+        path: ${{ env.Solution_Name }}\bin
+        retention-days: 5
+
+    - name: リリースバイナリのZIP圧縮
+      if: success()
+      run: |
+        Compress-Archive `
+          -Path $env:Solution_Name\bin\$env:Solution_Name `
+          -DestinationPath $env:Solution_Name\bin\${env:Solution_Name}_${env:REL_GIT_TAG}.zip
+
+    - name: リリースをドラフトで作成
+      id: create_release
+      uses: actions/create-release@v1
+      if: success()
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: ${{ env.REL_GIT_TAG }}
+        draft: true
+        body: |
+          ## 変更内容 ([prev] -> ${{ env.REL_GIT_TAG }})
+
+          - 実装追加
+
+          - 機能追加
+
+          - 仕様変更
+
+          - 修正
+
+          - その他
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: リリースのアセットをアップロード
+      uses: actions/upload-release-asset@v1
+      if: success()
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ env.Solution_Name }}\bin\${{ env.Solution_Name }}_${{ env.REL_GIT_TAG }}.zip
+        asset_name: ${{ env.Solution_Name }}_${{ env.REL_GIT_TAG }}.zip
+        asset_content_type: application/zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
