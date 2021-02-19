@@ -97,7 +97,7 @@ namespace firmware_wintools.Tools
 		/// <returns>実行結果</returns>
 		public int Do_NecEnc(string[] args, int arg_idx, Program.Properties props)
 		{
-			int max_key_len = 16;
+			int max_key_len = 32;
 			int pattern_len = 251;
 			int read_len;
 			int ptn = 1;
