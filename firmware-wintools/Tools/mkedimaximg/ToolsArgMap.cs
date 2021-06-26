@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 
 namespace firmware_wintools.Tools
@@ -29,7 +29,7 @@ namespace firmware_wintools.Tools
 						case "f":
 							string flash = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref flash) == 0 &&
-								Program.StrToInt(flash, out int conv_flash, 0) == 0)
+								Program.StrToInt(flash, out int conv_flash, 0))
 							{
 								subprops.flash = conv_flash;
 								i++;
@@ -38,7 +38,7 @@ namespace firmware_wintools.Tools
 						case "S":
 							string start = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref start) == 0 &&
-								Program.StrToInt(start, out int conv_start, 0) == 0)
+								Program.StrToInt(start, out int conv_start, 0))
 							{
 								subprops.start = conv_start;
 								i++;

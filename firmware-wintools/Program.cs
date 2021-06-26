@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -63,40 +63,38 @@ namespace firmware_wintools
 			}
 		}
 
-		public static int StrToInt(string val, out int cnv, int numstyle)
+		public static bool StrToInt(string val, out int cnv, int numstyle)
 		{
 			cnv = 0;
 			CultureInfo provider = CultureInfo.CurrentCulture;
 
-			if (val == null ||
-				!Int32.TryParse(val.Replace("0x", ""), SetNumStyle(numstyle, val), provider, out cnv))
-				return 1;
+			if (val == null)
+				return false;
 
-			return 0;
+
+			return int.TryParse(val.Replace("0x", ""), SetNumStyle(numstyle, val), provider, out cnv);
 		}
 
-		public static uint StrToUInt(string val, out uint cnv, int numstyle)
+		public static bool StrToUInt(string val, out uint cnv, int numstyle)
 		{
 			cnv = 0;
 			CultureInfo provider = CultureInfo.CurrentCulture;
 
-			if (val == null ||
-				!UInt32.TryParse(val.Replace("0x", ""), SetNumStyle(numstyle, val), provider, out cnv))
-				return 1;
+			if (val == null)
+				return false;
 
-			return 0;
+			return uint.TryParse(val.Replace("0x", ""), SetNumStyle(numstyle, val), provider, out cnv);
 		}
 
-		public static long StrToLong(string val, out long cnv, int numstyle)
+		public static bool StrToLong(string val, out long cnv, int numstyle)
 		{
 			cnv = 0;
 			CultureInfo provider = CultureInfo.CurrentCulture;
 
-			if (val == null ||
-				!Int64.TryParse(val.Replace("0x", ""), SetNumStyle(numstyle, val), provider, out cnv))
-				return 1;
+			if (val == null)
+				return false;
 
-			return 0;
+			return long.TryParse(val.Replace("0x", ""), SetNumStyle(numstyle, val), provider, out cnv);
 		}
 
 		/// <summary>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 
 namespace firmware_wintools.Tools
@@ -34,7 +34,7 @@ namespace firmware_wintools.Tools
 						case "r":
 							string vendor = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref vendor) == 0 &&
-								Program.StrToUInt(vendor, out uint conv_vendor, 0) == 0)
+								Program.StrToUInt(vendor, out uint conv_vendor, 0))
 							{
 								subprops.vendor = conv_vendor;
 								i++;
@@ -43,7 +43,7 @@ namespace firmware_wintools.Tools
 						case "p":
 							string product = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref product) == 0 &&
-								Program.StrToUInt(product, out uint conv_product, 0) == 0)
+								Program.StrToUInt(product, out uint conv_product, 0))
 							{
 								subprops.product = conv_product;
 								i++;
@@ -52,7 +52,7 @@ namespace firmware_wintools.Tools
 						case "m":
 							string magic = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref magic) == 0 &&
-								Program.StrToUInt(magic, out uint conv_magic, 0) == 0)
+								Program.StrToUInt(magic, out uint conv_magic, 0))
 							{
 								subprops.magic = conv_magic;
 								i++;
@@ -64,7 +64,7 @@ namespace firmware_wintools.Tools
 						case "b":
 							string bs = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref bs) == 0 &&
-								Program.StrToInt(bs, out int conv_bs, 0) == 0)
+								Program.StrToInt(bs, out int conv_bs, 0))
 							{
 								subprops.bs = conv_bs;
 								i++;
