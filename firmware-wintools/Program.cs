@@ -46,56 +46,93 @@ namespace firmware_wintools
 			public bool param_invalid;
 		}
 
-		public static NumberStyles SetNumStyle(int numstyle, string valStr)
+		public static bool StrToLong(string valStr, out long cnv, NumberStyles styles)
 		{
-			switch (numstyle)
+			int suf = 1;
+			CultureInfo provider = CultureInfo.CurrentCulture;
+			cnv = 0;
+
+			if (valStr == null)
+				return false;
+
+			switch (styles)
 			{
-				case 0:		// auto
-					if (valStr.StartsWith("0x"))
-						goto case 16;
-					else
-						goto case 10;
-				case 16:	// hex
-					return NumberStyles.HexNumber;
-				case 10:	// decimal
-				default:	// octal（8進数）は.NETで非サポート、10進数として強制解釈
-					return NumberStyles.Integer;
+				case NumberStyles.None:		// use as "auto"
+					/* jump to "default" if no hex prefix */
+					if (!valStr.StartsWith("0x"))
+						goto default;
+					valStr = valStr.Remove(0, 2);
+					styles = NumberStyles.HexNumber;
+					break;
+				case NumberStyles.HexNumber:	// do nothing
+					break;
+				default:
+					styles = NumberStyles.Integer;
+					break;
 			}
-		}
 
-		public static bool StrToInt(string val, out int cnv, int numstyle)
-		{
-			cnv = 0;
-			CultureInfo provider = CultureInfo.CurrentCulture;
+			if (styles != NumberStyles.HexNumber)
+			{
+				switch (valStr[valStr.Length - 1])
+				{
+					case 'g':
+					case 'G':
+						suf *= 1024;
+						goto case 'M';
+					case 'm':
+					case 'M':
+						suf *= 1024;
+						goto case 'K';
+					case 'k':
+					case 'K':
+						suf *= 1024;
+						valStr = valStr.Remove(valStr.Length - 1, 1);
+						break;
+				}
+			}
 
-			if (val == null)
+			if (!long.TryParse(valStr, styles, provider, out cnv))
 				return false;
 
+			cnv *= suf;
 
-			return int.TryParse(val.Replace("0x", ""), SetNumStyle(numstyle, val), provider, out cnv);
+			return true;
 		}
 
-		public static bool StrToUInt(string val, out uint cnv, int numstyle)
+		public static bool StrToInt(string val, out int cnv, NumberStyles numstyle)
 		{
 			cnv = 0;
-			CultureInfo provider = CultureInfo.CurrentCulture;
 
-			if (val == null)
+			if (!StrToLong(val, out long cnvLong, numstyle) ||
+				cnvLong > int.MaxValue ||
+				cnvLong < int.MinValue)
 				return false;
 
-			return uint.TryParse(val.Replace("0x", ""), SetNumStyle(numstyle, val), provider, out cnv);
+			cnv = (int)cnvLong;
+
+			return true;
 		}
 
-		public static bool StrToLong(string val, out long cnv, int numstyle)
+		public static bool StrToUInt(string val, out uint cnv, NumberStyles numstyle)
 		{
 			cnv = 0;
-			CultureInfo provider = CultureInfo.CurrentCulture;
 
-			if (val == null)
+			if (!StrToLong(val, out long cnvLong, numstyle) ||
+				cnvLong > uint.MaxValue ||
+				cnvLong < uint.MinValue)
 				return false;
 
-			return long.TryParse(val.Replace("0x", ""), SetNumStyle(numstyle, val), provider, out cnv);
+			cnv = (uint)cnvLong;
+
+			return true;
 		}
+
+	/*	public static bool StrToLong(string val, out long cnv, NumberStyles numstyle)
+		{
+			cnv = 0;
+
+			return StrToNum(val, out cnv, numstyle);
+		}*/
 
 		/// <summary>
 		/// 本体ヘルプを表示
