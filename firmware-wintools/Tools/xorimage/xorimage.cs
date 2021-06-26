@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -183,10 +184,10 @@ namespace firmware_wintools.Tools
 			else
 				offset = subprops.offset;
 
-			if (subprops.len != null &&					// something is specified for len
-				(!Program.StrToLong(subprops.len, out len, 0) ||	// fail to convert (invalid chars for num)
-				len <= 0 ||						// equal or smaller than 0
-				len > inFs.Length - offset))				// larger than valid length
+			if (subprops.len != null &&						// something is specified for len
+				(!Program.StrToLong(subprops.len, out len, NumberStyles.None) ||// fail to convert (invalid chars for num)
+				len <= 0 ||							// equal or smaller than 0
+				len > inFs.Length - offset))					// larger than valid length
 			{
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Warning_Prefix +

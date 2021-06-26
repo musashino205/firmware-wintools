@@ -22,7 +22,8 @@ namespace firmware_wintools.Tools
 						case "O":	// offset
 							string offset = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref offset) == 0 &&
-								Program.StrToInt(offset, out int conv_offset, 0))
+								Program.StrToInt(offset, out int conv_offset,
+									System.Globalization.NumberStyles.None))
 							{
 								subprops.offset = conv_offset;
 								i++;

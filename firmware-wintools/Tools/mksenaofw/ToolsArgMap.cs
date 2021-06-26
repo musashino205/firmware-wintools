@@ -34,7 +34,8 @@ namespace firmware_wintools.Tools
 						case "r":
 							string vendor = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref vendor) == 0 &&
-								Program.StrToUInt(vendor, out uint conv_vendor, 0))
+								Program.StrToUInt(vendor, out uint conv_vendor,
+										NumberStyles.None))
 							{
 								subprops.vendor = conv_vendor;
 								i++;
@@ -43,7 +44,8 @@ namespace firmware_wintools.Tools
 						case "p":
 							string product = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref product) == 0 &&
-								Program.StrToUInt(product, out uint conv_product, 0))
+								Program.StrToUInt(product, out uint conv_product,
+										NumberStyles.None))
 							{
 								subprops.product = conv_product;
 								i++;
@@ -52,7 +54,8 @@ namespace firmware_wintools.Tools
 						case "m":
 							string magic = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref magic) == 0 &&
-								Program.StrToUInt(magic, out uint conv_magic, 0))
+								Program.StrToUInt(magic, out uint conv_magic,
+										NumberStyles.None))
 							{
 								subprops.magic = conv_magic;
 								i++;

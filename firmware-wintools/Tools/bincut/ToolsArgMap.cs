@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace firmware_wintools.Tools
 {
 	partial class ToolsArgMap
@@ -18,7 +20,8 @@ namespace firmware_wintools.Tools
 						case "l":	// length
 							string length = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref length) == 0 &&
-								Program.StrToLong(length, out long conv_length, 0))
+								Program.StrToLong(length, out long conv_length,
+										NumberStyles.None))
 							{
 								subprops.len = conv_length;
 								i++;
@@ -28,7 +31,8 @@ namespace firmware_wintools.Tools
 						case "O":	// offset
 							string offset = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref offset) == 0 &&
-								Program.StrToInt(offset, out int conv_offset, 0))
+								Program.StrToInt(offset, out int conv_offset,
+										NumberStyles.None))
 							{
 								subprops.offset = conv_offset;
 								i++;
@@ -37,7 +41,8 @@ namespace firmware_wintools.Tools
 						case "p":	// padding
 							string pad = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref pad) == 0 &&
-								Program.StrToInt(pad, out int conv_pad, 0))
+								Program.StrToInt(pad, out int conv_pad,
+										NumberStyles.None))
 							{
 								subprops.pad = conv_pad;
 								i++;
@@ -46,7 +51,8 @@ namespace firmware_wintools.Tools
 						case "P":	// padding with blocksize
 							string padBS = null;
 							if (ArgMap.Set_StrParamFromArgs(args, i, ref padBS) == 0 &&
-								Program.StrToInt(padBS, out int conv_padBS, 0))
+								Program.StrToInt(padBS, out int conv_padBS,
+										NumberStyles.None))
 							{
 								subprops.padBS = conv_padBS;
 								i++;
