@@ -171,7 +171,7 @@ namespace firmware_wintools.Tools
 		/* for encryption */
 		internal int EncryptData(byte seed, in byte[] key, bool longstate)
 		{
-			return BufBcrypt.Bcrypt_Buf(seed, key, ref data, 0, (int)dataLen, longstate);
+			return BufBcrypt.Bcrypt_Buf(seed, key, ref data, 0, dataLen, longstate);
 		}
 
 		/* for decryption */
@@ -181,7 +181,7 @@ namespace firmware_wintools.Tools
 			if (FileToBytes(in inFs, ref data, length) != length)
 				return 1;
 
-			return BufBcrypt.Bcrypt_Buf(seed, key, ref data, 0, (int)length, longstate);
+			return BufBcrypt.Bcrypt_Buf(seed, key, ref data, 0, length, longstate);
 		}
 	}
 }

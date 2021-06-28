@@ -16,10 +16,10 @@ namespace firmware_wintools.Tools
 		}
 
 		static private int Bcrypt_Init(ref Bcrypt_ctx ctx, in byte[] key, int keylen,
-			int state_len)
+			long state_len)
 		{
-			int k = 0;
-			int i, j;
+			long k = 0;
+			long i, j;
 
 			ctx.buf = new byte[state_len];
 
@@ -44,27 +44,27 @@ namespace firmware_wintools.Tools
 		}
 
 		static private void Bcrypt_Process(ref Bcrypt_ctx ctx, ref byte[] src,
-			int offset, int len)
+			long offset, long len)
 		{
 			byte i, j;
 
 			i = Convert.ToByte(ctx.i);
 			j = Convert.ToByte(ctx.j);
 
-			for (int k = 0; k < len; k++)
+			for (long k = 0; k < len; k++)
 			{
 				byte t;
 
-				i = (byte)((uint)(i + 1) % ctx.buf_len);
-				j = (byte)((uint)(j + ctx.buf[i]) % ctx.buf_len);
+				i = (byte)((i + 1) % ctx.buf_len);
+				j = (byte)((j + ctx.buf[i]) % ctx.buf_len);
 				t = ctx.buf[j];
 				ctx.buf[j] = ctx.buf[i];
 				ctx.buf[i] = t;
 
 				if (offset >= 0)
-					src[k] = (byte)(src[k + offset] ^ ctx.buf[(uint)(ctx.buf[i] + ctx.buf[j]) % ctx.buf_len]);
+					src[k] = (byte)(src[k + offset] ^ ctx.buf[(ctx.buf[i] + ctx.buf[j]) % ctx.buf_len]);
 				else
-					src[k + -offset] = (byte)(src[k + -offset] ^ ctx.buf[(uint)(ctx.buf[i] + ctx.buf[j]) % ctx.buf_len]);
+					src[k + -offset] = (byte)(src[k + -offset] ^ ctx.buf[(ctx.buf[i] + ctx.buf[j]) % ctx.buf_len]);
 			}
 
 			ctx.i = i;
@@ -89,7 +89,7 @@ namespace firmware_wintools.Tools
 		/// <param name="longstate"></param>
 		/// <returns>成功: 0, 失敗: 1</returns>
 		static internal int Bcrypt_Buf(byte seed, in byte[] key, ref byte[] src,
-			int offset, int len, bool longstate)
+			long offset, long len, bool longstate)
 		{
 			byte[] bckey = new byte[BCRYPT_MAX_KEYLEN + 1];
 			int keylen;
