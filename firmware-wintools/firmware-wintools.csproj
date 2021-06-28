@@ -135,9 +135,9 @@
     <Compile Include="Tools\aes\ToolsArgMap.cs" />
     <Compile Include="Tools\bincut\bincut.cs" />
     <Compile Include="Tools\bincut\ToolsArgMap.cs" />
+    <Compile Include="Tools\buffalo-tools\BufBcrypt.cs" />
     <Compile Include="Tools\buffalo-tools\buffalo-enc.cs" />
-    <Compile Include="Tools\buffalo-tools\buffalo-libh.cs" />
-    <Compile Include="Tools\buffalo-tools\buffalo-lib.cs" />
+    <Compile Include="Tools\buffalo-tools\BuffaloEncFirmware.cs" />
     <Compile Include="Tools\buffalo-tools\ToolsArgMap.cs" />
     <Compile Include="Tools\Firmware.cs" />
     <Compile Include="Tools\mkedimaximg\mkedimaximg.cs" />
