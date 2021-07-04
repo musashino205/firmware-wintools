@@ -19,6 +19,9 @@ namespace firmware_wintools.Tools
 				{
 					switch (args[i].Replace("-", ""))
 					{
+						case "C":
+							subprops.isMinorCksum = true;
+							break;
 						case "d":
 							subprops.isde = true;
 							break;

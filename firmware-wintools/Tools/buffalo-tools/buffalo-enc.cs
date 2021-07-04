@@ -21,6 +21,7 @@ namespace firmware_wintools.Tools
 			public bool isde;
 			public int offset;
 			public int size;
+			public bool isMinorCksum;
 			public bool force;
 		}
 
@@ -179,7 +180,7 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			footer.cksum = fw.GetCksum();
+			footer.cksum = fw.GetCksum(subprops.isMinorCksum);
 
 			if (!props.quiet)
 				PrintInfo(subprops, fw.dataLen, footer.cksum, props.debug);
@@ -278,7 +279,7 @@ namespace firmware_wintools.Tools
 				return 1;
 
 			fw.dataLen = header.data_len;
-			cksum = fw.GetCksum();
+			cksum = fw.GetCksum(subprops.isMinorCksum);
 			/* 計算cksumと埋め込みcksum不一致 & 非forceならエラー */
 			if (!subprops.force && cksum != footer.cksum)
 				return 1;

@@ -160,13 +160,14 @@ namespace firmware_wintools.Tools
 		/* 実際のデータ長（パディング分を含まない） */
 		internal long dataLen;
 
-		internal uint GetCksum()
+		internal uint GetCksum(bool minorCksum)
 		{
 			uint csum = (uint)dataLen;
 
 			foreach (sbyte sbyteVal in data)
 			{
-				csum ^= (uint)sbyteVal;
+				csum ^= minorCksum ?
+					(byte)sbyteVal : (uint)sbyteVal;
 
 				for (int i = 0; i < 8; i++)
 					csum = ((csum & 1) > 0) ?
