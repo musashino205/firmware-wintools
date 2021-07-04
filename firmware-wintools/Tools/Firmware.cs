@@ -147,27 +147,8 @@ namespace firmware_wintools.Tools
 
 		internal int WriteToFile(bool dataonly)
 		{
-			bool fsNoHandle = false;
-
-			if (outFile == null)
-				return 1;
-
 			if (data == null || data.LongLength == 0)
 				return 1;
-
-			if (outFs == null)
-				try
-				{
-					outFs = new FileStream(outFile, outFMode,
-							FileAccess.Write, FileShare.None);
-				}
-				catch (IOException e)
-				{
-					Console.Error.WriteLine(e.Message);
-					return 1;
-				}
-			else
-				fsNoHandle = true;
 
 			if (!dataonly && header != null && header.LongLength > 0)
 			{
@@ -182,12 +163,28 @@ namespace firmware_wintools.Tools
 				if (BytesToFile(ref footer, ref outFs) != footer.LongLength)
 					return 1;
 
-			//outFs.Write(data, 0, data.Length);
-
-			if (!fsNoHandle)
-				outFs.Close();
-
 			return 0;
+		}
+
+		internal int OpenAndWriteToFile(bool dataonly)
+		{
+			int ret;
+
+			try
+			{
+				using (outFs = new FileStream(outFile, outFMode,
+							FileAccess.Write, FileShare.None))
+				{
+					ret = WriteToFile(dataonly);
+				}
+			}
+			catch (IOException e)
+			{
+				Console.Error.WriteLine(e.Message);
+				return 1;
+			}
+
+			return ret;
 		}
 	}
 }
