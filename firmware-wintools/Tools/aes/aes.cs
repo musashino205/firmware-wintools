@@ -87,6 +87,7 @@ namespace firmware_wintools.Tools
 				keylen = 256,
 			};
 			CryptoStream Cs;
+			Firmware fw = new Firmware();
 
 			ToolsArgMap argMap = new ToolsArgMap();
 			argMap.Init_args_Aes(args, arg_idx, ref subprops);
@@ -96,6 +97,9 @@ namespace firmware_wintools.Tools
 				PrintHelp(arg_idx);
 				return 0;
 			}
+
+			fw.inFInfo = new FileInfo(props.inFile);
+			fw.outFile = props.outFile;
 
 			keylen = subprops.keylen;
 
@@ -206,34 +210,18 @@ namespace firmware_wintools.Tools
 			 * check/build iv and key end
 			 */
 
-			FileStream inFs;
-			FileStream outFs;
-			FileMode outMode =
-				File.Exists(props.outFile) ? FileMode.Truncate : FileMode.Create;
-			try
-			{
-				inFs = new FileStream(props.inFile, FileMode.Open, FileAccess.Read, FileShare.Write);
-				outFs = new FileStream(props.outFile, outMode, FileAccess.Write, FileShare.None);
-			}
-			catch (IOException e)
-			{
-				Console.Error.WriteLine(e.Message);
-				return 1;
-			}
-
 			/* check offset/length */
-			if (subprops.offset > inFs.Length)
+			if (subprops.offset > fw.inFInfo.Length)
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Warning_Prefix +
 					Lang.Tools.AesRes.Warning_LargeOffset);
 			else
 				offset = subprops.offset;
 
-
 			if (subprops.len != null &&						// something is specified for len
 				(!Program.StrToLong(subprops.len, out len, NumberStyles.None) ||// fail to convert (invalid chars for num)
 				len <= 0 ||							// equal or smaller than 0
-				len > inFs.Length - offset))					// larger than valid length
+				len > fw.inFInfo.Length - offset))				// larger than valid length
 			{
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Warning_Prefix +
@@ -243,7 +231,7 @@ namespace firmware_wintools.Tools
 
 			if (subprops.len != null ?
 				len % 16 != 0 :				// if "length" specified
-				(inFs.Length - offset) % 16 != 0)	// no length specified
+				(fw.inFInfo.Length - offset) % 16 != 0)	// no length specified
 			{
 				if (subprops.decrypt)
 				{
@@ -263,7 +251,7 @@ namespace firmware_wintools.Tools
 
 			if (!props.quiet)
 				PrintInfo(subprops, key, iv,
-					subprops.len != null ? len : inFs.Length - offset);
+					subprops.len != null ? len : fw.inFInfo.Length - offset);
 
 			AesManaged aes = new AesManaged
 			{
@@ -277,31 +265,41 @@ namespace firmware_wintools.Tools
 			ICryptoTransform endec = subprops.decrypt ?
 				aes.CreateDecryptor(aes.Key, aes.IV) :
 				aes.CreateEncryptor(aes.Key, aes.IV);
-			Cs = new CryptoStream(outFs, endec, CryptoStreamMode.Write);
 
-			inFs.Seek(offset, SeekOrigin.Begin);
-
-			byte[] buf = new byte[0x10000];
-			int readlen;
-			while ((readlen = inFs.Read(buf, 0, buf.Length)) > 0)
+			try
 			{
-				if (subprops.len == null)
-					Cs.Write(buf, 0, readlen);
-				else if (len > readlen)
+				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
+							FileAccess.Read, FileShare.Write))
+				using (fw.outFs = new FileStream(props.outFile, FileMode.Create,
+							FileAccess.Write, FileShare.None))
+				using (Cs = new CryptoStream(fw.outFs, endec, CryptoStreamMode.Write))
 				{
-					len -= readlen;
-					Cs.Write(buf, 0, readlen);
-				}
-				else
-				{
-					Cs.Write(buf, 0, (int)len);
-					break;
+					fw.inFs.Seek(offset, SeekOrigin.Begin);
+
+					byte[] buf = new byte[0x10000];
+					int readlen;
+					while ((readlen = fw.inFs.Read(buf, 0, buf.Length)) > 0)
+					{
+						if (subprops.len == null)
+							Cs.Write(buf, 0, readlen);
+						else if (len > readlen)
+						{
+							len -= readlen;
+							Cs.Write(buf, 0, readlen);
+						}
+						else
+						{
+							Cs.Write(buf, 0, (int)len);
+							break;
+						}
+					}
 				}
 			}
-
-			Cs.Close();
-			inFs.Close();
-			outFs.Close();
+			catch (Exception e)
+			{
+				Console.Error.WriteLine(e.Message);
+				return 1;
+			}
 
 			return 0;
 		}
