@@ -162,15 +162,16 @@ namespace firmware_wintools.Tools
 
 		internal uint GetCksum()
 		{
-			// ref: https://blog.ch3cooh.jp/entry/20111005/1317772085
-			sbyte[] tmp = ((data as Array) as sbyte[]);
 			uint csum = (uint)dataLen;
 
-			for (long i = 0; i < dataLen; i++)
+			foreach (sbyte sbyteVal in data)
 			{
-				csum ^= (uint)tmp[i];
-				for (int j = 0; j < 8; j++)
-					csum = (uint)((csum >> 1) ^ (((csum & 1) > 0) ? 0xEDB88320ul : 0));
+				csum ^= (uint)sbyteVal;
+
+				for (int i = 0; i < 8; i++)
+					csum = ((csum & 1) > 0) ?
+							(csum >> 1) ^ 0xEDB88320 :
+							csum >>= 1;
 			}
 
 			return csum;
