@@ -136,10 +136,12 @@ namespace firmware_wintools.Tools
 				ver_len = subprops.version.Length + 1,
 				version = Encoding.ASCII.GetBytes(subprops.version + "\0"),
 				data_len = subprops.size > 0 ?
-						(uint)subprops.size : (uint)fw.inFs.Length
+						(uint)subprops.size : (uint)fw.inFInfo.Length
 			};
 
 			BufEncFooter footer = new BufEncFooter();
+
+			MemoryStream bufStream = new MemoryStream();
 
 			/* キーは 0x00 ('\0') で終端 */
 			key = Encoding.ASCII.GetBytes(subprops.crypt_key + "\0");
@@ -152,8 +154,30 @@ namespace firmware_wintools.Tools
 			footer.totalLen +=				// フッタ2
 				4 - (footer.totalLen + header.totalLen + fw.dataLen) % 4;
 
-			fw.data = new byte[fw.dataLen];
-			Firmware.FileToBytes(in fw.inFs, ref fw.data, fw.dataLen);
+			try
+			{
+				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
+							FileAccess.Read, FileShare.Read))
+				{
+					fw.data = new byte[fw.dataLen];
+					Firmware.FileToBytes(in fw.inFs, ref fw.data, fw.dataLen);
+
+					/*
+					 * サイズ指定ある場合バッファにコピー
+					 * バッファ側は読み込んだ分進むので0にシーク
+					 */
+					if (subprops.size > 0)
+					{
+						fw.inFs.CopyTo(bufStream);
+						bufStream.Seek(0, SeekOrigin.Begin);
+					}
+				}
+			}
+			catch (IOException e)
+			{
+				Console.Error.WriteLine(e.Message);
+				return 1;
+			}
 
 			footer.cksum = fw.GetCksum();
 
@@ -181,20 +205,21 @@ namespace firmware_wintools.Tools
 
 			try
 			{
-				fw.outFs = new FileStream(fw.outFile, FileMode.Create, FileAccess.Write, FileShare.None);
+				using (fw.outFs = new FileStream(fw.outFile, FileMode.Create,
+							FileAccess.Write, FileShare.None))
+				{
+					ret = fw.WriteToFile(false);
+
+					/* サイズ指定ある場合残りのデータを出力ファイルにコピー */
+					if (subprops.size > 0)
+						bufStream.CopyTo(fw.outFs);
+				}
 			}
 			catch (IOException e)
 			{
 				Console.Error.WriteLine(e.Message);
 				return 1;
 			}
-			ret = fw.WriteToFile(false);
-
-			/* サイズ指定ある場合残りのデータを出力ファイルにコピー */
-			if (subprops.size > 0)
-				fw.inFs.CopyTo(fw.outFs);
-
-			fw.outFs.Close();
 
 			return ret;
 		}
@@ -208,7 +233,7 @@ namespace firmware_wintools.Tools
 			BufEncHeader header = new BufEncHeader();
 			BufEncFooter footer = new BufEncFooter();
 
-			if (!fw.inFs.CanSeek || fw.inFs.Length < subprops.offset)
+			if (fw.inFInfo.Length < subprops.offset)
 			{
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_LargeOffset,
@@ -216,23 +241,34 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			fw.inFs.Seek(subprops.offset, SeekOrigin.Begin);
+			try
+			{
+				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
+							FileAccess.Read, FileShare.Read)) {
+					fw.inFs.Seek(subprops.offset, SeekOrigin.Begin);
 
-			key = Encoding.ASCII.GetBytes(subprops.crypt_key);
-			/* ヘッダ読み込み */
-			ret = header.LoadHeader(fw.inFs, in key, subprops.islong);
-			if (ret > 0)
-				return ret;
+					key = Encoding.ASCII.GetBytes(subprops.crypt_key);
+					/* ヘッダ読み込み */
+					ret = header.LoadHeader(fw.inFs, in key, subprops.islong);
+					if (ret > 0)
+						return ret;
 
-			/* データ読み込み */
-			ret = fw.LoadData(header.data_len, header.dataSeed, in key, subprops.islong);
-			if (ret > 0)
-				return ret;
+					/* データ読み込み */
+					ret = fw.LoadData(header.data_len, header.dataSeed, in key, subprops.islong);
+					if (ret > 0)
+						return ret;
 
-			/* フッタ読み込み */
-			ret = footer.LoadFooter(fw.inFs);
-			if (ret > 0)
-				return ret;
+					/* フッタ読み込み */
+					ret = footer.LoadFooter(fw.inFs);
+					if (ret > 0)
+						return ret;
+				}
+			}
+			catch (IOException e)
+			{
+				Console.Error.WriteLine(e.Message);
+				return 1;
+			}
 
 			fw.dataLen = header.data_len;
 			cksum = fw.GetCksum();
@@ -248,9 +284,7 @@ namespace firmware_wintools.Tools
 			if (!props.quiet)
 				PrintInfo(subprops, header.data_len, footer.cksum, props.debug);
 
-			fw.WriteToFile(true);
-
-			return 0;
+			return fw.OpenAndWriteToFile(true);
 		}
 
 		public int Do_BuffaloEnc(string[] args, int arg_idx, Program.Properties props)
@@ -278,17 +312,9 @@ namespace firmware_wintools.Tools
 
 			fw.outFile = props.outFile;
 			fw.outFMode = FileMode.Create;
-			try
-			{
-				fw.inFs = new FileStream(props.inFile, FileMode.Open, FileAccess.Read, FileShare.Read);
-			}
-			catch (IOException e)
-			{
-				Console.Error.WriteLine(e.Message);
-				return 1;
-			}
+			fw.inFInfo = new FileInfo(props.inFile);
 
-			if (fw.inFs.Length > uint.MaxValue) {
+			if (fw.inFInfo.Length > uint.MaxValue) {
 				Console.Error.WriteLine(Lang.Tools.BuffaloEncRes.Error_BigFile);
 				return 1;
 			}
@@ -296,8 +322,6 @@ namespace firmware_wintools.Tools
 			ret = subprops.isde ?
 				Decrypt(ref fw, subprops, props) :
 				Encrypt(ref fw, subprops, props);
-
-			fw.inFs.Close();
 
 			return ret;
 		}
