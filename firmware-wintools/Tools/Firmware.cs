@@ -44,6 +44,14 @@ namespace firmware_wintools.Tools
 						index++;
 						break;
 
+					case ushort ushortVal when (buf.Length - curLen) >= sizeof(ushort):
+						tmp = BitConverter.GetBytes(ushortVal);
+						if (tmp.Length == 0)
+							continue;
+						Array.Copy(tmp, 0, buf, index, tmp.Length);
+						index += tmp.Length;
+						break;
+
 					case int intVal when (buf.Length - curLen) >= sizeof(int):
 						tmp = BitConverter.GetBytes(intVal);
 						if (tmp.Length == 0)
