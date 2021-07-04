@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
@@ -36,18 +36,6 @@ namespace firmware_wintools.Tools
 		}
 
 		/// <summary>
-		/// edimaxヘッダ構造体
-		/// </summary>
-		public struct Header
-		{
-			public byte[] sign;
-			public int start;
-			public int flash;
-			public byte[] model;
-			public int size;
-		}
-
-		/// <summary>
 		/// mkedimaximgの機能ヘルプを表示します
 		/// </summary>
 		private void PrintHelp(int arg_idx)
@@ -82,27 +70,6 @@ namespace firmware_wintools.Tools
 		}
 
 		/// <summary>
-		/// <paramref name="buf"/> からデータ末尾に付加するchecksumの算出を行います
-		/// </summary>
-		/// <param name="buf">checksum算出対象データ</param>
-		/// <param name="isbe">BEでの算出</param>
-		/// <returns></returns>
-		private ushort CalcCkSum(in byte[] buf, bool isbe)
-		{
-			ushort cksum = 0;
-
-			for (int i = 0; i < buf.Length / 2; i++)
-			{
-				if (isbe)
-					cksum -= (ushort)IPAddress.HostToNetworkOrder(BitConverter.ToInt16(buf, i * 2));
-				else
-					cksum -= BitConverter.ToUInt16(buf, i);
-			}
-
-			return cksum;
-		}
-
-		/// <summary>
 		/// mkedimaximgメイン関数
 		/// <para>コマンドライン引数とメインプロパティから、edimaxヘッダと checksum
 		/// の付加を行います</para>
@@ -112,19 +79,10 @@ namespace firmware_wintools.Tools
 		/// <returns></returns>
 		public int Do_MkEdimaxImage(string[] args, int arg_idx, Program.Properties props)
 		{
-			int read_len;
-			ushort cksum;
-			byte[] header_buf;
-			byte[] buf;
 			Properties subprops = new Properties();
-			Header header = new Header()
-			{
-				sign = new byte[4],
-				model = new byte[4],
-				flash = 0,
-				start = 0,
-				size = 0
-			};
+			EdimaxHeader header = new EdimaxHeader();
+			EdimaxFirmware fw = new EdimaxFirmware();
+			EdimaxFooter footer = new EdimaxFooter();
 
 			if (props.help)
 			{
@@ -134,6 +92,10 @@ namespace firmware_wintools.Tools
 
 			ToolsArgMap argMap = new ToolsArgMap();
 			argMap.Init_args_MkEdimaxImg(args, arg_idx, ref subprops);
+
+			fw.inFInfo = new FileInfo(props.inFile);
+			fw.outFile = props.outFile;
+			fw.outFMode = FileMode.Create;
 
 			if (subprops.signature == null || subprops.signature == "")
 			{
@@ -175,24 +137,46 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
+			if (fw.inFInfo.Length > int.MaxValue)
+			{
+				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+					Lang.Tools.MkEdimaxImgRes.Error_LargeInFile);
+				return 1;
+			}
+
 			if (!props.quiet)
 				PrintInfo(subprops);
 
+			fw.dataLen = Convert.ToInt32(fw.inFInfo.Length + sizeof(short));
+
+			/* ヘッダ設定 */
 			header.sign = Encoding.ASCII.GetBytes(subprops.signature);
-			header.flash = (subprops.isbe) ? IPAddress.HostToNetworkOrder(subprops.flash) : subprops.flash;
-			header.start = (subprops.isbe) ? IPAddress.HostToNetworkOrder(subprops.start) : subprops.start;
+			header.start = subprops.isbe ?
+						IPAddress.HostToNetworkOrder(subprops.start) :
+						subprops.start;
+			header.flash = subprops.isbe ?
+						IPAddress.HostToNetworkOrder(subprops.flash) :
+						subprops.flash;
 			header.model = Encoding.ASCII.GetBytes(subprops.model);
+			header.size = subprops.isbe ?
+						IPAddress.HostToNetworkOrder(fw.dataLen) :
+						fw.dataLen;
 
-			header_buf = new byte[Marshal.SizeOf(header)];
+			fw.totalLen = header.size + fw.inFInfo.Length;
 
-			FileStream inFs;
-			FileStream outFs;
-			FileMode outFMode =
-				File.Exists(props.outFile) ? FileMode.Truncate : FileMode.Create;
+			header.totalLen = sizeof(byte) * 4	// sign
+					+ sizeof(int) * 2	// start, flash
+					+ sizeof(byte) * 4	// model
+					+ sizeof(int);		// size
+
 			try
 			{
-				inFs = new FileStream(props.inFile, FileMode.Open, FileAccess.Read, FileShare.Read);
-				outFs = new FileStream(props.outFile, outFMode, FileAccess.Write, FileShare.None);
+				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
+							FileAccess.Read, FileShare.Read))
+				{
+					fw.data = new byte[fw.inFInfo.Length];
+					Firmware.FileToBytes(in fw.inFs, ref fw.data, fw.inFInfo.Length);
+				}
 			}
 			catch (IOException e)
 			{
@@ -200,49 +184,28 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			if (inFs.Length > 0x7FFFFFFFu)
+			footer.cksum = fw.CalcCksum(subprops.isbe);
+			if (props.debug)
 			{
-				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
-					Lang.Tools.MkEdimaxImgRes.Error_LargeInFile);
+				Console.WriteLine(" header size:\t{0} bytes (0x{0:X})", header.totalLen);
+				Console.WriteLine(" data size:\t{0} bytes (0x{0:X})", fw.inFInfo.Length + sizeof(short));
+				Console.WriteLine(" total size:\t{0} bytes (0x{0:X})", header.totalLen + fw.inFInfo.Length + sizeof(short));
+				Console.WriteLine(" checksum:\t{0:X}\n", footer.cksum);
+			}
+
+			/* ヘッダシリアル化 */
+			fw.header = new byte[header.totalLen];
+			if (header.SerializeProps(ref fw.header, 0) != header.totalLen)
 				return 1;
-			}
 
-			buf = new byte[inFs.Length];
-			header.size = Convert.ToInt32(inFs.Length + sizeof(short));
-
-			if (props.debug)
-			{
-				Console.WriteLine(" header size:\t{0} bytes (0x{0:X})", header_buf.Length);
-				Console.WriteLine(" data size:\t{0} bytes (0x{0:X})", inFs.Length + sizeof(short));
-				Console.WriteLine(" total size:\t{0} bytes (0x{0:X})", header_buf.Length + inFs.Length + sizeof(short));
-			}
-
+			/* BEモード時フッタcksumをBE変換 */
 			if (subprops.isbe)
-				header.size = IPAddress.HostToNetworkOrder(header.size);
+				footer.cksum = (ushort)IPAddress.HostToNetworkOrder((short)footer.cksum);
+			/* フッタシリアル化 */
+			fw.footer = new byte[sizeof(ushort)];
+			footer.SerializeProps(ref fw.footer, 0);
 
-			// struct -> byte[] 変換上手くいかない（文字列が化ける）ので個別に
-			Array.Copy(header.sign, 0, header_buf, 0, sizeof(int));
-			Array.Copy(BitConverter.GetBytes(header.start), 0, header_buf, sizeof(int), sizeof(int));
-			Array.Copy(BitConverter.GetBytes(header.flash), 0, header_buf, sizeof(int) * 2, sizeof(int));
-			Array.Copy(header.model, 0, header_buf, sizeof(int) * 3, sizeof(int));
-			Array.Copy(BitConverter.GetBytes(header.size), 0, header_buf, sizeof(int) * 4, sizeof(int));
-
-			outFs.Write(header_buf, 0, header_buf.Length);
-
-			read_len = inFs.Read(buf, 0, buf.Length);
-			outFs.Write(buf, 0, read_len);
-
-			cksum = CalcCkSum(in buf, subprops.isbe);
-			if (props.debug)
-				Console.WriteLine(" checksum:\t{0:X}\n", cksum);
-			if (subprops.isbe)
-				cksum = (ushort)IPAddress.HostToNetworkOrder((short)cksum);
-
-			outFs.Write(BitConverter.GetBytes(cksum), 0, sizeof(ushort));
-
-			inFs.Close();
-			outFs.Close();
-			return 0;
+			return fw.OpenAndWriteToFile(false);
 		}
 	}
 }

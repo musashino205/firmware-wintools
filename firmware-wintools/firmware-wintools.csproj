@@ -140,6 +140,7 @@
     <Compile Include="Tools\buffalo-tools\BuffaloEncFirmware.cs" />
     <Compile Include="Tools\buffalo-tools\ToolsArgMap.cs" />
     <Compile Include="Tools\Firmware.cs" />
+    <Compile Include="Tools\mkedimaximg\EdimaxFirmware.cs" />
     <Compile Include="Tools\mkedimaximg\mkedimaximg.cs" />
     <Compile Include="Tools\mkedimaximg\ToolsArgMap.cs" />
     <Compile Include="Tools\mksenaofw\firmware_type.cs" />
