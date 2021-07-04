@@ -139,6 +139,7 @@
     <Compile Include="Tools\buffalo-tools\buffalo-libh.cs" />
     <Compile Include="Tools\buffalo-tools\buffalo-lib.cs" />
     <Compile Include="Tools\buffalo-tools\ToolsArgMap.cs" />
+    <Compile Include="Tools\Firmware.cs" />
     <Compile Include="Tools\mkedimaximg\mkedimaximg.cs" />
     <Compile Include="Tools\mkedimaximg\ToolsArgMap.cs" />
     <Compile Include="Tools\mksenaofw\firmware_type.cs" />
