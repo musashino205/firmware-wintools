@@ -247,14 +247,13 @@ namespace firmware_wintools.Tools
 							FileAccess.Read, FileShare.Read)) {
 					fw.inFs.Seek(subprops.offset, SeekOrigin.Begin);
 
-					key = Encoding.ASCII.GetBytes(subprops.crypt_key);
 					/* ヘッダ読み込み */
-					ret = header.LoadHeader(fw.inFs, in key, subprops.islong);
+					ret = header.LoadHeader(fw.inFs);
 					if (ret > 0)
 						return ret;
 
 					/* データ読み込み */
-					ret = fw.LoadData(header.data_len, header.dataSeed, in key, subprops.islong);
+					ret = fw.LoadData(header.data_len);
 					if (ret > 0)
 						return ret;
 
@@ -269,6 +268,14 @@ namespace firmware_wintools.Tools
 				Console.Error.WriteLine(e.Message);
 				return 1;
 			}
+
+			key = Encoding.ASCII.GetBytes(subprops.crypt_key);
+
+			/* Decrypt Header/Data */
+			if (header.DecryptHeader(key, subprops.islong) != 0)
+				return 1;
+			if (fw.DecryptData(header.data_len, header.dataSeed, in key, subprops.islong) != 0)
+				return 1;
 
 			fw.dataLen = header.data_len;
 			cksum = fw.GetCksum();

@@ -77,16 +77,14 @@ namespace firmware_wintools.Tools
 			return magicStr.Equals("start") || magicStr.Equals("asar1");
 		}
 
-		internal int LoadHeader(in FileStream fs, in byte[] key, bool longstate)
+		internal int LoadHeader(in FileStream fs)
 		{
-			byte[] buf = new byte[128];
+			byte[] buf = new byte[sizeof(int)];
 
 			/* magic */
-			if (fs.Read(buf, 0, ENC_MAGIC_LEN) != ENC_MAGIC_LEN)
-				return 1;
-
 			magic = new byte[ENC_MAGIC_LEN];
-			Array.Copy(buf, magic, ENC_MAGIC_LEN);
+			if (fs.Read(magic, 0, ENC_MAGIC_LEN) != ENC_MAGIC_LEN)
+				return 1;
 			if (!CheckMagic(magic))
 				return 1;
 
@@ -102,12 +100,9 @@ namespace firmware_wintools.Tools
 			prod_len = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(buf, 0));
 
 			/* product */
-			if (fs.Read(buf, 0, prod_len) != prod_len)
-				return 1;
 			product = new byte[prod_len];
-			Array.Copy(buf, product, prod_len);
-			BufBcrypt.Bcrypt_Buf(seed, in key, ref product, 0, prod_len, longstate);
-			dataSeed = buf[0];
+			if (fs.Read(product, 0, prod_len) != prod_len)
+				return 1;
 
 			/* ver_len */
 			if (fs.Read(buf, 0, sizeof(int)) != sizeof(int))
@@ -115,16 +110,29 @@ namespace firmware_wintools.Tools
 			ver_len = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(buf, 0));
 
 			/* version */
-			if (fs.Read(buf, 0, ver_len) != ver_len)
-				return 1;
 			version = new byte[ver_len];
-			Array.Copy(buf, version, ver_len);
-			BufBcrypt.Bcrypt_Buf(dataSeed, in key, ref version, 0, ver_len, longstate);
-			dataSeed = buf[0];
+			if (fs.Read(version, 0, ver_len) != ver_len)
+				return 1;
 
 			if (fs.Read(buf, 0, sizeof(uint)) != sizeof(uint))
 				return 1;
 			data_len = (uint)IPAddress.NetworkToHostOrder(BitConverter.ToInt32(buf, 0));
+
+			return 0;
+		}
+
+		internal int DecryptHeader(in byte[] key, bool longstate)
+		{
+			/* データの復号に使用するseedは復号前のversionの1文字目 */
+			dataSeed = version[0];
+
+			/* version */
+			if (BufBcrypt.Bcrypt_Buf(product[0], in key, ref version, 0, ver_len, longstate) != 0)
+				return 1;
+
+			/* product */
+			if (BufBcrypt.Bcrypt_Buf(seed, in key, ref product, 0, prod_len, longstate) != 0)
+				return 1;
 
 			return 0;
 		}
@@ -175,12 +183,16 @@ namespace firmware_wintools.Tools
 		}
 
 		/* for decryption */
-		internal int LoadData(long length, byte seed, in byte[] key, bool longstate)
+		internal int LoadData(long length)
 		{
 			data = new byte[length];
-			if (FileToBytes(in inFs, ref data, length) != length)
-				return 1;
 
+			return (FileToBytes(in inFs, ref data, length) == length) ?
+				0 : 1;
+		}
+
+		internal int DecryptData(long length, byte seed, in byte[] key, bool longstate)
+		{
 			return BufBcrypt.Bcrypt_Buf(seed, key, ref data, 0, length, longstate);
 		}
 	}
