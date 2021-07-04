@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 namespace firmware_wintools.Tools
@@ -48,6 +48,8 @@ namespace firmware_wintools.Tools
 		{
 			Properties subprops = new Properties();
 
+			Firmware fw = new Firmware();
+
 			if (props.help)
 			{
 				PrintHelp(arg_idx);
@@ -57,30 +59,17 @@ namespace firmware_wintools.Tools
 			ToolsArgMap argMap = new ToolsArgMap();
 			argMap.Init_args_BinCut(args, arg_idx, ref subprops);
 
-			FileStream inFs;
-			FileStream outFs;
-			FileMode outFMode =
-				File.Exists(props.outFile) ? FileMode.Truncate : FileMode.Create;
-			try
-			{
-				inFs = new FileStream(props.inFile, FileMode.Open, FileAccess.Read, FileShare.Read);
-				outFs = new FileStream(props.outFile, outFMode, FileAccess.Write, FileShare.None);
-			}
-			catch (IOException e)
-			{
-				Console.Error.WriteLine(e.Message);
-				return 1;
-			}
+			fw.inFInfo = new FileInfo(props.inFile);
 
 			/* check offset/length */
-			if (subprops.offset > inFs.Length)
+			if (subprops.offset > fw.inFInfo.Length)
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Warning_Prefix +
 					Lang.Tools.BinCutRes.Warning_LargeOffset);
 				subprops.offset = 0;
 			}
 
-			if (subprops.len < 0 || subprops.len > inFs.Length - subprops.offset)
+			if (subprops.len < 0 || subprops.len > fw.inFInfo.Length - subprops.offset)
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Warning_Prefix +
 					Lang.Tools.BinCutRes.Warning_InvalidLength);
@@ -96,7 +85,7 @@ namespace firmware_wintools.Tools
 
 			if (subprops.pad != 0 &&
 				subprops.pad <
-					(subprops.len != 0 ? subprops.len : inFs.Length - subprops.offset))
+					(subprops.len != 0 ? subprops.len : fw.inFInfo.Length - subprops.offset))
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 					Lang.Tools.BinCutRes.Error_SmallPadSize);
@@ -112,41 +101,55 @@ namespace firmware_wintools.Tools
 			/* check offset/length/pad/pad_with_bs end */
 
 			long data_len =
-				subprops.len != 0 ? subprops.len : (inFs.Length - subprops.offset);
+				subprops.len != 0 ? subprops.len : (fw.inFInfo.Length - subprops.offset);
 			if (!props.quiet)
 				PrintInfo(subprops, data_len);
 
-			inFs.Seek(subprops.offset, SeekOrigin.Begin);
-
-			inFs.CopyTo(outFs);
-
-			if (subprops.len != 0)
-				outFs.SetLength(subprops.len);
-
-			/* padding無しであればここで終了 */
-			if (subprops.pad == 0 && subprops.padBS == 0)
-				return 0;
-
-			long padded_len;
-			/*
-			 * blocksizeでのpaddingの際は余りを確認して、あるようならblocksizeを足す
-			 * 指定サイズへのpaddingの際はそのサイズをそのまま指定
-			 */
-			if (subprops.padBS > 0)
-				padded_len = subprops.padBS *
-					((data_len / subprops.padBS) + (data_len % subprops.padBS > 0 ? 1 : 0));
-			else
-				padded_len = subprops.pad;
-			long len;
-			byte[] buf = new byte[0x10000];
-
-			for (len = padded_len - data_len; len >= buf.Length; len -= buf.Length)
+			try
 			{
-				outFs.Write(buf, 0, buf.Length);
-			}
+				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
+							FileAccess.Read, FileShare.Read))
+				using (fw.outFs = new FileStream(props.outFile, FileMode.Create,
+							FileAccess.Write, FileShare.None))
+				{
+					fw.inFs.Seek(subprops.offset, SeekOrigin.Begin);
 
-			if (len > 0)
-				outFs.Write(buf, 0, (int)len);
+					fw.inFs.CopyTo(fw.outFs);
+
+					if (subprops.len != 0)
+						fw.outFs.SetLength(subprops.len);
+
+					/* padding無しであればここで終了 */
+					if (subprops.pad == 0 && subprops.padBS == 0)
+						return 0;
+
+					long padded_len;
+					/*
+					 * blocksizeでのpaddingの際は余りを確認して、あるようならblocksizeを足す
+					 * 指定サイズへのpaddingの際はそのサイズをそのまま指定
+					 */
+					if (subprops.padBS > 0)
+						padded_len = subprops.padBS *
+							((data_len / subprops.padBS) + (data_len % subprops.padBS > 0 ? 1 : 0));
+					else
+						padded_len = subprops.pad;
+					long len;
+					byte[] buf = new byte[0x10000];
+
+					for (len = padded_len - data_len; len >= buf.Length; len -= buf.Length)
+					{
+						fw.outFs.Write(buf, 0, buf.Length);
+					}
+
+					if (len > 0)
+						fw.outFs.Write(buf, 0, (int)len);
+				}
+			}
+			catch (IOException e)
+			{
+				Console.Error.WriteLine(e.Message);
+				return 1;
+			}
 
 			return 0;
 		}
