@@ -83,6 +83,7 @@ namespace firmware_wintools.Tools
 
 	class Firmware
 	{
+		public FileInfo inFInfo;
 		public string outFile;
 		public FileStream inFs = null;
 		public FileStream outFs = null;
