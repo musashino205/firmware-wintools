@@ -201,7 +201,7 @@ namespace firmware_wintools.Tools
 			footer.SerializeProps(ref fw.footer, 0);
 
 			/* データ暗号化 */
-			if (fw.EncryptData(header.dataSeed, key, subprops.islong) < 0)
+			if (fw.EncryptData(header.dataSeed, key, subprops.islong) > 0)
 				return 1;
 
 			try
