@@ -188,7 +188,12 @@ namespace firmware_wintools.Tools
 			/* ヘッダ暗号化（+ product長, ver長, データ長BE変換） */
 			ret = header.EncryptHeader(key, subprops.islong);
 			if (ret > 0)
+			{
+				Console.Error.WriteLine(
+					Lang.Resource.Main_Error_Prefix +
+					Lang.Tools.BuffaloEncRes.Error_FailEncryptHeader);
 				return ret;
+			}
 			/* ヘッダシリアル化 */
 			fw.header = new byte[header.totalLen];
 			if (header.SerializeProps(ref fw.header, 0) != header.totalLen)
@@ -202,7 +207,12 @@ namespace firmware_wintools.Tools
 
 			/* データ暗号化 */
 			if (fw.EncryptData(header.dataSeed, key, subprops.islong) > 0)
+			{
+				Console.Error.WriteLine(
+					Lang.Resource.Main_Error_Prefix +
+					Lang.Tools.BuffaloEncRes.Error_FailEncryptData);
 				return 1;
+			}
 
 			try
 			{
@@ -251,17 +261,32 @@ namespace firmware_wintools.Tools
 					/* ヘッダ読み込み */
 					ret = header.LoadHeader(fw.inFs);
 					if (ret > 0)
+					{
+						Console.Error.WriteLine(
+							Lang.Resource.Main_Error_Prefix +
+							Lang.Tools.BuffaloEncRes.Error_FailLoadHeader);
 						return ret;
+					}
 
 					/* データ読み込み */
 					ret = fw.LoadData(header.data_len);
 					if (ret > 0)
+					{
+						Console.Error.WriteLine(
+							Lang.Resource.Main_Error_Prefix +
+							Lang.Tools.BuffaloEncRes.Error_FailLoadData);
 						return ret;
+					}
 
 					/* フッタ読み込み */
 					ret = footer.LoadFooter(fw.inFs);
 					if (ret > 0)
+					{
+						Console.Error.WriteLine(
+							Lang.Resource.Main_Error_Prefix +
+							Lang.Tools.BuffaloEncRes.Error_FailLoadFooter);
 						return ret;
+					}
 				}
 			}
 			catch (IOException e)
@@ -273,16 +298,33 @@ namespace firmware_wintools.Tools
 			key = Encoding.ASCII.GetBytes(subprops.crypt_key);
 
 			/* Decrypt Header/Data */
-			if (header.DecryptHeader(key, subprops.islong) != 0)
+			if (header.DecryptHeader(key, subprops.islong) != 0 ||
+			    fw.DecryptData(header.data_len, header.dataSeed, in key, subprops.islong) != 0)
+			{
+				Console.Error.WriteLine(
+					Lang.Resource.Main_Error_Prefix +
+					Lang.Tools.BuffaloEncRes.Error_FailDecryptData);
 				return 1;
-			if (fw.DecryptData(header.data_len, header.dataSeed, in key, subprops.islong) != 0)
-				return 1;
+			}
 
 			fw.dataLen = header.data_len;
 			cksum = fw.GetCksum(subprops.isMinorCksum);
 			/* 計算cksumと埋め込みcksum不一致 & 非forceならエラー */
 			if (!subprops.force && cksum != footer.cksum)
+			{
+				Console.Error.WriteLine(
+					Lang.Resource.Main_Error_Prefix +
+					Lang.Tools.BuffaloEncRes.Error_CksumNotMatch);
+
 				return 1;
+			}
+			if (cksum != footer.cksum)
+			{
+				Console.Error.WriteLine(
+					Lang.Resource.Main_Warning_Prefix +
+					Lang.Tools.BuffaloEncRes.Warn_CksumNotMatch);
+			}
+
 			subprops.magic = Encoding.ASCII.GetString(header.magic).TrimEnd('\0');
 			subprops.seed = header.seed;
 			subprops.product = Encoding.ASCII.GetString(header.product).TrimEnd('\0');
@@ -330,6 +372,18 @@ namespace firmware_wintools.Tools
 			ret = subprops.isde ?
 				Decrypt(ref fw, subprops, props) :
 				Encrypt(ref fw, subprops, props);
+
+			if (ret != 0)
+			{
+				if (subprops.isde)
+					Console.Error.WriteLine(
+						Lang.Resource.Main_Error_Prefix +
+						Lang.Tools.BuffaloEncRes.Error_FailDecrypt);
+				else
+					Console.Error.WriteLine(
+						Lang.Resource.Main_Error_Prefix +
+						Lang.Tools.BuffaloEncRes.Error_FailEncrypt);
+			}
 
 			return ret;
 		}

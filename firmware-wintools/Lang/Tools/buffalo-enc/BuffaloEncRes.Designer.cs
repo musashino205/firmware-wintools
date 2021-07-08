@@ -70,6 +70,15 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
+        ///   checksum doesn&apos;t match, exiting... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Error_CksumNotMatch {
+            get {
+                return ResourceManager.GetString("Error.CksumNotMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   failed to decrypt に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Error_FailDecrypt {
@@ -79,11 +88,65 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
+        ///   failed to decrypt header or data に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Error_FailDecryptData {
+            get {
+                return ResourceManager.GetString("Error.FailDecryptData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   failed to encrypt に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Error_FailEncrypt {
             get {
                 return ResourceManager.GetString("Error.FailEncrypt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   failed to encrypt data に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Error_FailEncryptData {
+            get {
+                return ResourceManager.GetString("Error.FailEncryptData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   failed to encrypt header に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Error_FailEncryptHeader {
+            get {
+                return ResourceManager.GetString("Error.FailEncryptHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   failed to load data に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Error_FailLoadData {
+            get {
+                return ResourceManager.GetString("Error.FailLoadData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   failed to load footer に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Error_FailLoadFooter {
+            get {
+                return ResourceManager.GetString("Error.FailLoadFooter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   failed to load header に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Error_FailLoadHeader {
+            get {
+                return ResourceManager.GetString("Error.FailLoadHeader", resourceCulture);
             }
         }
         
@@ -372,6 +435,15 @@ namespace firmware_wintools.Lang.Tools {
         internal static string Main_FuncDesc_Fmt {
             get {
                 return ResourceManager.GetString("Main.FuncDesc.Fmt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   checksum doesn&apos;t match, ignoring... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Warn_CksumNotMatch {
+            get {
+                return ResourceManager.GetString("Warn.CksumNotMatch", resourceCulture);
             }
         }
     }

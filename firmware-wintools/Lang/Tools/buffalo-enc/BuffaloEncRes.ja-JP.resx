@@ -226,4 +226,28 @@
   <data name="Error.BigFile" xml:space="preserve">
     <value>指定されたファイルは大きすぎます（2GiB以上）</value>
   </data>
+  <data name="Error.CksumNotMatch" xml:space="preserve">
+    <value>チェックサムが一致しません。終了します...</value>
+  </data>
+  <data name="Error.FailDecryptData" xml:space="preserve">
+    <value>ヘッダーまたはデータの復号に失敗しました</value>
+  </data>
+  <data name="Error.FailEncryptData" xml:space="preserve">
+    <value>データの暗号化に失敗しました</value>
+  </data>
+  <data name="Error.FailEncryptHeader" xml:space="preserve">
+    <value>ヘッダーの暗号化に失敗しました</value>
+  </data>
+  <data name="Error.FailLoadData" xml:space="preserve">
+    <value>データの読み込みに失敗しました</value>
+  </data>
+  <data name="Error.FailLoadFooter" xml:space="preserve">
+    <value>フッターの読み込みに失敗しました</value>
+  </data>
+  <data name="Error.FailLoadHeader" xml:space="preserve">
+    <value>ヘッダーの読み込みに失敗しました</value>
+  </data>
+  <data name="Warn.CksumNotMatch" xml:space="preserve">
+    <value>チェックサムが一致しません。無視します...</value>
+  </data>
 </root>

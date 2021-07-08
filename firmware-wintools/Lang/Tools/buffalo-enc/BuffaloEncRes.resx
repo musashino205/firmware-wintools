@@ -120,11 +120,32 @@
   <data name="Error.BigFile" xml:space="preserve">
     <value>specified file is too big (&gt;= 2GiB)</value>
   </data>
+  <data name="Error.CksumNotMatch" xml:space="preserve">
+    <value>checksum doesn't match, exiting...</value>
+  </data>
   <data name="Error.FailDecrypt" xml:space="preserve">
     <value>failed to decrypt</value>
   </data>
+  <data name="Error.FailDecryptData" xml:space="preserve">
+    <value>failed to decrypt header or data</value>
+  </data>
   <data name="Error.FailEncrypt" xml:space="preserve">
     <value>failed to encrypt</value>
+  </data>
+  <data name="Error.FailEncryptData" xml:space="preserve">
+    <value>failed to encrypt data</value>
+  </data>
+  <data name="Error.FailEncryptHeader" xml:space="preserve">
+    <value>failed to encrypt header</value>
+  </data>
+  <data name="Error.FailLoadData" xml:space="preserve">
+    <value>failed to load data</value>
+  </data>
+  <data name="Error.FailLoadFooter" xml:space="preserve">
+    <value>failed to load footer</value>
+  </data>
+  <data name="Error.FailLoadHeader" xml:space="preserve">
+    <value>failed to load header</value>
   </data>
   <data name="Error.InvalidMagicLen" xml:space="preserve">
     <value>length of magic must be {0}</value>
@@ -227,5 +248,8 @@
   </data>
   <data name="Main.FuncDesc.Fmt" xml:space="preserve">
     <value>    {0}		: {1}</value>
+  </data>
+  <data name="Warn.CksumNotMatch" xml:space="preserve">
+    <value>checksum doesn't match, ignoring...</value>
   </data>
 </root>
