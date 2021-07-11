@@ -167,7 +167,7 @@
 </value>
   </data>
   <data name="Help.Options.t.TypeFmt" xml:space="preserve">
-    <value>			 {0} = {1}	{2}</value>
+    <value>			 {0,2} = {1,-12} {2}</value>
   </data>
   <data name="Help.Options.t.values" xml:space="preserve">
     <value>			--- valid image &lt;type&gt; values: ---</value>

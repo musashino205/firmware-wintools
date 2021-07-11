@@ -194,7 +194,7 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
-        ///   			 {0} = {1}	{2} に類似しているローカライズされた文字列を検索します。
+        ///   			 {0,2} = {1,-12} {2} に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Help_Options_t_TypeFmt {
             get {
