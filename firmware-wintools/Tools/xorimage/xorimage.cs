@@ -113,6 +113,10 @@ namespace firmware_wintools.Tools
 			byte[] pattern;
 			byte[] hex_pattern = new byte[128];
 			byte[] buf = new byte[4096];
+			Firmware fw = new Firmware()
+			{
+				data = new byte[4096]
+			};
 			Properties subprops = new Properties
 			{
 				pattern = "12345678"
@@ -162,22 +166,10 @@ namespace firmware_wintools.Tools
 			else
 				pattern = Encoding.ASCII.GetBytes(subprops.pattern);
 
-			FileStream inFs;
-			FileStream outFs;
-			FileMode outFMode =
-				File.Exists(props.outFile) ? FileMode.Truncate : FileMode.Create;
-			try
-			{
-				inFs = new FileStream(props.inFile, FileMode.Open, FileAccess.Read, FileShare.Read);
-				outFs = new FileStream(props.outFile, outFMode, FileAccess.Write, FileShare.None);
-			} catch (IOException e)
-			{
-				Console.Error.WriteLine(e.Message);
-				return 1;
-			}
+			fw.inFInfo = new FileInfo(props.inFile);
 
 			/* check offset/length */
-			if (subprops.offset > inFs.Length)
+			if (subprops.offset > fw.inFInfo.Length)
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Warning_Prefix +
 					Lang.Tools.XorImageRes.Warning_LargeOffset);
@@ -186,8 +178,8 @@ namespace firmware_wintools.Tools
 
 			if (subprops.len != null &&						// something is specified for len
 				(!Program.StrToLong(subprops.len, out len, NumberStyles.None) ||// fail to convert (invalid chars for num)
-				len <= 0 ||							// equal or smaller than 0
-				len > inFs.Length - offset))					// larger than valid length
+			    len <= 0 ||								// equal or smaller than 0
+			    len > fw.inFInfo.Length - offset))					// larger than valid length
 			{
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Warning_Prefix +
@@ -197,59 +189,65 @@ namespace firmware_wintools.Tools
 			/* check offset/length end */
 
 			if (!props.quiet)
-				PrintInfo(subprops, len != long.MaxValue ? len : inFs.Length - offset);
+				PrintInfo(subprops, len != long.MaxValue ? len : fw.inFInfo.Length - offset);
 
-			/* copy data of the range 0x0 to offset to outFs if rewrite mode */
-			if (subprops.rewrite)
-				while ((read_len = inFs.Read(buf, 0, buf.Length)) > 0)
-				{
-					if (inFs.Position <= offset)
-					{
-						outFs.Write(buf, 0, read_len);
-					}
-					else
-					{
-						outFs.Write(buf, 0, read_len - (int)(inFs.Position - offset));
-						break;
-					}
-				}
-
-			inFs.Seek(offset, SeekOrigin.Begin);
-
-			while ((read_len = inFs.Read(buf, 0, buf.Length)) > 0)
+			try
 			{
-				write_len = read_len;
-
-				if (len != long.MaxValue)
-					if (len > read_len)
-						len -= read_len;	// 読み取った長さよりも残りの対象データ長が長い場合差し引く
-					else
-						write_len = (int)len;	// 残りデータ長が読み取った長さ以下である場合残りデータ長を使う
-
-				p_off = XorData(ref buf, write_len, in pattern, p_len, p_off, subprops.ishex);
-
-				outFs.Write(buf, 0, write_len);
-
-				/*
-				 * 読み取った長さが対象データ長以下である場合breakしてXorと書き込みを終了
-				 * len <= read_lenであるならばlengthが正しい数値で指定され（long.MaxValueでない）、
-				 * なおかつ最後のブロックであるので、inFsから残りをoutFsへコピーするため読み取った
-				 * データ長から実際に書き込んだデータ長を差し引いたサイズで現在位置からマイナス方向に
-				 * Seekする
-				 */
-				if (len <= read_len)
+				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
+							FileAccess.Read, FileShare.Read))
+				using (fw.outFs = new FileStream(props.outFile, FileMode.Create,
+							FileAccess.Write, FileShare.None))
 				{
-					inFs.Seek(-(read_len - write_len), SeekOrigin.Current);
-					break;
+					if (subprops.rewrite && subprops.offset > 0)
+					{
+						fw.inFs.CopyTo(fw.outFs);
+						/* outFs.Lengthをoffsetまで切り詰める */
+						fw.outFs.SetLength(offset);
+					}
+
+					/* inFs.Positionをoffsetに移動 */
+					fw.inFs.Seek(offset, SeekOrigin.Begin);
+
+					while ((read_len = fw.inFs.Read(fw.data, 0, fw.data.Length)) > 0)
+					{
+						write_len = read_len;
+
+						if (len != long.MaxValue)
+							/* 読み取った長さよりも残りの対象データ長が長い場合 */
+							if (len > read_len)
+								len -= read_len;
+							/* 残りデータ長が読み取った長さ以下である場合 */
+							else
+								write_len = (int)len;
+
+						p_off = XorData(ref fw.data, write_len, in pattern, p_len, p_off, subprops.ishex);
+
+						fw.outFs.Write(fw.data, 0, write_len);
+
+						/*
+						 * 読み取った長さが残り対象データ長以上である場合breakしてXorと書き込みを終了
+						 * len <= read_lenであるならばlengthが正しい数値で指定され（long.MaxValueでない）、
+						 * なおかつ最後のブロックであるので、inFsから残りをoutFsへコピーするため読み取った
+						 * データ長から実際に書き込んだデータ長を差し引いたサイズで現在位置からマイナス方向に
+						 * Seekする
+						 */
+						if (len <= read_len)
+						{
+							fw.inFs.Seek(-(read_len - write_len), SeekOrigin.Current);
+							break;
+						}
+					}
+
+					/* copy remaining data in inFs to outFs if rewrite mode */
+					if (subprops.rewrite)
+						fw.inFs.CopyTo(fw.outFs);
 				}
 			}
-
-			/* copy remaining data in inFs to outFs if rewrite mode */
-			if (subprops.rewrite)
-				inFs.CopyTo(outFs);
-
-			inFs.Close();
-			outFs.Close();
+			catch (IOException e)
+			{
+				Console.Error.WriteLine(e.Message);
+				return 1;
+			}
 
 			return 0;
 		}
