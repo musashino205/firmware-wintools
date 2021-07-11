@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 
@@ -97,16 +97,16 @@ namespace firmware_wintools.Tools
 		/// <returns>実行結果</returns>
 		public int Do_NecEnc(string[] args, int arg_idx, Program.Properties props)
 		{
-			int max_key_len = 32;
-			int pattern_len = 251;
+			const int MAX_KEY_LEN = 32;
 			int read_len;
-			int ptn = 1;
 			int k_off = 0;
 			int k_len = 0;
-			byte[] key = new byte[] {};
-			byte[] buf_pattern = new byte[4096];
-			byte[] buf = new byte[4096];
+			byte[] key = new byte[0];
 			Properties subprops = new Properties();
+			NecEncFirmware fw = new NecEncFirmware() {
+				data = new byte[4096],
+				buf_ptn = new byte[4096]
+			};
 
 			ToolsArgMap argMap = new ToolsArgMap();
 			argMap.Init_args_NecEnc(args, arg_idx, ref subprops);
@@ -127,11 +127,11 @@ namespace firmware_wintools.Tools
 				}
 
 				k_len = subprops.key.Length;
-				if (k_len == 0 || k_len > max_key_len)
+				if (k_len == 0 || k_len > MAX_KEY_LEN)
 				{
 					Console.Error.WriteLine(
 						Lang.Resource.Main_Error_Prefix + Lang.Tools.NecEncRes.Error_InvalidKeyLen,
-						max_key_len);
+						MAX_KEY_LEN);
 					return 1;
 				}
 
@@ -141,63 +141,56 @@ namespace firmware_wintools.Tools
 			if (!props.quiet)
 				PrintInfo(subprops);
 
-			FileStream inFs;
-			FileStream outFs;
-			FileStream patFs = null;
-			FileStream xpatFs = null;
-			FileMode outFMode =
-				File.Exists(props.outFile) ? FileMode.Truncate : FileMode.Create;
 			try
 			{
-				inFs = new FileStream(props.inFile, FileMode.Open, FileAccess.Read, FileShare.Read);
-				outFs = new FileStream(props.outFile, outFMode, FileAccess.Write, FileShare.None);
+				FileStream patFs = null;
+				FileStream xpatFs = null;
 
 				if (props.debug)
 				{
-					patFs = new FileStream(@"pattern.bin", FileMode.OpenOrCreate, FileAccess.Write);
+					patFs = new FileStream(@"pattern.bin",
+							FileMode.Create, FileAccess.Write);
 					if (!subprops.half)
-						xpatFs = new FileStream(@"pattern.xor", FileMode.OpenOrCreate, FileAccess.Write);
+						xpatFs = new FileStream(@"pattern.xor",
+							FileMode.Create, FileAccess.Write);
+				}
+
+				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
+							FileAccess.Read, FileShare.Read))
+				using (fw.outFs = new FileStream(props.outFile, FileMode.Create,
+							FileAccess.Write, FileShare.None))
+				{
+					while ((read_len = fw.inFs.Read(fw.data, 0, fw.data.Length)) > 0)
+					{
+						fw.GenerateBasePattern(read_len);
+
+						if (props.debug)
+							patFs.Write(fw.buf_ptn, 0, read_len);
+
+						if (!subprops.half)
+						{
+							k_off = XorPattern(ref fw.buf_ptn, read_len, key, k_len, k_off);
+							if (props.debug)
+								xpatFs.Write(fw.buf_ptn, 0, read_len);
+						}
+
+						XorData(ref fw.data, read_len, in fw.buf_ptn);
+
+						fw.outFs.Write(fw.data, 0, read_len);
+					}
+				}
+
+				if (props.debug)
+				{
+					patFs.Close();
+					if (!subprops.half)
+						xpatFs.Close();
 				}
 			}
 			catch (IOException e)
 			{
 				Console.Error.WriteLine(e.Message);
 				return 1;
-			}
-
-			while ((read_len = inFs.Read(buf, 0, buf.Length)) > 0)
-			{
-				for (int i = 0; i < read_len; i++)
-				{
-					buf_pattern[i] = Convert.ToByte(ptn);
-					ptn++;
-
-					if (ptn > pattern_len)
-						ptn = 1;
-				}
-
-				if (props.debug)
-					patFs.Write(buf_pattern, 0, read_len);
-
-				if (!subprops.half)
-				{
-					k_off = XorPattern(ref buf_pattern, read_len, key, k_len, k_off);
-					if (props.debug)
-						xpatFs.Write(buf_pattern, 0, read_len);
-				}
-
-				XorData(ref buf, read_len, in buf_pattern);
-
-				outFs.Write(buf, 0, read_len);
-			}
-
-			inFs.Close();
-			outFs.Close();
-			if (props.debug)
-			{
-				patFs.Close();
-				if (!subprops.half)
-					xpatFs.Close();
 			}
 
 			return 0;

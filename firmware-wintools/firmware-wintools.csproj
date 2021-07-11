@@ -146,6 +146,7 @@
     <Compile Include="Tools\mksenaofw\mksenaofw.cs" />
     <Compile Include="Tools\mksenaofw\SenaoFirmware.cs" />
     <Compile Include="Tools\mksenaofw\ToolsArgMap.cs" />
+    <Compile Include="Tools\nec-enc\NecEncFirmware.cs" />
     <Compile Include="Tools\nec-enc\ToolsArgMap.cs" />
     <Compile Include="Tools\nec-enc\nec-enc.cs" />
     <Compile Include="Tools\xorimage\ToolsArgMap.cs" />
