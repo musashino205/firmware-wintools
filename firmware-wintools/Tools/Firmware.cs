@@ -103,22 +103,23 @@ namespace firmware_wintools.Tools
 
 		static internal long FileToBytes(in FileStream fs, ref byte[] array, long length)
 		{
-			long readLen, copyLen = 0, totalLen = 0;
+			long readLen, copyLen = -1, totalLen = 0;
 			const int readBlock = 0x10000;
 			byte[] buf = new byte[readBlock];
 
 			if (fs == null || array == null)
 				return 0;
 
-			while ((readLen = fs.Read(buf, 0, readBlock)) > 0){
+			while ((readLen = fs.Read(buf, 0, readBlock)) > 0)
+			{
 				if ((length - totalLen) < readLen)
 					copyLen = length - totalLen;
 
-				Array.Copy(buf, 0, array, totalLen, copyLen > 0 ?
+				Array.Copy(buf, 0, array, totalLen, copyLen >= 0 ?
 								copyLen : readLen);
-				totalLen += copyLen > 0 ? copyLen : readLen;
+				totalLen += copyLen >= 0 ? copyLen : readLen;
 
-				if (copyLen > 0)
+				if (copyLen >= 0)
 				{
 					/* 途中までのコピーの場合fsを現在起点にマイナス方向へseek */
 					fs.Seek(-(readLen - copyLen), SeekOrigin.Current);
