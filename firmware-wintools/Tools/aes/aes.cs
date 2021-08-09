@@ -6,7 +6,7 @@ using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	class Aes
+	static class Aes
 	{
 		public struct Properties
 		{
@@ -20,7 +20,7 @@ namespace firmware_wintools.Tools
 			public bool decrypt;
 		}
 
-		private void PrintHelp(int arg_idx)
+		private static void PrintHelp(int arg_idx)
 		{
 			Console.WriteLine(Lang.Tools.AesRes.Help_Usage +
 				Lang.Tools.AesRes.FuncDesc +
@@ -40,7 +40,7 @@ namespace firmware_wintools.Tools
 				Lang.Tools.AesRes.Help_Options_s);
 		}
 
-		private void PrintInfo(Properties subprops, byte[] key, byte[] iv, long filelen)
+		private static void PrintInfo(Properties subprops, byte[] key, byte[] iv, long filelen)
 		{
 			Console.WriteLine(Lang.Tools.AesRes.Info,		// mode info
 				subprops.decrypt ?
@@ -75,7 +75,7 @@ namespace firmware_wintools.Tools
 				subprops.offset);
 		}
 
-		public int Do_Aes(string[] args, int arg_idx, Program.Properties props)
+		public static int Do_Aes(string[] args, int arg_idx, Program.Properties props)
 		{
 			byte[] iv;
 			byte[] key;

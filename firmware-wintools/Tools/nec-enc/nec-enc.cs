@@ -4,7 +4,7 @@ using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	class Nec_Enc
+	static class Nec_Enc
 	{
 		/// <summary>
 		/// nec-encの機能プロパティ
@@ -21,7 +21,7 @@ namespace firmware_wintools.Tools
 		/// <summary>
 		/// nec-encの機能ヘルプを表示します
 		/// </summary>
-		private void PrintHelp(int arg_idx)
+		private static void PrintHelp(int arg_idx)
 		{
 			Console.WriteLine(Lang.Tools.NecEncRes.Help_Usage +
 				Lang.Tools.NecEncRes.FuncDesc +
@@ -38,7 +38,7 @@ namespace firmware_wintools.Tools
 		/// nec-encの実行情報を表示します
 		/// </summary>
 		/// <param name="props">nec-encの機能プロパティ</param>
-		private void PrintInfo(Properties subprops)
+		private static void PrintInfo(Properties subprops)
 		{
 			Console.WriteLine(Lang.Tools.NecEncRes.Info);
 			Console.WriteLine(Lang.Tools.NecEncRes.Info_key,
@@ -54,7 +54,7 @@ namespace firmware_wintools.Tools
 		/// <param name="k_len">キー長</param>
 		/// <param name="k_off">キー オフセット</param>
 		/// <returns></returns>
-		private int XorPattern(ref byte[] data, int len, byte[] key, int k_len, int k_off)
+		private static int XorPattern(ref byte[] data, int len, byte[] key, int k_len, int k_off)
 		{
 			int data_pos = 0;
 
@@ -75,7 +75,7 @@ namespace firmware_wintools.Tools
 		/// <param name="data">xor対象データ</param>
 		/// <param name="len">xor対象データの長さ</param>
 		/// <param name="pattern">xorに用いるpattern</param>
-		private void XorData(ref byte[] data, int len, in byte[] pattern)
+		private static void XorData(ref byte[] data, int len, in byte[] pattern)
 		{
 			int data_pos = 0;
 
@@ -95,7 +95,7 @@ namespace firmware_wintools.Tools
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">Program内メインプロパティ</param>
 		/// <returns>実行結果</returns>
-		public int Do_NecEnc(string[] args, int arg_idx, Program.Properties props)
+		public static int Do_NecEnc(string[] args, int arg_idx, Program.Properties props)
 		{
 			const int MAX_KEY_LEN = 32;
 			int read_len;

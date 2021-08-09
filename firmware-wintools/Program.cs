@@ -285,32 +285,25 @@ namespace firmware_wintools
 			switch (mode)
 			{
 				case "aes":
-					Tools.Aes aes = new Tools.Aes();
-					ret = aes.Do_Aes(args, arg_idx, props);
+					ret = Tools.Aes.Do_Aes(args, arg_idx, props);
 					break;
 				case "bincut":
-					Tools.BinCut bincut = new Tools.BinCut();
-					ret = bincut.Do_BinCut(args, arg_idx, props);
+					ret = Tools.BinCut.Do_BinCut(args, arg_idx, props);
 					break;
 				case "buffalo-enc":
-					Tools.Buffalo_Enc buffalo_enc = new Tools.Buffalo_Enc();
-					ret = buffalo_enc.Do_BuffaloEnc(args, arg_idx, props);
+					ret = Tools.Buffalo_Enc.Do_BuffaloEnc(args, arg_idx, props);
 					break;
 				case "mkedimaximg":
-					Tools.MkEdimaxImg mkedimaximg = new Tools.MkEdimaxImg();
-					ret = mkedimaximg.Do_MkEdimaxImage(args, arg_idx, props);
+					ret = Tools.MkEdimaxImg.Do_MkEdimaxImage(args, arg_idx, props);
 					break;
 				case "mksenaofw":
-					Tools.MkSenaoFw mksenaofw = new Tools.MkSenaoFw();
-					ret = mksenaofw.Do_MkSenaoFw(args, arg_idx, props);
+					ret = Tools.MkSenaoFw.Do_MkSenaoFw(args, arg_idx, props);
 					break;
 				case "nec-enc":
-					Tools.Nec_Enc nec_enc = new Tools.Nec_Enc();
-					ret = nec_enc.Do_NecEnc(args, arg_idx, props);
+					ret = Tools.Nec_Enc.Do_NecEnc(args, arg_idx, props);
 					break;
 				case "xorimage":
-					Tools.XorImage xorimage = new Tools.XorImage();
-					ret = xorimage.Do_XorImage(args, arg_idx, props);
+					ret = Tools.XorImage.Do_XorImage(args, arg_idx, props);
 					break;
 				default:
 					if (mode.StartsWith("-") && props.help)

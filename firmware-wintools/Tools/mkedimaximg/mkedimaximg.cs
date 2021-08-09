@@ -6,7 +6,7 @@ using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	class MkEdimaxImg
+	static class MkEdimaxImg
 	{
 		/// <summary>
 		/// mkedimaximgの機能プロパティ
@@ -38,7 +38,7 @@ namespace firmware_wintools.Tools
 		/// <summary>
 		/// mkedimaximgの機能ヘルプを表示します
 		/// </summary>
-		private void PrintHelp(int arg_idx)
+		private static void PrintHelp(int arg_idx)
 		{
 			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Help_Usage +
 				Lang.Tools.MkEdimaxImgRes.FuncDesc +
@@ -59,7 +59,7 @@ namespace firmware_wintools.Tools
 		/// mkedimaximgの実行情報を表示します
 		/// </summary>
 		/// <param name="props"></param>
-		private void PrintInfo(Properties subprops)
+		private static void PrintInfo(Properties subprops)
 		{
 			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info);
 			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_Signature, subprops.signature);
@@ -77,7 +77,7 @@ namespace firmware_wintools.Tools
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">メインプロパティ</param>
 		/// <returns></returns>
-		public int Do_MkEdimaxImage(string[] args, int arg_idx, Program.Properties props)
+		public static int Do_MkEdimaxImage(string[] args, int arg_idx, Program.Properties props)
 		{
 			Properties subprops = new Properties();
 			EdimaxFirmware fw = new EdimaxFirmware();

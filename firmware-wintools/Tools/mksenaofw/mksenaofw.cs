@@ -6,9 +6,9 @@ using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	class MkSenaoFw
+	static class MkSenaoFw
 	{
-		byte[] md5sum;
+		static byte[] md5sum;
 
 		/// <summary>
 		/// mksenaofwの機能プロパティ
@@ -49,7 +49,7 @@ namespace firmware_wintools.Tools
 			internal int bs;
 		}
 
-		private void PrintHelp(int arg_idx)
+		private static void PrintHelp(int arg_idx)
 		{
 			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Help_Usage +
 				Lang.Tools.MkSenaoFwRes.FuncDesc +
@@ -79,7 +79,7 @@ namespace firmware_wintools.Tools
 				Lang.Tools.MkSenaoFwRes.Help_Options_d);
 		}
 
-		private void PrintInfo(Properties subprops)
+		private static void PrintInfo(Properties subprops)
 		{
 			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info,
 				subprops.isde ?
@@ -112,7 +112,7 @@ namespace firmware_wintools.Tools
 		/// <param name="props">メインプロパティ</param>
 		/// <param name="subprops">機能プロパティ</param>
 		/// <returns></returns>
-		private int Encode(ref SenaoFirmware fw, Program.Properties props, Properties subprops)
+		private static int Encode(ref SenaoFirmware fw, Program.Properties props, Properties subprops)
 		{
 			long pad_len;
 
@@ -182,7 +182,7 @@ namespace firmware_wintools.Tools
 		/// <param name="props">メインプロパティ</param>
 		/// <param name="subprops">機能プロパティ</param>
 		/// <returns></returns>
-		private int Decode(ref SenaoFirmware fw, Program.Properties props, Properties subprops)
+		private static int Decode(ref SenaoFirmware fw, Program.Properties props, Properties subprops)
 		{
 			fw.header = new SenaoHeader();
 
@@ -247,7 +247,7 @@ namespace firmware_wintools.Tools
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">メインプロパティ</param>
 		/// <returns>成功: 0, 失敗: 1</returns>
-		public int Do_MkSenaoFw(string[] args, int arg_idx, Program.Properties props)
+		public static int Do_MkSenaoFw(string[] args, int arg_idx, Program.Properties props)
 		{
 			SenaoFirmware fw = new SenaoFirmware();
 			Properties subprops = new Properties()

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	class XorImage
+	static class XorImage
 	{
 		/// <summary>
 		/// xorimageの機能プロパティ
@@ -37,7 +37,7 @@ namespace firmware_wintools.Tools
 		/// <summary>
 		/// xorimageの機能ヘルプを表示します
 		/// </summary>
-		private void PrintHelp(int arg_idx)
+		private static void PrintHelp(int arg_idx)
 		{
 			Console.WriteLine(Lang.Tools.XorImageRes.Help_Usage +
 				Lang.Tools.XorImageRes.FuncDesc +
@@ -58,7 +58,7 @@ namespace firmware_wintools.Tools
 		/// xorimageの実行情報を表示します
 		/// </summary>
 		/// <param name="props"></param>
-		private void PrintInfo(Properties subprops, long datalen)
+		private static void PrintInfo(Properties subprops, long datalen)
 		{
 			Console.WriteLine(Lang.Tools.XorImageRes.Info);
 			Console.WriteLine(Lang.Tools.XorImageRes.Info_Pattern, subprops.pattern);
@@ -84,7 +84,7 @@ namespace firmware_wintools.Tools
 		/// <param name="p_len">パターン長</param>
 		/// <param name="p_off">パターン オフセット</param>
 		/// <returns></returns>
-		private int XorData(ref byte[] data, int len, in byte[] pattern, int p_len, int p_off, bool ishex)
+		private static int XorData(ref byte[] data, int len, in byte[] pattern, int p_len, int p_off, bool ishex)
 		{
 			int data_pos = 0;
 
@@ -106,7 +106,7 @@ namespace firmware_wintools.Tools
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">Program内のメインプロパティ</param>
 		/// <returns></returns>
-		public int Do_XorImage(string[] args, int arg_idx, Program.Properties props)
+		public static int Do_XorImage(string[] args, int arg_idx, Program.Properties props)
 		{
 			int read_len, write_len, p_off = 0;
 			long offset = 0, len = long.MaxValue;

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	class Buffalo_Enc
+	static class Buffalo_Enc
 	{
 		const string DEFAULT_KEY = "Buffalo";
 		const string DEFAULT_MAGIC = "start";
@@ -25,7 +25,7 @@ namespace firmware_wintools.Tools
 			public bool force;
 		}
 
-		private void PrintHelp(int arg_idx)
+		private static void PrintHelp(int arg_idx)
 		{
 			Console.WriteLine(Lang.Tools.BuffaloEncRes.Help_Usage +
 				Lang.Tools.BuffaloEncRes.FuncDesc +
@@ -47,7 +47,7 @@ namespace firmware_wintools.Tools
 				DEFAULT_KEY, DEFAULT_MAGIC);
 		}
 
-		private void PrintInfo(Properties subprops, long datalen, uint cksum, bool isdbg)
+		private static void PrintInfo(Properties subprops, long datalen, uint cksum, bool isdbg)
 		{
 			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info, subprops.isde ?
 				Lang.Tools.BuffaloEncRes.Info_Decrypt : Lang.Tools.BuffaloEncRes.Info_Encrypt);
@@ -64,7 +64,7 @@ namespace firmware_wintools.Tools
 			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Cksum, cksum);
 		}
 
-		private int CheckParams(Properties subprops)
+		private static int CheckParams(Properties subprops)
 		{
 			if (subprops.crypt_key == null || subprops.crypt_key.Length == 0)
 			{
@@ -122,7 +122,7 @@ namespace firmware_wintools.Tools
 			return 0;
 		}
 
-		private int Encrypt(ref BufEncFirmware fw, Properties subprops, Program.Properties props)
+		private static int Encrypt(ref BufEncFirmware fw, Properties subprops, Program.Properties props)
 		{
 			int ret;
 			byte[] key;
@@ -235,7 +235,7 @@ namespace firmware_wintools.Tools
 			return ret;
 		}
 
-		private int Decrypt(ref BufEncFirmware fw, Properties subprops, Program.Properties props)
+		private static int Decrypt(ref BufEncFirmware fw, Properties subprops, Program.Properties props)
 		{
 			int ret;
 			uint cksum;
@@ -337,7 +337,7 @@ namespace firmware_wintools.Tools
 			return fw.OpenAndWriteToFile(true);
 		}
 
-		public int Do_BuffaloEnc(string[] args, int arg_idx, Program.Properties props)
+		public static int Do_BuffaloEnc(string[] args, int arg_idx, Program.Properties props)
 		{
 			int ret = 0;
 			BufEncFirmware fw = new BufEncFirmware();

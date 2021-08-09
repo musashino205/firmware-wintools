@@ -3,7 +3,7 @@ using System.IO;
 
 namespace firmware_wintools.Tools
 {
-	class BinCut
+	static class BinCut
 	{
 		public struct Properties
 		{
@@ -13,7 +13,7 @@ namespace firmware_wintools.Tools
 			public long padBS;
 		}
 
-		private void PrintHelp(int arg_idx)
+		private static void PrintHelp(int arg_idx)
 		{
 			Console.WriteLine(Lang.Tools.BinCutRes.Help_Usage +
 				Lang.Tools.BinCutRes.FuncDesc +
@@ -29,7 +29,7 @@ namespace firmware_wintools.Tools
 				Lang.Tools.BinCutRes.Help_Options_PadBS);
 		}
 
-		private void PrintInfo(Properties subprops, long data_len)
+		private static void PrintInfo(Properties subprops, long data_len)
 		{
 			Console.WriteLine(Lang.Tools.BinCutRes.Info);
 			Console.WriteLine(Lang.Tools.BinCutRes.Info_length,
@@ -44,7 +44,7 @@ namespace firmware_wintools.Tools
 					subprops.padBS);
 		}
 
-		public int Do_BinCut(string[] args, int arg_idx, Program.Properties props)
+		public static int Do_BinCut(string[] args, int arg_idx, Program.Properties props)
 		{
 			Properties subprops = new Properties();
 
