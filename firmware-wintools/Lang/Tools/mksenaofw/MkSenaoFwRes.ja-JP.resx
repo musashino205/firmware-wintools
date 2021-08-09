@@ -120,6 +120,12 @@
   <data name="Error.FailHeaderCksum" xml:space="preserve">
     <value>ヘッダー チェックサムの算出に失敗しました</value>
   </data>
+  <data name="Error.FailLoadData" xml:space="preserve">
+    <value>データの読み込みに失敗しました</value>
+  </data>
+  <data name="Error.FailLoadHeader" xml:space="preserve">
+    <value>ヘッダーの読み込みに失敗しました</value>
+  </data>
   <data name="Error.InvalidVerLen" xml:space="preserve">
     <value>バージョンの長さが無効です</value>
   </data>

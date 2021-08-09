@@ -70,6 +70,24 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
+        ///   failed to load data に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Error_FailLoadData {
+            get {
+                return ResourceManager.GetString("Error.FailLoadData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   failed to load header に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Error_FailLoadHeader {
+            get {
+                return ResourceManager.GetString("Error.FailLoadHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   the length of version is invalid に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Error_InvalidVerLen {

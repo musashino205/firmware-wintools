@@ -120,6 +120,12 @@
   <data name="Error.FailHeaderCksum" xml:space="preserve">
     <value>failed to calculate header checksum</value>
   </data>
+  <data name="Error.FailLoadData" xml:space="preserve">
+    <value>failed to load data</value>
+  </data>
+  <data name="Error.FailLoadHeader" xml:space="preserve">
+    <value>failed to load header</value>
+  </data>
   <data name="Error.InvalidVerLen" xml:space="preserve">
     <value>the length of version is invalid</value>
   </data>

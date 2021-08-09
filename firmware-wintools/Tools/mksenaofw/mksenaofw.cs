@@ -192,10 +192,20 @@ namespace firmware_wintools.Tools
 							FileAccess.Read, FileShare.Read))
 				{
 					if (header.LoadHeader(in fw.inFs) != 0)
+					{
+						Console.Error.WriteLine(
+							Lang.Resource.Main_Error_Prefix +
+							Lang.Tools.MkSenaoFwRes.Error_FailLoadHeader);
 						return 1;
+					}
 
 					if (fw.LoadData(header.filesize) != 0)
+					{
+						Console.Error.WriteLine(
+							Lang.Resource.Main_Error_Prefix +
+							Lang.Tools.MkSenaoFwRes.Error_FailLoadData);
 						return 1;
+					}
 				}
 			}
 			catch (IOException e)
