@@ -264,8 +264,7 @@ namespace firmware_wintools.Tools
 				return 0;
 			}
 
-			ToolsArgMap argMap = new ToolsArgMap();
-			argMap.Init_args_MkSenaoFw(args, arg_idx, ref subprops);
+			ToolsArgMap.Init_args_MkSenaoFw(args, arg_idx, ref subprops);
 
 			if (!subprops.pad)
 				subprops.bs = 0;

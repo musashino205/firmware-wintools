@@ -3,14 +3,15 @@ using System.Globalization;
 
 namespace firmware_wintools.Tools
 {
-	partial class ToolsArgMap
+	static partial class ToolsArgMap
 	{
 		/// <summary>
 		/// コマンドライン引数 (<paramref name="args"/>) を解析し、mkedimaximgの機能プロパティを取得します
 		/// </summary>
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">mkedimaximgの機能プロパティ</param>
-		public void Init_args_MkEdimaxImg(string[] args, int arg_idx, ref Tools.MkEdimaxImg.Properties subprops)
+		public static void
+		Init_args_MkEdimaxImg(string[] args, int arg_idx, ref Tools.MkEdimaxImg.Properties subprops)
 		{
 			for (int i = arg_idx; i < args.Length; i++)
 			{

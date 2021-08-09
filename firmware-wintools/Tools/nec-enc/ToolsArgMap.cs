@@ -1,13 +1,14 @@
-﻿namespace firmware_wintools.Tools
+namespace firmware_wintools.Tools
 {
-	partial class ToolsArgMap
+	static partial class ToolsArgMap
 	{
 		/// <summary>
 		/// コマンドライン引数 (<paramref name="args"/>) を解析し、nec-encの機能プロパティを取得します
 		/// </summary>
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">nec-encの機能プロパティ</param>
-		public void Init_args_NecEnc(string[] args, int arg_idx, ref Tools.Nec_Enc.Properties subprops)
+		public static void
+		Init_args_NecEnc(string[] args, int arg_idx, ref Tools.Nec_Enc.Properties subprops)
 		{
 			for (int i = arg_idx; i < args.Length; i++)
 			{

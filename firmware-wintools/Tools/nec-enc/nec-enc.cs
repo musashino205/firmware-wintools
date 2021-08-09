@@ -108,8 +108,7 @@ namespace firmware_wintools.Tools
 				buf_ptn = new byte[4096]
 			};
 
-			ToolsArgMap argMap = new ToolsArgMap();
-			argMap.Init_args_NecEnc(args, arg_idx, ref subprops);
+			ToolsArgMap.Init_args_NecEnc(args, arg_idx, ref subprops);
 
 			if (props.help)
 			{

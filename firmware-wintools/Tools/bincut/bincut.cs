@@ -56,8 +56,7 @@ namespace firmware_wintools.Tools
 				return 0;
 			}
 
-			ToolsArgMap argMap = new ToolsArgMap();
-			argMap.Init_args_BinCut(args, arg_idx, ref subprops);
+			ToolsArgMap.Init_args_BinCut(args, arg_idx, ref subprops);
 
 			fw.inFInfo = new FileInfo(props.inFile);
 

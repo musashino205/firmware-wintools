@@ -2,14 +2,15 @@ using System.Globalization;
 
 namespace firmware_wintools.Tools
 {
-	partial class ToolsArgMap
+	static partial class ToolsArgMap
 	{
 		/// <summary>
 		/// コマンドライン引数 (<paramref name="args"/>) を解析し、xorimageの機能プロパティを取得します
 		/// </summary>
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">xorimageの機能プロパティ</param>
-		public void Init_args_BinCut(string[] args, int arg_idx, ref Tools.BinCut.Properties subprops)
+		public static void
+		Init_args_BinCut(string[] args, int arg_idx, ref Tools.BinCut.Properties subprops)
 		{
 			for (int i = arg_idx; i < args.Length; i++)
 			{

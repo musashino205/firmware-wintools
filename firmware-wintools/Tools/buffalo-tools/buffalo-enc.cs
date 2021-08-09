@@ -348,8 +348,7 @@ namespace firmware_wintools.Tools
 				seed = 0x4F   // Char: O
 			};
 
-			ToolsArgMap argMap = new ToolsArgMap();
-			argMap.Init_args_BuffaloEnc(args, arg_idx, ref subprops);
+			ToolsArgMap.Init_args_BuffaloEnc(args, arg_idx, ref subprops);
 
 			if (props.help)
 			{
