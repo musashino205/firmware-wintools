@@ -19,6 +19,9 @@ namespace firmware_wintools.Tools
 
 	class EdimaxFirmware : Firmware
 	{
+		internal EdimaxHeader header = new EdimaxHeader();
+		internal EdimaxFooter footer = new EdimaxFooter();
+
 		internal int dataLen;
 
 		/// <summary>

@@ -116,7 +116,7 @@ namespace firmware_wintools.Tools
 		{
 			long pad_len;
 
-			SenaoHeader header = new SenaoHeader()
+			fw.header = new SenaoHeader()
 			{
 				vendor_id = (uint)IPAddress.HostToNetworkOrder((int)subprops.vendor),
 				product_id = (uint)IPAddress.HostToNetworkOrder((int)subprops.product),
@@ -129,7 +129,7 @@ namespace firmware_wintools.Tools
 			/* versionをコピー */
 			Array.Copy(
 				Encoding.ASCII.GetBytes(subprops.version),
-				header.version,
+				fw.header.version,
 				Encoding.ASCII.GetByteCount(subprops.version) > SenaoHeader.VER_LEN ?
 					SenaoHeader.VER_LEN :
 					Encoding.ASCII.GetByteCount(subprops.version));
@@ -143,7 +143,7 @@ namespace firmware_wintools.Tools
 				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
 							FileAccess.Read, FileShare.Read))
 				{
-					md5sum = header.md5sum = fw.GetMd5sum();
+					md5sum = fw.header.md5sum = fw.GetMd5sum();
 					/* MD5sum読み取りでStreamのPositionが末尾まで飛ぶ */
 					fw.inFs.Seek(0, SeekOrigin.Begin);
 
@@ -158,15 +158,15 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			header.cksum = (uint)IPAddress.HostToNetworkOrder(
-						(int)header.CalcHeaderCksum(SenaoHeader.HDR_LEN));
+			fw.header.cksum = (uint)IPAddress.HostToNetworkOrder(
+						(int)fw.header.CalcHeaderCksum(SenaoHeader.HDR_LEN));
 
 			if (!props.quiet)
 				PrintInfo(subprops);
 
 			/* ヘッダシリアル化 */
-			fw.header = new byte[SenaoHeader.HDR_LEN];
-			if (header.SerializeProps(ref fw.header, 0) != SenaoHeader.HDR_LEN)
+			fw.headerData = new byte[SenaoHeader.HDR_LEN];
+			if (fw.header.SerializeProps(ref fw.headerData, 0) != SenaoHeader.HDR_LEN)
 				return 1;
 
 			/* データエンコード */
@@ -184,14 +184,14 @@ namespace firmware_wintools.Tools
 		/// <returns></returns>
 		private int Decode(ref SenaoFirmware fw, Program.Properties props, Properties subprops)
 		{
-			SenaoHeader header = new SenaoHeader();
+			fw.header = new SenaoHeader();
 
 			try
 			{
 				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
 							FileAccess.Read, FileShare.Read))
 				{
-					if (header.LoadHeader(in fw.inFs) != 0)
+					if (fw.header.LoadHeader(in fw.inFs) != 0)
 					{
 						Console.Error.WriteLine(
 							Lang.Resource.Main_Error_Prefix +
@@ -199,7 +199,7 @@ namespace firmware_wintools.Tools
 						return 1;
 					}
 
-					if (fw.LoadData(header.filesize) != 0)
+					if (fw.LoadData(fw.header.filesize) != 0)
 					{
 						Console.Error.WriteLine(
 							Lang.Resource.Main_Error_Prefix +
@@ -214,27 +214,27 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			if (header.filesize > int.MaxValue)
+			if (fw.header.filesize > int.MaxValue)
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 					Lang.Tools.MkSenaoFwRes.Error_LargeInFile);
 				return 1;
 			}
 
-			subprops.fw_type = BitConverter.GetBytes(header.firmware_type)[0];
-			subprops.vendor = header.vendor_id;
-			subprops.product = header.product_id;
-			subprops.version = Encoding.ASCII.GetString(header.version);
-			subprops.magic = header.magic;
-			md5sum = header.md5sum;
+			subprops.fw_type = BitConverter.GetBytes(fw.header.firmware_type)[0];
+			subprops.vendor = fw.header.vendor_id;
+			subprops.product = fw.header.product_id;
+			subprops.version = Encoding.ASCII.GetString(fw.header.version);
+			subprops.magic = fw.header.magic;
+			md5sum = fw.header.md5sum;
 
 			if (!props.quiet)
 				PrintInfo(subprops);
 
-			if (!SenaoHeader.ChkFwType(header.firmware_type))
+			if (!SenaoHeader.ChkFwType(fw.header.firmware_type))
 				return 1;
 
-			fw.EncodeData(header.magic);
+			fw.EncodeData(fw.header.magic);
 
 			return fw.OpenAndWriteToFile(true);
 		}

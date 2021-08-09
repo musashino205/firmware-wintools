@@ -80,9 +80,7 @@ namespace firmware_wintools.Tools
 		public int Do_MkEdimaxImage(string[] args, int arg_idx, Program.Properties props)
 		{
 			Properties subprops = new Properties();
-			EdimaxHeader header = new EdimaxHeader();
 			EdimaxFirmware fw = new EdimaxFirmware();
-			EdimaxFooter footer = new EdimaxFooter();
 
 			if (props.help)
 			{
@@ -150,21 +148,21 @@ namespace firmware_wintools.Tools
 			fw.dataLen = Convert.ToInt32(fw.inFInfo.Length + sizeof(short));
 
 			/* ヘッダ設定 */
-			header.sign = Encoding.ASCII.GetBytes(subprops.signature);
-			header.start = subprops.isbe ?
+			fw.header.sign = Encoding.ASCII.GetBytes(subprops.signature);
+			fw.header.start = subprops.isbe ?
 						IPAddress.HostToNetworkOrder(subprops.start) :
 						subprops.start;
-			header.flash = subprops.isbe ?
+			fw.header.flash = subprops.isbe ?
 						IPAddress.HostToNetworkOrder(subprops.flash) :
 						subprops.flash;
-			header.model = Encoding.ASCII.GetBytes(subprops.model);
-			header.size = subprops.isbe ?
+			fw.header.model = Encoding.ASCII.GetBytes(subprops.model);
+			fw.header.size = subprops.isbe ?
 						IPAddress.HostToNetworkOrder(fw.dataLen) :
 						fw.dataLen;
 
-			fw.totalLen = header.size + fw.inFInfo.Length;
+			fw.totalLen = fw.header.size + fw.inFInfo.Length;
 
-			header.totalLen = sizeof(byte) * 4	// sign
+			fw.header.totalLen = sizeof(byte) * 4	// sign
 					+ sizeof(int) * 2	// start, flash
 					+ sizeof(byte) * 4	// model
 					+ sizeof(int);		// size
@@ -184,26 +182,26 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			footer.cksum = fw.CalcCksum(subprops.isbe);
+			fw.footer.cksum = fw.CalcCksum(subprops.isbe);
 			if (props.debug)
 			{
-				Console.WriteLine(" header size:\t{0} bytes (0x{0:X})", header.totalLen);
+				Console.WriteLine(" header size:\t{0} bytes (0x{0:X})", fw.header.totalLen);
 				Console.WriteLine(" data size:\t{0} bytes (0x{0:X})", fw.inFInfo.Length + sizeof(short));
-				Console.WriteLine(" total size:\t{0} bytes (0x{0:X})", header.totalLen + fw.inFInfo.Length + sizeof(short));
-				Console.WriteLine(" checksum:\t{0:X}\n", footer.cksum);
+				Console.WriteLine(" total size:\t{0} bytes (0x{0:X})", fw.header.totalLen + fw.inFInfo.Length + sizeof(short));
+				Console.WriteLine(" checksum:\t{0:X}\n", fw.footer.cksum);
 			}
 
 			/* ヘッダシリアル化 */
-			fw.header = new byte[header.totalLen];
-			if (header.SerializeProps(ref fw.header, 0) != header.totalLen)
+			fw.headerData = new byte[fw.header.totalLen];
+			if (fw.header.SerializeProps(ref fw.headerData, 0) != fw.header.totalLen)
 				return 1;
 
 			/* BEモード時フッタcksumをBE変換 */
 			if (subprops.isbe)
-				footer.cksum = (ushort)IPAddress.HostToNetworkOrder((short)footer.cksum);
+				fw.footer.cksum = (ushort)IPAddress.HostToNetworkOrder((short)fw.footer.cksum);
 			/* フッタシリアル化 */
-			fw.footer = new byte[sizeof(ushort)];
-			footer.SerializeProps(ref fw.footer, 0);
+			fw.footerData = new byte[sizeof(ushort)];
+			fw.footer.SerializeProps(ref fw.footerData, 0);
 
 			return fw.OpenAndWriteToFile(false);
 		}

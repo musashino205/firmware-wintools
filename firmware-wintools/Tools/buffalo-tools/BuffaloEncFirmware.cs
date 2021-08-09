@@ -157,6 +157,9 @@ namespace firmware_wintools.Tools
 
 	class BufEncFirmware : Firmware
 	{
+		internal BufEncHeader header;
+		internal BufEncFooter footer;
+
 		/* 実際のデータ長（パディング分を含まない） */
 		internal long dataLen;
 
@@ -179,9 +182,9 @@ namespace firmware_wintools.Tools
 		}
 
 		/* for encryption */
-		internal int EncryptData(byte seed, in byte[] key, bool longstate)
+		internal int EncryptData(in byte[] key, bool longstate)
 		{
-			return BufBcrypt.Bcrypt_Buf(seed, key, ref data, 0, dataLen, longstate);
+			return BufBcrypt.Bcrypt_Buf(header.dataSeed, key, ref data, 0, dataLen, longstate);
 		}
 
 		/* for decryption */
@@ -193,9 +196,9 @@ namespace firmware_wintools.Tools
 				0 : 1;
 		}
 
-		internal int DecryptData(long length, byte seed, in byte[] key, bool longstate)
+		internal int DecryptData(in byte[] key, bool longstate)
 		{
-			return BufBcrypt.Bcrypt_Buf(seed, key, ref data, 0, length, longstate);
+			return BufBcrypt.Bcrypt_Buf(header.dataSeed, key, ref data, 0, header.data_len, longstate);
 		}
 	}
 }

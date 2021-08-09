@@ -96,9 +96,9 @@ namespace firmware_wintools.Tools
 		public FileStream inFs = null;
 		public FileStream outFs = null;
 		public FileMode outFMode;
-		public byte[] header;
+		public byte[] headerData;
 		public byte[] data;
-		public byte[] footer;
+		public byte[] footerData;
 		public long totalLen;
 
 		static internal long FileToBytes(in FileStream fs, ref byte[] array, long length)
@@ -159,17 +159,17 @@ namespace firmware_wintools.Tools
 			if (data == null || data.LongLength == 0)
 				return 1;
 
-			if (!dataonly && header != null && header.LongLength > 0)
+			if (!dataonly && headerData != null && headerData.LongLength > 0)
 			{
-				if (BytesToFile(ref header, ref outFs) != header.LongLength)
+				if (BytesToFile(ref headerData, ref outFs) != headerData.LongLength)
 					return 1;
 			}
 
 			if (BytesToFile(ref data, ref outFs) != data.LongLength)
 				return 1;
 
-			if (!dataonly && footer != null && footer.LongLength > 0)
-				if (BytesToFile(ref footer, ref outFs) != footer.LongLength)
+			if (!dataonly && footerData != null && footerData.LongLength > 0)
+				if (BytesToFile(ref footerData, ref outFs) != footerData.LongLength)
 					return 1;
 
 			return 0;

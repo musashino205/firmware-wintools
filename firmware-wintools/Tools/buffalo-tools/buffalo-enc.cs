@@ -128,7 +128,7 @@ namespace firmware_wintools.Tools
 			byte[] key;
 
 			/* magic, product, versionは末尾 0x0 ('\0') で終端 */
-			BufEncHeader header = new BufEncHeader()
+			fw.header = new BufEncHeader()
 			{
 				magic = Encoding.ASCII.GetBytes(subprops.magic + "\0"),
 				seed = subprops.seed,
@@ -140,7 +140,7 @@ namespace firmware_wintools.Tools
 						(uint)subprops.size : (uint)fw.inFInfo.Length
 			};
 
-			BufEncFooter footer = new BufEncFooter();
+			fw.footer = new BufEncFooter();
 
 			MemoryStream bufStream = new MemoryStream();
 
@@ -148,12 +148,12 @@ namespace firmware_wintools.Tools
 			key = Encoding.ASCII.GetBytes(subprops.crypt_key + "\0");
 
 			/* ヘッダ/データ/フッタの各部長さ */
-			header.totalLen = header.GetHeaderLen();	// ヘッダ
-			fw.dataLen = header.data_len;			// データ
-			footer.totalLen = sizeof(uint);			// フッタ1
+			fw.header.totalLen = fw.header.GetHeaderLen();	// ヘッダ
+			fw.dataLen = fw.header.data_len;			// データ
+			fw.footer.totalLen = sizeof(uint);			// フッタ1
 			/* フッタ4byteパディング分 */
-			footer.totalLen +=				// フッタ2
-				4 - (footer.totalLen + header.totalLen + fw.dataLen) % 4;
+			fw.footer.totalLen +=				// フッタ2
+				4 - (fw.footer.totalLen + fw.header.totalLen + fw.dataLen) % 4;
 
 			try
 			{
@@ -180,13 +180,13 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			footer.cksum = fw.GetCksum(subprops.isMinorCksum);
+			fw.footer.cksum = fw.GetCksum(subprops.isMinorCksum);
 
 			if (!props.quiet)
-				PrintInfo(subprops, fw.dataLen, footer.cksum, props.debug);
+				PrintInfo(subprops, fw.dataLen, fw.footer.cksum, props.debug);
 
 			/* ヘッダ暗号化（+ product長, ver長, データ長BE変換） */
-			ret = header.EncryptHeader(key, subprops.islong);
+			ret = fw.header.EncryptHeader(key, subprops.islong);
 			if (ret > 0)
 			{
 				Console.Error.WriteLine(
@@ -195,18 +195,18 @@ namespace firmware_wintools.Tools
 				return ret;
 			}
 			/* ヘッダシリアル化 */
-			fw.header = new byte[header.totalLen];
-			if (header.SerializeProps(ref fw.header, 0) != header.totalLen)
+			fw.headerData = new byte[fw.header.totalLen];
+			if (fw.header.SerializeProps(ref fw.headerData, 0) != fw.header.totalLen)
 				return 1;
 
 			/* フッタcksumをBE変換 */
-			footer.cksum = (uint)IPAddress.HostToNetworkOrder((int)footer.cksum);
+			fw.footer.cksum = (uint)IPAddress.HostToNetworkOrder((int)fw.footer.cksum);
 			/* フッタシリアル化 */
-			fw.footer = new byte[footer.totalLen];
-			footer.SerializeProps(ref fw.footer, 0);
+			fw.footerData = new byte[fw.footer.totalLen];
+			fw.footer.SerializeProps(ref fw.footerData, 0);
 
 			/* データ暗号化 */
-			if (fw.EncryptData(header.dataSeed, key, subprops.islong) > 0)
+			if (fw.EncryptData(key, subprops.islong) > 0)
 			{
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Error_Prefix +
@@ -241,8 +241,8 @@ namespace firmware_wintools.Tools
 			uint cksum;
 			byte[] key;
 
-			BufEncHeader header = new BufEncHeader();
-			BufEncFooter footer = new BufEncFooter();
+			fw.header = new BufEncHeader();
+			fw.footer = new BufEncFooter();
 
 			if (fw.inFInfo.Length < subprops.offset)
 			{
@@ -259,7 +259,7 @@ namespace firmware_wintools.Tools
 					fw.inFs.Seek(subprops.offset, SeekOrigin.Begin);
 
 					/* ヘッダ読み込み */
-					ret = header.LoadHeader(fw.inFs);
+					ret = fw.header.LoadHeader(fw.inFs);
 					if (ret > 0)
 					{
 						Console.Error.WriteLine(
@@ -269,7 +269,7 @@ namespace firmware_wintools.Tools
 					}
 
 					/* データ読み込み */
-					ret = fw.LoadData(header.data_len);
+					ret = fw.LoadData(fw.header.data_len);
 					if (ret > 0)
 					{
 						Console.Error.WriteLine(
@@ -279,7 +279,7 @@ namespace firmware_wintools.Tools
 					}
 
 					/* フッタ読み込み */
-					ret = footer.LoadFooter(fw.inFs);
+					ret = fw.footer.LoadFooter(fw.inFs);
 					if (ret > 0)
 					{
 						Console.Error.WriteLine(
@@ -298,8 +298,8 @@ namespace firmware_wintools.Tools
 			key = Encoding.ASCII.GetBytes(subprops.crypt_key);
 
 			/* Decrypt Header/Data */
-			if (header.DecryptHeader(key, subprops.islong) != 0 ||
-			    fw.DecryptData(header.data_len, header.dataSeed, in key, subprops.islong) != 0)
+			if (fw.header.DecryptHeader(key, subprops.islong) != 0 ||
+			    fw.DecryptData(in key, subprops.islong) != 0)
 			{
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Error_Prefix +
@@ -307,10 +307,10 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			fw.dataLen = header.data_len;
+			fw.dataLen = fw.header.data_len;
 			cksum = fw.GetCksum(subprops.isMinorCksum);
 			/* 計算cksumと埋め込みcksum不一致 & 非forceならエラー */
-			if (!subprops.force && cksum != footer.cksum)
+			if (!subprops.force && cksum != fw.footer.cksum)
 			{
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Error_Prefix +
@@ -318,21 +318,21 @@ namespace firmware_wintools.Tools
 
 				return 1;
 			}
-			if (cksum != footer.cksum)
+			if (cksum != fw.footer.cksum)
 			{
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Warning_Prefix +
 					Lang.Tools.BuffaloEncRes.Warn_CksumNotMatch);
 			}
 
-			subprops.magic = Encoding.ASCII.GetString(header.magic).TrimEnd('\0');
-			subprops.seed = header.seed;
-			subprops.product = Encoding.ASCII.GetString(header.product).TrimEnd('\0');
-			subprops.version = Encoding.ASCII.GetString(header.version).TrimEnd('\0');
-			subprops.size = Convert.ToInt32(header.data_len);
+			subprops.magic = Encoding.ASCII.GetString(fw.header.magic).TrimEnd('\0');
+			subprops.seed = fw.header.seed;
+			subprops.product = Encoding.ASCII.GetString(fw.header.product).TrimEnd('\0');
+			subprops.version = Encoding.ASCII.GetString(fw.header.version).TrimEnd('\0');
+			subprops.size = Convert.ToInt32(fw.header.data_len);
 
 			if (!props.quiet)
-				PrintInfo(subprops, header.data_len, footer.cksum, props.debug);
+				PrintInfo(subprops, fw.header.data_len, fw.footer.cksum, props.debug);
 
 			return fw.OpenAndWriteToFile(true);
 		}

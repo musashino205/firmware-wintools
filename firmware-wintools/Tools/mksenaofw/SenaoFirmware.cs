@@ -185,6 +185,7 @@ namespace firmware_wintools.Tools
 
 	class SenaoFirmware : Firmware
 	{
+		internal SenaoHeader header;
 		internal const int DEF_BLOCK_SIZE = 65535;
 
 		/* common */
