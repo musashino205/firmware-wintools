@@ -8,7 +8,7 @@ namespace firmware_wintools.Tools
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">xorimageの機能プロパティ</param>
 		public static void
-		Init_args_Xorimage(string[] args, int arg_idx, ref Tools.XorImage.Properties subprops)
+		Init_args_Xorimage(string[] args, int arg_idx, ref XorImage.Properties subprops)
 		{
 			for (int i = arg_idx; i < args.Length; i++)
 			{

@@ -10,7 +10,7 @@ namespace firmware_wintools.Tools
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">xorimageの機能プロパティ</param>
 		public static void
-		Init_args_BinCut(string[] args, int arg_idx, ref Tools.BinCut.Properties subprops)
+		Init_args_BinCut(string[] args, int arg_idx, ref BinCut.Properties subprops)
 		{
 			for (int i = arg_idx; i < args.Length; i++)
 			{

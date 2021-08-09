@@ -8,7 +8,7 @@ namespace firmware_wintools.Tools
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">nec-encの機能プロパティ</param>
 		public static void
-		Init_args_NecEnc(string[] args, int arg_idx, ref Tools.Nec_Enc.Properties subprops)
+		Init_args_NecEnc(string[] args, int arg_idx, ref Nec_Enc.Properties subprops)
 		{
 			for (int i = arg_idx; i < args.Length; i++)
 			{

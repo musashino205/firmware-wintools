@@ -11,7 +11,7 @@ namespace firmware_wintools.Tools
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">mkedimaximgの機能プロパティ</param>
 		public static void
-		Init_args_MkEdimaxImg(string[] args, int arg_idx, ref Tools.MkEdimaxImg.Properties subprops)
+		Init_args_MkEdimaxImg(string[] args, int arg_idx, ref MkEdimaxImg.Properties subprops)
 		{
 			for (int i = arg_idx; i < args.Length; i++)
 			{
