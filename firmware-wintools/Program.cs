@@ -183,7 +183,7 @@ namespace firmware_wintools
 					return 1;
 				}
 
-				if (!props.quiet)
+				if (!props.quiet && props.debug)
 					Console.WriteLine(Lang.Resource.Main_Info + Environment.NewLine,
 						Path.GetFileName(props.inFile), Directory.GetParent(props.inFile),
 						Path.GetFileName(props.outFile), Directory.GetParent(props.outFile));
