@@ -120,8 +120,14 @@
   <data name="Error.InvalidDecLen" xml:space="preserve">
     <value>the length of target data is not a multiple of 16</value>
   </data>
+  <data name="Error.InvalidIVHex" xml:space="preserve">
+    <value>the specified IV is invalid for hex mode</value>
+  </data>
   <data name="Error.InvalidIVLenHex" xml:space="preserve">
     <value>the length of specified IV is invalid for hex mode</value>
+  </data>
+  <data name="Error.InvalidKeyHex" xml:space="preserve">
+    <value>the specified key is invalid for hex mode</value>
   </data>
   <data name="Error.InvalidKeyLenHex" xml:space="preserve">
     <value>the length of specified key is invalid for hex mode</value>
@@ -129,14 +135,8 @@
   <data name="Error.LongIVLen" xml:space="preserve">
     <value>the length of specified IV exceeds 16 bytes</value>
   </data>
-  <data name="Error.LongIVLenHex" xml:space="preserve">
-    <value>the length of specified IV exceeds 16 bytes (32 characters)</value>
-  </data>
   <data name="Error.LongKeyLen" xml:space="preserve">
     <value>the length of specified key exceeds the key length {0} bytes</value>
-  </data>
-  <data name="Error.LongKeyLenHex" xml:space="preserve">
-    <value>the length of specified key exceeds the key length {0} bytes ({1} characters)</value>
   </data>
   <data name="Error.NoKey" xml:space="preserve">
     <value>no key specified</value>

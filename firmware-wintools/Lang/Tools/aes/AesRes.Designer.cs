@@ -19,7 +19,7 @@ namespace firmware_wintools.Lang.Tools {
     // または Visual Studio のようなツールを使用して自動生成されました。
     // メンバーを追加または削除するには、.ResX ファイルを編集して、/str オプションと共に
     // ResGen を実行し直すか、または VS プロジェクトをビルドし直します。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class AesRes {
@@ -70,11 +70,29 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
+        ///   the specified IV is invalid for hex mode に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Error_InvalidIVHex {
+            get {
+                return ResourceManager.GetString("Error.InvalidIVHex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   the length of specified IV is invalid for hex mode に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Error_InvalidIVLenHex {
             get {
                 return ResourceManager.GetString("Error.InvalidIVLenHex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   the specified key is invalid for hex mode に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Error_InvalidKeyHex {
+            get {
+                return ResourceManager.GetString("Error.InvalidKeyHex", resourceCulture);
             }
         }
         
@@ -97,29 +115,11 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
-        ///   the length of specified IV exceeds 16 bytes (32 characters) に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string Error_LongIVLenHex {
-            get {
-                return ResourceManager.GetString("Error.LongIVLenHex", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   the length of specified key exceeds the key length {0} bytes に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Error_LongKeyLen {
             get {
                 return ResourceManager.GetString("Error.LongKeyLen", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   the length of specified key exceeds the key length {0} bytes ({1} characters) に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string Error_LongKeyLenHex {
-            get {
-                return ResourceManager.GetString("Error.LongKeyLenHex", resourceCulture);
             }
         }
         

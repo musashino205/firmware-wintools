@@ -123,35 +123,34 @@ namespace firmware_wintools.Tools
 			}
 			else	// if iv is specified
 			{
-				if (!subprops.hex_iv && subprops.iv.Length > iv.Length)
+				if ((!subprops.hex_iv && subprops.iv.Length > iv.Length) ||
+				    (subprops.hex_iv && subprops.iv.Length != iv.Length * 2))
 				{
-					Console.Error.WriteLine(
-						Lang.Resource.Main_Error_Prefix +
-						Lang.Tools.AesRes.Error_LongIVLen);
-					return 1;
-				}
-				else if (subprops.hex_iv)
-				{
-					if (subprops.iv.Length % 2 != 0)
-					{
-						Console.Error.WriteLine(
+
+					if (subprops.hex_iv)
+						Console.Error.Write(
 							Lang.Resource.Main_Error_Prefix +
 							Lang.Tools.AesRes.Error_InvalidIVLenHex);
-						return 1;
-					}
-
-					if (subprops.iv.Length > iv.Length * 2)
-					{
-						Console.Error.WriteLine(
+					else
+						Console.Error.Write(
 							Lang.Resource.Main_Error_Prefix +
-							Lang.Tools.AesRes.Error_LongIVLenHex);
-					}
+							Lang.Tools.AesRes.Error_LongIVLen);
+
+					return 1;
 				}
 
 				if (subprops.hex_iv)
 				{
-					for (int i = 0; i < (subprops.iv.Length / 2); i++)
-						iv[i] = Convert.ToByte(subprops.iv.Substring(i * 2, 2), 16);
+					if (!Utils.StrToByteArray(ref subprops.iv, out iv))
+					{
+						Console.Error.WriteLine(
+							Lang.Resource.Main_Error_Prefix +
+							Lang.Tools.AesRes.Error_InvalidIVHex);
+						if (iv != null)
+							Console.Error.WriteLine("(char: \"{0}\")", subprops.iv);
+
+						return 1;
+					}
 				}
 				else
 				{
@@ -170,44 +169,38 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			if (!subprops.hex_key && subprops.key.Length > key.Length)
+			if ((!subprops.hex_key && subprops.key.Length > key.Length) ||
+				(subprops.hex_key && subprops.key.Length != key.Length * 2))
 			{
-				Console.Error.WriteLine(
-					Lang.Resource.Main_Error_Prefix +
-					Lang.Tools.AesRes.Error_LongKeyLen, key.Length);
-				return 1;
-			}
-			else if (subprops.hex_key)
-			{
-				if (subprops.key.Length % 2 != 0)
-				{
-					Console.Error.WriteLine(
+				if (subprops.hex_key)
+					Console.Error.Write(
 						Lang.Resource.Main_Error_Prefix +
 						Lang.Tools.AesRes.Error_InvalidKeyLenHex);
-					return 1;
-				}
-
-				if (subprops.key.Length > key.Length * 2)
-				{
-					Console.Error.WriteLine(
+				else
+					Console.Error.Write(
 						Lang.Resource.Main_Error_Prefix +
-						Lang.Tools.AesRes.Error_LongKeyLenHex, key.Length, key.Length * 2);
-					return 1;
-				}
+						Lang.Tools.AesRes.Error_LongKeyLen, key.Length);
+
+				return 1;
 			}
 
 			if (subprops.hex_key)
 			{
-				for (int i = 0; i < (subprops.key.Length / 2); i++)
-					key[i] = Convert.ToByte(subprops.key.Substring(i * 2, 2), 16);
+				if (!Utils.StrToByteArray(ref subprops.key, out key))
+				{
+					Console.Error.WriteLine(
+						Lang.Resource.Main_Error_Prefix +
+						Lang.Tools.AesRes.Error_InvalidKeyHex);
+					if (iv != null)
+						Console.Error.WriteLine("(char: \"{0}\")", subprops.key);
+
+					return 1;
+				}
 			}
 			else
 			{
 				byte[] tmp_key = Encoding.ASCII.GetBytes(subprops.key);
 				Array.Copy(tmp_key, key, tmp_key.Length);
-
-				//if (tmp_key.Length < keylen / 8)
-				//	Console.Error.WriteLine("specified key is too short, padded by '0'");
 			}
 			/* key end */
 			/*

@@ -120,8 +120,14 @@
   <data name="Error.InvalidDecLen" xml:space="preserve">
     <value>対象データの長さが 16 の倍数ではありません</value>
   </data>
+  <data name="Error.InvalidIVHex" xml:space="preserve">
+    <value>16進モードにおいて、指定された IV は正しくありません</value>
+  </data>
   <data name="Error.InvalidIVLenHex" xml:space="preserve">
     <value>16進モードにおける、指定された IV の長さが正しくありません</value>
+  </data>
+  <data name="Error.InvalidKeyHex" xml:space="preserve">
+    <value>16進モードにおいて、指定されたキーは正しくありません</value>
   </data>
   <data name="Error.InvalidKeyLenHex" xml:space="preserve">
     <value>16進モードにおける、指定されたキーの長さが正しくありません</value>
@@ -129,14 +135,8 @@
   <data name="Error.LongIVLen" xml:space="preserve">
     <value>指定された IV は 16 バイトを超えています</value>
   </data>
-  <data name="Error.LongIVLenHex" xml:space="preserve">
-    <value>指定された IV は 16 バイト（32文字）を超えています</value>
-  </data>
   <data name="Error.LongKeyLen" xml:space="preserve">
     <value>指定されたキーはキー長 {0} バイトを超えています</value>
-  </data>
-  <data name="Error.LongKeyLenHex" xml:space="preserve">
-    <value>指定されたキーはキー長 {0} バイト（{1} 文字）を超えています</value>
   </data>
   <data name="Error.NoKey" xml:space="preserve">
     <value>キーが指定されていません</value>
