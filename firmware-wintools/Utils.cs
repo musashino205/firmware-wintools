@@ -84,5 +84,29 @@ namespace firmware_wintools
 
 			return true;
 		}
+
+		public static bool StrToByteArray(ref string val, out byte[] cnv)
+		{
+			CultureInfo provider = CultureInfo.InvariantCulture;
+			cnv = null;
+			string c;
+
+			if (val.Length % 2 != 0)
+				return false;
+
+			cnv = new byte[val.Length / 2];
+
+			for (int i = 0; i < (val.Length / 2); i++)
+			{
+				c = val.Substring(i * 2, 2);
+				if (!byte.TryParse(c, NumberStyles.HexNumber, provider, out cnv[i]))
+				{
+					val = c;
+					return false;
+				}
+			}
+
+			return true;
+		}
 	}
 }
