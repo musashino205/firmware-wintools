@@ -4,12 +4,17 @@ using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	static class Nec_Enc
+	internal partial class Nec_Enc : Tool
 	{
+		/* ツール情報　*/
+		public override string name { get => "nec-enc"; }
+		public override string desc { get => Lang.Tools.NecEncRes.FuncDesc; }
+		public override string descFmt { get => Lang.Tools.NecEncRes.Main_FuncDesc_Fmt; }
+
 		/// <summary>
 		/// nec-encの機能プロパティ
 		/// </summary>
-		public struct Properties
+		private struct Properties
 		{
 			/// <summary>
 			/// patternのxorに用いるキー
@@ -95,7 +100,7 @@ namespace firmware_wintools.Tools
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">Program内メインプロパティ</param>
 		/// <returns>実行結果</returns>
-		public static int Do_NecEnc(string[] args, int arg_idx, Program.Properties props)
+		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
 			const int MAX_KEY_LEN = 32;
 			int read_len;
@@ -108,7 +113,7 @@ namespace firmware_wintools.Tools
 				buf_ptn = new byte[4096]
 			};
 
-			ToolsArgMap.Init_args_NecEnc(args, arg_idx, ref subprops);
+			Init_args(args, arg_idx, ref subprops);
 
 			if (props.help)
 			{

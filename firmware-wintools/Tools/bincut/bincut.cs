@@ -3,8 +3,13 @@ using System.IO;
 
 namespace firmware_wintools.Tools
 {
-	static class BinCut
+	internal partial class BinCut : Tool
 	{
+		/* ツール情報　*/
+		public override string name { get => "bincut"; }
+		public override string desc { get => Lang.Tools.BinCutRes.FuncDesc; }
+		public override string descFmt { get => Lang.Tools.BinCutRes.Main_FuncDesc_Fmt; }
+
 		public struct Properties
 		{
 			public long len;
@@ -44,7 +49,7 @@ namespace firmware_wintools.Tools
 					subprops.padBS);
 		}
 
-		public static int Do_BinCut(string[] args, int arg_idx, Program.Properties props)
+		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
 			Properties subprops = new Properties();
 
@@ -56,7 +61,7 @@ namespace firmware_wintools.Tools
 				return 0;
 			}
 
-			ToolsArgMap.Init_args_BinCut(args, arg_idx, ref subprops);
+			Init_args(args, arg_idx, ref subprops);
 
 			fw.inFInfo = new FileInfo(props.inFile);
 

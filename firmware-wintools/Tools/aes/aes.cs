@@ -6,8 +6,13 @@ using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	static class Aes
+	internal partial class Aes : Tool
 	{
+		/* ツール情報　*/
+		public override string name { get => "aes"; }
+		public override string desc { get => Lang.Tools.AesRes.FuncDesc; }
+		public override string descFmt { get => Lang.Tools.AesRes.Main_FuncDesc_Fmt; }
+
 		public struct Properties
 		{
 			public string iv;
@@ -75,7 +80,7 @@ namespace firmware_wintools.Tools
 				subprops.offset);
 		}
 
-		public static int Do_Aes(string[] args, int arg_idx, Program.Properties props)
+		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
 			byte[] iv;
 			byte[] key;
@@ -89,7 +94,7 @@ namespace firmware_wintools.Tools
 			CryptoStream Cs;
 			Firmware fw = new Firmware();
 
-			ToolsArgMap.Init_args_Aes(args, arg_idx, ref subprops);
+			Init_args(args, arg_idx, ref subprops);
 
 			if (props.help)
 			{
@@ -218,7 +223,7 @@ namespace firmware_wintools.Tools
 				offset = subprops.offset;
 
 			if (subprops.len != null &&						// something is specified for len
-				(!Program.StrToLong(subprops.len, out len, NumberStyles.None) ||// fail to convert (invalid chars for num)
+				(!Utils.StrToLong(subprops.len, out len, NumberStyles.None) ||// fail to convert (invalid chars for num)
 				len <= 0 ||							// equal or smaller than 0
 				len > fw.inFInfo.Length - offset))				// larger than valid length
 			{

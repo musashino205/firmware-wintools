@@ -1,13 +1,17 @@
 using System;
 using System.IO;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	static class MkEdimaxImg
+	internal partial class MkEdimaxImg : Tool
 	{
+		/* ツール情報　*/
+		public override string name { get => "mkedimaximg"; }
+		public override string desc { get => Lang.Tools.MkEdimaxImgRes.FuncDesc; }
+		public override string descFmt { get => Lang.Tools.MkEdimaxImgRes.Main_FuncDesc_Fmt; }
+
 		/// <summary>
 		/// mkedimaximgの機能プロパティ
 		/// </summary>
@@ -77,7 +81,7 @@ namespace firmware_wintools.Tools
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">メインプロパティ</param>
 		/// <returns></returns>
-		public static int Do_MkEdimaxImage(string[] args, int arg_idx, Program.Properties props)
+		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
 			Properties subprops = new Properties();
 			EdimaxFirmware fw = new EdimaxFirmware();
@@ -88,7 +92,7 @@ namespace firmware_wintools.Tools
 				return 0;
 			}
 
-			ToolsArgMap.Init_args_MkEdimaxImg(args, arg_idx, ref subprops);
+			Init_args(args, arg_idx, ref subprops);
 
 			fw.inFInfo = new FileInfo(props.inFile);
 			fw.outFile = props.outFile;

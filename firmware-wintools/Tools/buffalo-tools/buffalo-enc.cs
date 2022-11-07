@@ -5,8 +5,14 @@ using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	static class Buffalo_Enc
+	internal partial class Buffalo_Enc : Tool
 	{
+		/* ツール情報　*/
+		public override string name { get => "buffalo-enc"; }
+		public override string desc { get => Lang.Tools.BuffaloEncRes.FuncDesc; }
+		public override string descFmt { get => Lang.Tools.BuffaloEncRes.Main_FuncDesc_Fmt; }
+
+
 		const string DEFAULT_KEY = "Buffalo";
 		const string DEFAULT_MAGIC = "start";
 
@@ -337,9 +343,9 @@ namespace firmware_wintools.Tools
 			return fw.OpenAndWriteToFile(true);
 		}
 
-		public static int Do_BuffaloEnc(string[] args, int arg_idx, Program.Properties props)
+		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
-			int ret = 0;
+			int ret;
 			BufEncFirmware fw = new BufEncFirmware();
 			Properties subprops = new Properties
 			{
@@ -348,7 +354,7 @@ namespace firmware_wintools.Tools
 				seed = 0x4F   // Char: O
 			};
 
-			ToolsArgMap.Init_args_BuffaloEnc(args, arg_idx, ref subprops);
+			Init_args(args, arg_idx, ref subprops);
 
 			if (props.help)
 			{

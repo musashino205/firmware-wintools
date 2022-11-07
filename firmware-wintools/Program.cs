@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -46,93 +47,18 @@ namespace firmware_wintools
 			public bool param_invalid;
 		}
 
-		public static bool StrToLong(string valStr, out long cnv, NumberStyles styles)
-		{
-			int suf = 1;
-			CultureInfo provider = CultureInfo.CurrentCulture;
-			cnv = 0;
-
-			if (valStr == null)
-				return false;
-
-			switch (styles)
-			{
-				case NumberStyles.None:		// use as "auto"
-					/* jump to "default" if no hex prefix */
-					if (!valStr.StartsWith("0x"))
-						goto default;
-					valStr = valStr.Remove(0, 2);
-					styles = NumberStyles.HexNumber;
-					break;
-				case NumberStyles.HexNumber:	// do nothing
-					break;
-				default:
-					styles = NumberStyles.Integer;
-					break;
-			}
-
-			if (styles != NumberStyles.HexNumber)
-			{
-				switch (valStr[valStr.Length - 1])
-				{
-					case 'g':
-					case 'G':
-						suf *= 1024;
-						goto case 'M';
-					case 'm':
-					case 'M':
-						suf *= 1024;
-						goto case 'K';
-					case 'k':
-					case 'K':
-						suf *= 1024;
-						valStr = valStr.Remove(valStr.Length - 1, 1);
-						break;
-				}
-			}
-
-			if (!long.TryParse(valStr, styles, provider, out cnv))
-				return false;
-
-			cnv *= suf;
-
-			return true;
-		}
-
-		public static bool StrToInt(string val, out int cnv, NumberStyles numstyle)
-		{
-			cnv = 0;
-
-			if (!StrToLong(val, out long cnvLong, numstyle) ||
-				cnvLong > int.MaxValue ||
-				cnvLong < int.MinValue)
-				return false;
-
-			cnv = (int)cnvLong;
-
-			return true;
-		}
-
-		public static bool StrToUInt(string val, out uint cnv, NumberStyles numstyle)
-		{
-			cnv = 0;
-
-			if (!StrToLong(val, out long cnvLong, numstyle) ||
-				cnvLong > uint.MaxValue ||
-				cnvLong < uint.MinValue)
-				return false;
-
-			cnv = (uint)cnvLong;
-
-			return true;
-		}
-
-	/*	public static bool StrToLong(string val, out long cnv, NumberStyles numstyle)
-		{
-			cnv = 0;
-
-			return StrToNum(val, out cnv, numstyle);
-		}*/
+		/// <summary>
+		/// 各ツールクラスのリスト
+		/// </summary>
+		private static readonly List<Tools.Tool> toolList = new List<Tools.Tool>() {
+			new Tools.Aes(),
+			new Tools.BinCut(),
+			new Tools.Buffalo_Enc(),
+			new Tools.MkEdimaxImg(),
+			new Tools.MkSenaoFw(),
+			new Tools.Nec_Enc(),
+			new Tools.XorImage(),
+		};
 
 		/// <summary>
 		/// 本体ヘルプを表示
@@ -146,20 +72,10 @@ namespace firmware_wintools
 			Console.WriteLine(Lang.Resource.Main_Help_Usage +
 				Environment.NewLine +
 				Lang.Resource.Main_Help_Functions);
-			Console.WriteLine(Lang.Tools.AesRes.Main_FuncDesc_Fmt,		// aes
-				"aes", Lang.Tools.AesRes.FuncDesc);
-			Console.WriteLine(Lang.Tools.BinCutRes.Main_FuncDesc_Fmt,       // bincut
-				"bincut", Lang.Tools.BinCutRes.FuncDesc);
-			Console.WriteLine(Lang.Tools.BuffaloEncRes.Main_FuncDesc_Fmt,	// buffalo-enc
-				"buffalo-enc", Lang.Tools.BuffaloEncRes.FuncDesc);
-			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Main_FuncDesc_Fmt,	// mkedimaximg
-				"mkedimaximg", Lang.Tools.MkEdimaxImgRes.FuncDesc);
-			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Main_FuncDesc_Fmt,	// mksenaofw
-				"mksenaofw", Lang.Tools.MkSenaoFwRes.FuncDesc);
-			Console.WriteLine(Lang.Tools.NecEncRes.Main_FuncDesc_Fmt,		// nec-enc
-				"nec-enc", Lang.Tools.NecEncRes.FuncDesc);
-			Console.WriteLine(Lang.Tools.XorImageRes.Main_FuncDesc_Fmt,		// xorimage
-				"xorimage", Lang.Tools.XorImageRes.FuncDesc);
+
+			foreach (Tools.Tool tool in toolList)
+				Console.WriteLine(tool.descFmt, tool.name, tool.desc);
+
 			Console.WriteLine(Environment.NewLine +
 				Lang.Resource.Main_Help_DetailsMsg);
 
@@ -189,6 +105,7 @@ namespace firmware_wintools
 			Properties props = new Properties();
 			string lc_all, lang, shell;
 			string mode;
+			Tools.Tool tool;
 
 			lc_all = Environment.GetEnvironmentVariable("LC_ALL");
 			lang = Environment.GetEnvironmentVariable("LANG");
@@ -282,53 +199,20 @@ namespace firmware_wintools
 
 			arg_idx += 1;	// インデックスをモード名の次（オプション）へ進める
 
-			switch (mode)
-			{
-				case "aes":
-					ret = Tools.Aes.Do_Aes(args, arg_idx, props);
-					break;
-				case "bincut":
-					ret = Tools.BinCut.Do_BinCut(args, arg_idx, props);
-					break;
-				case "buffalo-enc":
-					ret = Tools.Buffalo_Enc.Do_BuffaloEnc(args, arg_idx, props);
-					break;
-				case "mkedimaximg":
-					ret = Tools.MkEdimaxImg.Do_MkEdimaxImage(args, arg_idx, props);
-					break;
-				case "mksenaofw":
-					ret = Tools.MkSenaoFw.Do_MkSenaoFw(args, arg_idx, props);
-					break;
-				case "nec-enc":
-					ret = Tools.Nec_Enc.Do_NecEnc(args, arg_idx, props);
-					break;
-				case "xorimage":
-					ret = Tools.XorImage.Do_XorImage(args, arg_idx, props);
-					break;
-				default:
-					if (mode.StartsWith("-") && props.help)
-					{
-						PrintHelp();
-						ret = 0;
-					}
-					else
-					{
-						Console.Error.WriteLine(
-							Lang.Resource.Main_Error_Prefix + Lang.Resource.Main_Error_NoInvalidMode);
-						ret = 1;        // 指定されたモードが無効ならエラー吐いてret=1
-					}
-					break;
+			if (mode.StartsWith("-") && props.help) {
+				PrintHelp();
+				return 0;
 			}
 
-			if (props.debug)
-			{
-				if (ret != 0)
-					Console.Error.WriteLine("ERROR");
-				else
-					Console.Error.WriteLine("DONE");
+			ret = -99;
+			tool = toolList.Find(x => x.name == mode);
+			if (tool != null)
+				ret = tool.Do(args, arg_idx, props);
+			else
+				Console.Error.WriteLine(
+					Lang.Resource.Main_Error_Prefix
+					+ Lang.Resource.Main_Error_NoInvalidMode);
 
-				Thread.Sleep(4000);
-			}
 			return ret;
 		}
 	}

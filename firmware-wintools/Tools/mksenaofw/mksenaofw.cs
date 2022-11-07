@@ -6,8 +6,14 @@ using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	static class MkSenaoFw
+	internal partial class MkSenaoFw : Tool
 	{
+		/* ツール情報　*/
+		public override string name { get => "mksenaofw"; }
+		public override string desc { get => Lang.Tools.MkSenaoFwRes.FuncDesc; }
+		public override string descFmt { get => Lang.Tools.MkSenaoFwRes.Main_FuncDesc_Fmt; }
+
+
 		static byte[] md5sum;
 
 		/// <summary>
@@ -247,7 +253,7 @@ namespace firmware_wintools.Tools
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">メインプロパティ</param>
 		/// <returns>成功: 0, 失敗: 1</returns>
-		public static int Do_MkSenaoFw(string[] args, int arg_idx, Program.Properties props)
+		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
 			SenaoFirmware fw = new SenaoFirmware();
 			Properties subprops = new Properties()
@@ -264,7 +270,7 @@ namespace firmware_wintools.Tools
 				return 0;
 			}
 
-			ToolsArgMap.Init_args_MkSenaoFw(args, arg_idx, ref subprops);
+			Init_args(args, arg_idx, ref subprops);
 
 			if (!subprops.pad)
 				subprops.bs = 0;

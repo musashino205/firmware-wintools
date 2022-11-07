@@ -14,7 +14,7 @@ namespace firmware_wintools.Tools
 		internal byte[] version = new byte[VER_LEN];
 		internal uint firmware_type;
 		internal uint filesize;
-		internal uint zero;
+		internal uint zero = 0;
 		internal byte[] md5sum = new byte[MD5_LEN];
 		internal byte[] pad = new byte[PAD_LEN];
 		internal uint cksum;

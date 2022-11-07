@@ -5,8 +5,13 @@ using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	static class XorImage
+	internal partial class XorImage : Tool
 	{
+		/* ツール情報　*/
+		public override string name { get => "xorimage"; }
+		public override string desc { get => Lang.Tools.XorImageRes.FuncDesc; }
+		public override string descFmt { get => Lang.Tools.XorImageRes.Main_FuncDesc_Fmt; }
+
 		/// <summary>
 		/// xorimageの機能プロパティ
 		/// </summary>
@@ -37,7 +42,7 @@ namespace firmware_wintools.Tools
 		/// <summary>
 		/// xorimageの機能ヘルプを表示します
 		/// </summary>
-		private static void PrintHelp(int arg_idx)
+		public static void PrintHelp(int arg_idx)
 		{
 			Console.WriteLine(Lang.Tools.XorImageRes.Help_Usage +
 				Lang.Tools.XorImageRes.FuncDesc +
@@ -106,7 +111,7 @@ namespace firmware_wintools.Tools
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">Program内のメインプロパティ</param>
 		/// <returns></returns>
-		public static int Do_XorImage(string[] args, int arg_idx, Program.Properties props)
+		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
 			int read_len, write_len, p_off = 0;
 			long offset = 0, len = long.MaxValue;
@@ -128,7 +133,7 @@ namespace firmware_wintools.Tools
 				return 0;
 			}
 
-			ToolsArgMap.Init_args_Xorimage(args, arg_idx, ref subprops);
+			Init_args(args, arg_idx, ref subprops);
 
 			int p_len = subprops.pattern.Length;
 
@@ -176,7 +181,7 @@ namespace firmware_wintools.Tools
 				offset = subprops.offset;
 
 			if (subprops.len != null &&						// something is specified for len
-				(!Program.StrToLong(subprops.len, out len, NumberStyles.None) ||// fail to convert (invalid chars for num)
+				(!Utils.StrToLong(subprops.len, out len, NumberStyles.None) ||// fail to convert (invalid chars for num)
 			    len <= 0 ||								// equal or smaller than 0
 			    len > fw.inFInfo.Length - offset))					// larger than valid length
 			{
