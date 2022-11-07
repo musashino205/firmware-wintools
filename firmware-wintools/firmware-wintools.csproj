@@ -151,6 +151,7 @@
     <Compile Include="Tools\nec-enc\nec-enc.cs" />
     <Compile Include="Tools\xorimage\ToolsArgMap.cs" />
     <Compile Include="Tools\xorimage\xorimage.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
