@@ -58,6 +58,9 @@ namespace firmware_wintools
 			new Tools.MkSenaoFw(),
 			new Tools.Nec_Enc(),
 			new Tools.XorImage(),
+
+			/* misc tools */
+			new Tools.RtkWeb(),
 		};
 
 		/// <summary>
