@@ -85,13 +85,19 @@ namespace firmware_wintools
 		/// <summary>
 		/// 共通ヘルプを表示
 		/// </summary>
-		public static void PrintCommonOption()
+		public static void PrintCommonOption(bool skipOFChk)
 		{
 			Console.WriteLine(Lang.CommonRes.Help_CommonOpts +
 				Lang.CommonRes.Help_Options_i +
-				Lang.CommonRes.Help_Options_o +
+				(skipOFChk ? "" : Lang.CommonRes.Help_Options_o) +
 				Lang.CommonRes.Help_Options_Q);
 		}
+
+		public static void PrintCommonOption()
+		{
+			PrintCommonOption(false);
+		}
+
 
 		/// <summary>
 		/// main関数として、各機能への分岐などを行います
@@ -172,22 +178,6 @@ namespace firmware_wintools
 				Console.WriteLine("=============\n");
 			}
 
-			if (!props.help)
-			{
-				if (props.inFile == null || props.outFile == null)
-				{
-					Console.Error.WriteLine(
-						Lang.Resource.Main_Error_Prefix + Lang.Resource.Main_Error_NoInOutFile);
-					if (props.debug)
-						Thread.Sleep(4000);
-					return 1;
-				}
-
-				if (!props.quiet && props.debug)
-					Console.WriteLine(Lang.Resource.Main_Info + Environment.NewLine,
-						Path.GetFileName(props.inFile), Directory.GetParent(props.inFile),
-						Path.GetFileName(props.outFile), Directory.GetParent(props.outFile));
-			}
 
 			mode = args[arg_idx];
 			/*
@@ -204,14 +194,35 @@ namespace firmware_wintools
 				return 0;
 			}
 
-			ret = -99;
 			tool = toolList.Find(x => x.name == mode);
-			if (tool != null)
-				ret = tool.Do(args, arg_idx, props);
-			else
+			if (tool == null) {
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Error_Prefix
 					+ Lang.Resource.Main_Error_NoInvalidMode);
+
+				return -99;
+			}
+
+			if (!props.help)
+			{
+				if (props.inFile == null ||
+				    (!tool.skipOFChk && props.outFile == null))
+				{
+					Console.Error.WriteLine(
+						Lang.Resource.Main_Error_Prefix + Lang.Resource.Main_Error_NoInOutFile);
+					if (props.debug)
+						Thread.Sleep(4000);
+					return 1;
+				}
+
+				if (!props.quiet && props.debug)
+					Console.WriteLine(Lang.Resource.Main_Info + Environment.NewLine,
+						Path.GetFileName(props.inFile), Directory.GetParent(props.inFile),
+						tool.skipOFChk ? "-" : Path.GetFileName(props.outFile),
+						tool.skipOFChk ? "-" : Directory.GetParent(props.outFile).ToString());
+			}
+
+			ret = tool.Do(args, arg_idx, props);
 
 			return ret;
 		}

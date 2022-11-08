@@ -6,6 +6,7 @@ namespace firmware_wintools.Tools
 		public virtual string name { get => ""; }
 		public virtual string desc { get => ""; }
 		public virtual string descFmt { get => ""; }
+		public virtual bool skipOFChk { get => false; }
 
 		internal abstract int
 		Do(string[] args, int arg_idx, Program.Properties baseProps);
