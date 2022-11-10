@@ -85,20 +85,21 @@ namespace firmware_wintools
 			return true;
 		}
 
-		public static bool StrToByteArray(ref string val, out byte[] cnv)
+		public static bool
+		StrToByteArray(ref string val, out byte[] cnv, int offset, int bytes)
 		{
 			CultureInfo provider = CultureInfo.InvariantCulture;
 			cnv = null;
 			string c;
 
-			if (val.Length % 2 != 0)
+			if (bytes * 2 > val.Length)
 				return false;
 
-			cnv = new byte[val.Length / 2];
+			cnv = new byte[bytes];
 
-			for (int i = 0; i < (val.Length / 2); i++)
+			for (int i = 0; i < bytes; i++)
 			{
-				c = val.Substring(i * 2, 2);
+				c = val.Substring(offset + i * 2, 2);
 				if (!byte.TryParse(c, NumberStyles.HexNumber, provider, out cnv[i]))
 				{
 					val = c;
@@ -107,6 +108,16 @@ namespace firmware_wintools
 			}
 
 			return true;
+		}
+
+		public static bool StrToByteArray(ref string val, out byte[] cnv)
+		{
+			cnv = null;
+
+			if (val.Length % 2 != 0)
+				return false;
+
+			return StrToByteArray(ref val, out cnv, 0, val.Length / 2);
 		}
 	}
 }
