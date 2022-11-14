@@ -7,8 +7,8 @@ namespace firmware_wintools.Tools
 		/// </summary>
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">xorimageの機能プロパティ</param>
-		public static void
-		Init_args(string[] args, int arg_idx, ref Properties subprops)
+		public void
+		Init_args(string[] args, int arg_idx)
 		{
 			for (int i = arg_idx; i < args.Length; i++)
 			{
@@ -18,28 +18,28 @@ namespace firmware_wintools.Tools
 				switch (args[i].Replace("-", ""))
 				{
 					case "l":	// length
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.len) == 0)
+						if (ArgMap.Set_StrParamFromArgs(args, i, ref len_s) == 0)
 							i++;
 						break;
 					case "O":	// offset
-						string offset = null;
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref offset) == 0 &&
-							Utils.StrToInt(offset, out int conv_offset,
+						string offset_s = null;
+						if (ArgMap.Set_StrParamFromArgs(args, i, ref offset_s) == 0 &&
+							Utils.StrToInt(offset_s, out int conv_offset,
 								System.Globalization.NumberStyles.None))
 						{
-							subprops.offset = conv_offset;
+							offset = conv_offset;
 							i++;
 						}
 						break;
 					case "p":
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.pattern) == 0)
+						if (ArgMap.Set_StrParamFromArgs(args, i, ref pattern) == 0)
 							i++;
 						break;
 					case "r":
-						subprops.rewrite = true;
+						rewrite = true;
 						break;
 					case "x":
-						subprops.ishex = true;
+						ishex = true;
 						break;
 				}
 			}

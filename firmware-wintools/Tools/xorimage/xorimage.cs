@@ -12,32 +12,27 @@ namespace firmware_wintools.Tools
 		public override string desc { get => Lang.Tools.XorImageRes.FuncDesc; }
 		public override string descFmt { get => Lang.Tools.XorImageRes.Main_FuncDesc_Fmt; }
 
+
 		/// <summary>
-		/// xorimageの機能プロパティ
+		/// xorを行うデータ長
 		/// </summary>
-		public struct Properties
-		{
-			/// <summary>
-			/// xorを行うデータ長
-			/// </summary>
-			public string len;
-			/// <summary>
-			/// xorを開始するデータのオフセット
-			/// </summary>
-			public long offset;
-			/// <summary>
-			/// xorに用いるpattern
-			/// </summary>
-			public string pattern;
-			/// <summary>
-			/// 指定されたパターンがhex値であるか否か
-			/// </summary>
-			public bool ishex;
-			/// <summary>
-			/// 部分書き換えモード
-			/// </summary>
-			public bool rewrite;
-		}
+		private string len_s = null;
+		/// <summary>
+		/// xorを開始するデータのオフセット
+		/// </summary>
+		private long offset = 0;
+		/// <summary>
+		/// xorに用いるpattern
+		/// </summary>
+		private string pattern = "12345678";
+		/// <summary>
+		/// 指定されたパターンがhex値であるか否か
+		/// </summary>
+		private bool ishex = false;
+		/// <summary>
+		/// 部分書き換えモード
+		/// </summary>
+		private bool rewrite = false;
 
 		/// <summary>
 		/// xorimageの機能ヘルプを表示します
@@ -63,20 +58,14 @@ namespace firmware_wintools.Tools
 		/// xorimageの実行情報を表示します
 		/// </summary>
 		/// <param name="props"></param>
-		private static void PrintInfo(Properties subprops, long datalen)
+		private void PrintInfo(long datalen)
 		{
 			Console.WriteLine(Lang.Tools.XorImageRes.Info);
-			Console.WriteLine(Lang.Tools.XorImageRes.Info_Pattern, subprops.pattern);
-			Console.WriteLine(Lang.Tools.XorImageRes.Info_Hex, subprops.ishex.ToString());
-			Console.WriteLine(			// length
-				Lang.Tools.XorImageRes.Info_len,
-				datalen);
-			Console.WriteLine(			// offset
-				Lang.Tools.XorImageRes.Info_offset,
-				subprops.offset);
-			Console.WriteLine(
-				Lang.Tools.XorImageRes.Info_Rewrite,
-				subprops.rewrite);
+			Console.WriteLine(Lang.Tools.XorImageRes.Info_Pattern, pattern);
+			Console.WriteLine(Lang.Tools.XorImageRes.Info_Hex, ishex.ToString());
+			Console.WriteLine(Lang.Tools.XorImageRes.Info_len, datalen);
+			Console.WriteLine(Lang.Tools.XorImageRes.Info_offset, offset);
+			Console.WriteLine(Lang.Tools.XorImageRes.Info_Rewrite, rewrite);
 		}
 
 		/// <summary>
@@ -89,7 +78,8 @@ namespace firmware_wintools.Tools
 		/// <param name="p_len">パターン長</param>
 		/// <param name="p_off">パターン オフセット</param>
 		/// <returns></returns>
-		private static int XorData(ref byte[] data, int len, in byte[] pattern, int p_len, int p_off, bool ishex)
+		private static int
+		XorData(ref byte[] data, int len, in byte[] pattern, int p_len, int p_off, bool ishex)
 		{
 			int data_pos = 0;
 
@@ -114,17 +104,12 @@ namespace firmware_wintools.Tools
 		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
 			int read_len, write_len, p_off = 0;
-			long offset = 0, len = long.MaxValue;
-			byte[] pattern;
+			long len = long.MaxValue;
+			byte[] ptnAry;
 			byte[] hex_pattern = new byte[128];
-			byte[] buf = new byte[4096];
 			Firmware fw = new Firmware()
 			{
 				data = new byte[4096]
-			};
-			Properties subprops = new Properties
-			{
-				pattern = "12345678"
 			};
 
 			if (props.help)
@@ -133,9 +118,9 @@ namespace firmware_wintools.Tools
 				return 0;
 			}
 
-			Init_args(args, arg_idx, ref subprops);
+			Init_args(args, arg_idx);
 
-			int p_len = subprops.pattern.Length;
+			int p_len = pattern.Length;
 
 			if (p_len == 0)
 			{
@@ -144,7 +129,7 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			if (subprops.ishex)
+			if (ishex)
 			{
 				if ((p_len / 2) > hex_pattern.Length)
 				{
@@ -161,29 +146,36 @@ namespace firmware_wintools.Tools
 				}
 			}
 
-			if (subprops.ishex)
+			if (ishex)
 			{
-				pattern = new byte[p_len / 2];
+				ptnAry = new byte[p_len / 2];
 				for (int i = 0; i < (p_len / 2); i++)
-					pattern[i] = Convert.ToByte(subprops.pattern.Substring(i * 2, 2), 16);
+					ptnAry[i] = Convert.ToByte(pattern.Substring(i * 2, 2), 16);
 			}
 			else
-				pattern = Encoding.ASCII.GetBytes(subprops.pattern);
+				ptnAry = Encoding.ASCII.GetBytes(pattern);
 
 			fw.inFInfo = new FileInfo(props.inFile);
 
 			/* check offset/length */
-			if (subprops.offset > fw.inFInfo.Length)
+			if (offset > fw.inFInfo.Length)
+			{
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Warning_Prefix +
 					Lang.Tools.XorImageRes.Warning_LargeOffset);
-			else
-				offset = subprops.offset;
+				offset = 0;
+			}
 
-			if (subprops.len != null &&						// something is specified for len
-				(!Utils.StrToLong(subprops.len, out len, NumberStyles.None) ||// fail to convert (invalid chars for num)
-			    len <= 0 ||								// equal or smaller than 0
-			    len > fw.inFInfo.Length - offset))					// larger than valid length
+			/*
+			 * - len_sに何かが指定されている
+			 * - 文字列->long変換に失敗したか
+			 * - lenが0以下であるか
+			 * - lenが入力ファイルの長さからオフセットを引いたものより大きいか
+			 */
+			if (len_s != null &&
+			    (!Utils.StrToLong(len_s, out len, NumberStyles.None) ||
+			    len <= 0 ||
+			    len > fw.inFInfo.Length - offset))
 			{
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Warning_Prefix +
@@ -193,7 +185,7 @@ namespace firmware_wintools.Tools
 			/* check offset/length end */
 
 			if (!props.quiet)
-				PrintInfo(subprops, len != long.MaxValue ? len : fw.inFInfo.Length - offset);
+				PrintInfo(len != long.MaxValue ? len : fw.inFInfo.Length - offset);
 
 			try
 			{
@@ -202,7 +194,7 @@ namespace firmware_wintools.Tools
 				using (fw.outFs = new FileStream(props.outFile, FileMode.Create,
 							FileAccess.Write, FileShare.None))
 				{
-					if (subprops.rewrite && subprops.offset > 0)
+					if (rewrite && offset > 0)
 					{
 						fw.inFs.CopyTo(fw.outFs);
 						/* outFs.Lengthをoffsetまで切り詰める */
@@ -224,7 +216,7 @@ namespace firmware_wintools.Tools
 							else
 								write_len = (int)len;
 
-						p_off = XorData(ref fw.data, write_len, in pattern, p_len, p_off, subprops.ishex);
+						p_off = XorData(ref fw.data, write_len, in ptnAry, p_len, p_off, ishex);
 
 						fw.outFs.Write(fw.data, 0, write_len);
 
@@ -243,7 +235,7 @@ namespace firmware_wintools.Tools
 					}
 
 					/* copy remaining data in inFs to outFs if rewrite mode */
-					if (subprops.rewrite)
+					if (rewrite)
 						fw.inFs.CopyTo(fw.outFs);
 				}
 			}
