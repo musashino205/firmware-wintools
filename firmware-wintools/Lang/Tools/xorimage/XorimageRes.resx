@@ -120,11 +120,17 @@
   <data name="Error.InvalidHexPatternLen" xml:space="preserve">
     <value>the numbers of charactors (hex) is incorrect</value>
   </data>
+  <data name="Error.InvalidPatternBin" xml:space="preserve">
+    <value>the specified pattern binary is invalid</value>
+  </data>
   <data name="Error.InvalidPatternLen" xml:space="preserve">
     <value>incorrect pattern length (must be &gt; 0)</value>
   </data>
   <data name="Error.LongHexPattern" xml:space="preserve">
     <value>provided hex pattern is too long</value>
+  </data>
+  <data name="Error.PatternBinMaxLen" xml:space="preserve">
+    <value>(max len.: 0x{0:x} ({0} bytes))</value>
   </data>
   <data name="FuncDesc" xml:space="preserve">
     <value>encode/decode firmware by xor with a pattern</value>
@@ -142,7 +148,11 @@
 </value>
   </data>
   <data name="Help.Options.Pattern" xml:space="preserve">
-    <value>  -p &lt;pattern&gt;		use &lt;pattern&gt; for encode/decode the firmware by xor
+    <value>  -p &lt;pattern&gt;		use &lt;pattern&gt; for encoding/decoding the firmware by xor
+</value>
+  </data>
+  <data name="Help.Options.PatternBin" xml:space="preserve">
+    <value>  -P &lt;binary&gt;		specify pattern &lt;binary&gt; instead of pattern text on command line
 </value>
   </data>
   <data name="Help.Options.Rewrite" xml:space="preserve">

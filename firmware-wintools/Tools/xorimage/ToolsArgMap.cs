@@ -35,6 +35,10 @@ namespace firmware_wintools.Tools
 						if (ArgMap.Set_StrParamFromArgs(args, i, ref pattern) == 0)
 							i++;
 						break;
+					case "P":
+						if (ArgMap.Set_StrParamFromArgs(args, i, ref binPattern) == 0)
+							i++;
+						break;
 					case "r":
 						rewrite = true;
 						break;

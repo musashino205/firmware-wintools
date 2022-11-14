@@ -19,7 +19,7 @@ namespace firmware_wintools.Lang.Tools {
     // または Visual Studio のようなツールを使用して自動生成されました。
     // メンバーを追加または削除するには、.ResX ファイルを編集して、/str オプションと共に
     // ResGen を実行し直すか、または VS プロジェクトをビルドし直します。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class XorImageRes {
@@ -70,6 +70,15 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
+        ///   the specified pattern binary is invalid に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Error_InvalidPatternBin {
+            get {
+                return ResourceManager.GetString("Error.InvalidPatternBin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   incorrect pattern length (must be &gt; 0) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Error_InvalidPatternLen {
@@ -84,6 +93,15 @@ namespace firmware_wintools.Lang.Tools {
         internal static string Error_LongHexPattern {
             get {
                 return ResourceManager.GetString("Error.LongHexPattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   (max len.: 0x{0:x} ({0} bytes)) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Error_PatternBinMaxLen {
+            get {
+                return ResourceManager.GetString("Error.PatternBinMaxLen", resourceCulture);
             }
         }
         
@@ -127,12 +145,22 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
-        ///     -p &lt;pattern&gt;		use &lt;pattern&gt; for encode/decode the firmware by xor
+        ///     -p &lt;pattern&gt;		use &lt;pattern&gt; for encoding/decoding the firmware by xor
         /// に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Help_Options_Pattern {
             get {
                 return ResourceManager.GetString("Help.Options.Pattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///     -P &lt;binary&gt;		specify pattern &lt;binary&gt; instead of pattern text on command line
+        /// に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Help_Options_PatternBin {
+            get {
+                return ResourceManager.GetString("Help.Options.PatternBin", resourceCulture);
             }
         }
         

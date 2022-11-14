@@ -120,11 +120,17 @@
   <data name="Error.InvalidHexPatternLen" xml:space="preserve">
     <value>パターン文字列（16進数）の長さが正しくありません</value>
   </data>
+  <data name="Error.InvalidPatternBin" xml:space="preserve">
+    <value>指定されたパターンバイナリは無効です</value>
+  </data>
   <data name="Error.InvalidPatternLen" xml:space="preserve">
     <value>パターン文字列の長さは 0 より大きくなければなりません</value>
   </data>
   <data name="Error.LongHexPattern" xml:space="preserve">
     <value>指定されたパターン文字列（16進数）は長すぎます</value>
+  </data>
+  <data name="Error.PatternBinMaxLen" xml:space="preserve">
+    <value>（最大サイズ: 0x{0:x} ({0} バイト)）</value>
   </data>
   <data name="FuncDesc" xml:space="preserve">
     <value>ファームウェアをxorによりパターンを用いてエンコード/デコードします</value>
@@ -143,6 +149,10 @@
   </data>
   <data name="Help.Options.Pattern" xml:space="preserve">
     <value>  -p &lt;パターン&gt;		xorによるファームウェアのエンコード/デコードに使用する &lt;パターン&gt; を指定します
+</value>
+  </data>
+  <data name="Help.Options.PatternBin" xml:space="preserve">
+    <value>  -P &lt;バイナリ&gt;		コマンドライン上でのテキストに代わって使用するパターン &lt;バイナリ&gt; を指定します
 </value>
   </data>
   <data name="Help.Options.Rewrite" xml:space="preserve">
