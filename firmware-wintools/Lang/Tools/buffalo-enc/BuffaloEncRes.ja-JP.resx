@@ -218,7 +218,7 @@
     <value> プロダクト名	: '{0}'</value>
   </data>
   <data name="Info.Seed" xml:space="preserve">
-    <value> シード値	: 0x{0,2:X}</value>
+    <value> シード値	: 0x{0:X02}</value>
   </data>
   <data name="Info.Version" xml:space="preserve">
     <value> バージョン	: '{0}'</value>
