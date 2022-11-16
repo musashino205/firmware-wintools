@@ -149,14 +149,14 @@ namespace firmware_wintools
 
 			args = Environment.GetCommandLineArgs();
 
-			if (Path.GetFileName(args[0]) != "firmware-wintools.exe")
-				arg_idx = 0;			// symlinkからの呼び出しまたはバイナリ名が機能名の場合、機能名を取る為0スタート
+			if (toolList.Exists(x => x.name == Path.GetFileName(args[0])))
+				arg_idx = 0;            // symlinkからの呼び出しまたはバイナリ名が機能名の場合、機能名を取る為0スタート
 			else
-				if (args.Length == 1)		// 引数が1（firmware-wintoolsのパス）ならヘルプ表示して終了
-			{
-				PrintHelp();
-				return 0;
-			}
+				if (args.Length == 1)   // 引数が1（firmware-wintoolsのパス）ならヘルプ表示して終了
+				{
+					PrintHelp();
+					return 0;
+				}
 
 
 			ArgMap argMap = new ArgMap();
