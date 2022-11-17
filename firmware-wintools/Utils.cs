@@ -119,5 +119,10 @@ namespace firmware_wintools
 
 			return StrToByteArray(ref val, out cnv, 0, val.Length / 2);
 		}
+
+		public static int BE32toHost(int val)
+		{
+			return System.Net.IPAddress.NetworkToHostOrder(val);
+		}
 	}
 }
