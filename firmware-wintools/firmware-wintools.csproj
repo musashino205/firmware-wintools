@@ -151,6 +151,8 @@
     <Compile Include="Tools\nec-enc\nec-enc.cs" />
     <Compile Include="Tools\hex2bin\hex2bin.cs" />
     <Compile Include="Tools\hex2bin\ToolsArgMap.cs" />
+    <Compile Include="Tools\nec-bsdtools\nec-bsdfw.cs" />
+    <Compile Include="Tools\nec-bsdtools\ToolsArgMap.cs" />
     <Compile Include="Tools\rtkweb\rtkweb.cs" />
     <Compile Include="Tools\rtkweb\ToolsArgMap.cs" />
     <Compile Include="Tools\Tool.cs" />
