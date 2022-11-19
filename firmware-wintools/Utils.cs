@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 
 namespace firmware_wintools
@@ -123,6 +124,56 @@ namespace firmware_wintools
 		public static int BE32toHost(int val)
 		{
 			return System.Net.IPAddress.NetworkToHostOrder(val);
+		}
+
+		public static int BE32toHost(uint val)
+		{
+			return BE32toHost((int)val);
+		}
+
+		public static long BE64toHost(long val)
+		{
+			return System.Net.IPAddress.NetworkToHostOrder(val);
+		}
+
+		public static int LE32toHost(int val)
+		{
+			byte[] ary;
+
+			if (BitConverter.IsLittleEndian)
+				return val;
+
+			ary = BitConverter.GetBytes(val);
+			Array.Reverse(ary);
+			return BitConverter.ToInt32(ary, 0);
+		}
+
+		public static int LE32toHost(uint val)
+		{
+			return LE32toHost((int)val);
+		}
+
+		public static long LE64toHost(long val)
+		{
+			byte[] ary;
+
+			if (BitConverter.IsLittleEndian)
+				return val;
+
+			ary = BitConverter.GetBytes(val);
+			Array.Reverse(ary);
+			return BitConverter.ToInt32(ary, 0);
+		}
+
+		public static DateTime UnixZeroUTC()
+		{
+			return new DateTime(1970, 1, 1, 0, 0, 0,
+					DateTimeKind.Utc);
+		}
+
+		public static DateTime UnixToUTC(uint unixtime)
+		{
+			return UnixZeroUTC().AddSeconds(unixtime);
 		}
 	}
 }
