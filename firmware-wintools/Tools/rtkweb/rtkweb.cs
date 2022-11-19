@@ -14,8 +14,7 @@ namespace firmware_wintools.Tools
 		public override bool skipOFChk => true;
 
 
-		private readonly int FINFO_LEN = 0x40;
-		private readonly int FINFO_FNAME_LEN = 0x3c;
+		private int finfo_len = 0x40;
 
 		string dir = "webdata";
 
@@ -58,13 +57,19 @@ namespace firmware_wintools.Tools
 
 			fw.inFInfo = new FileInfo(props.inFile);
 
+			if (finfo_len % 4 != 0 || finfo_len > 0x100)
+			{
+				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+							"specified file header is not multiple of 4 (len % 4 != 0)"
+							+ " or too long (> 0x100)");
+				return 1;
+			}
+
 			if (dir.Length == 0) {
 				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 							"invalid output directory specified");
 				return 1;
 			}
-			if (!Directory.Exists(dir))
-				Directory.CreateDirectory(dir);
 
 			try
 			{
@@ -73,24 +78,32 @@ namespace firmware_wintools.Tools
 				{
 					string fname, fdir, fbase;
 					uint flen = 0;
-					int nameEnd = 0;
+					int nameEnd = 0, finfo_name_len = finfo_len - sizeof(uint);
 
 					while (fw.inFs.Position < fw.inFs.Length) {
-						fw.data = new byte[FINFO_LEN];
-						read_len = fw.inFs.Read(fw.data, 0, FINFO_LEN);
+						fw.data = new byte[finfo_len];
+						read_len = fw.inFs.Read(fw.data, 0, finfo_len);
 
-						if (read_len < FINFO_LEN) {
+						if (read_len < finfo_len) {
 							Console.Error.WriteLine(Lang.Resource.Main_Warning_Prefix +
 										"fileinfo field is too short! {0} bytes (ofs: 0x{1:x08})",
 										read_len, fw.inFs.Position);
 							break;
 						}
 
-						nameEnd = Array.IndexOf<byte>(fw.data, 0, 0, FINFO_FNAME_LEN);
+						nameEnd = Array.IndexOf<byte>(fw.data, 0, 0, finfo_name_len);
 
 						fname = Encoding.ASCII.GetString(fw.data, 0, nameEnd);
 						flen = (uint)IPAddress.NetworkToHostOrder(
-										BitConverter.ToInt32(fw.data, FINFO_FNAME_LEN));
+										BitConverter.ToInt32(fw.data, finfo_name_len));
+						if (flen > fw.inFInfo.Length - fw.inFs.Position)
+						{
+							Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+									$"size of file \"{fname}\" is too long (0x{flen:x}),"
+									+ " wrong file header length?\n"
+									+ "(candidates: 0x40, 0x84)");
+							return 1;
+						}
 
 						fdir = Path.GetDirectoryName(fname);
 						fbase = Path.GetFileName(fname);
@@ -106,11 +119,11 @@ namespace firmware_wintools.Tools
 										flen);
 						}
 
+						if (!Directory.Exists(dir))
+							Directory.CreateDirectory(dir);
 						using (FileStream outfile = new FileStream(dir + "/" + fname,
 											FileMode.Create, FileAccess.Write, FileShare.Read))
-						{
 							outfile.Write(fw.data, 0, (int)flen);
-						}
 
 						if (props.debug)
 							Console.WriteLine("{0,45}: size-> 0x{1:X08} ({1,8} bytes), offset-> 0x{2:X08}",
