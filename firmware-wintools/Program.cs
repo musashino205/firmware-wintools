@@ -63,6 +63,7 @@ namespace firmware_wintools
 			new Tools.RtkWeb(),
 			new Tools.Hex2Bin(),
 			new Tools.Nec_BsdFw(),
+			new Tools.Nec_BsdFFS(),
 		};
 
 		/// <summary>

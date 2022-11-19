@@ -146,6 +146,9 @@
     <Compile Include="Tools\mksenaofw\mksenaofw.cs" />
     <Compile Include="Tools\mksenaofw\SenaoFirmware.cs" />
     <Compile Include="Tools\mksenaofw\ToolsArgMap.cs" />
+    <Compile Include="Tools\nec-bsdtools\BsdFFS_SuperBlk.cs" />
+    <Compile Include="Tools\nec-bsdtools\BsdFFS_Inode.cs" />
+    <Compile Include="Tools\nec-bsdtools\nec-bsdffs.cs" />
     <Compile Include="Tools\nec-enc\NecEncFirmware.cs" />
     <Compile Include="Tools\nec-enc\ToolsArgMap.cs" />
     <Compile Include="Tools\nec-enc\nec-enc.cs" />
