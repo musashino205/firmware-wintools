@@ -118,6 +118,13 @@ namespace firmware_wintools.Tools
 						continue;
 					}
 
+					if (ret != 0)
+					{
+						Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+								"no super block found");
+						return ret;
+					}
+
 					isBE = sBlk.isBE;
 					supBlkOffset = cur_off;
 					sBlk.PrintSuperBlk(cur_off);
