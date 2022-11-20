@@ -18,7 +18,6 @@ namespace firmware_wintools.Tools
 		internal string output = null;
 		internal int outPos = 0;
 
-		private readonly int FWHDR_LEN = 0x20;
 		private readonly int BLKHDR_LEN = 0x18;
 		private readonly uint BLKHDR_F_GZIP = 0x80000000;	/* BIT(31) */
 		private readonly uint BLKHDR_F_EXEC = 0x00020000;   /* BIT(17) */
@@ -145,7 +144,7 @@ namespace firmware_wintools.Tools
 						{
 							if (hdrs.Count == 0)
 							{
-								fw.inFs.Seek(FWHDR_LEN, SeekOrigin.Begin);
+								fw.inFs.Seek(-0x8, SeekOrigin.Current);
 								continue;
 							}
 							else
