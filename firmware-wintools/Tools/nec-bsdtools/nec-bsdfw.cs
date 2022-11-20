@@ -92,6 +92,11 @@ namespace firmware_wintools.Tools
 					header.loadaddr);
 			Console.WriteLine("  Entry Point           : 0x{0:X08}",
 					header.entryp);
+			//Console.WriteLine("  ---");
+			Console.WriteLine("  Header Offset         : 0x{0:X}",
+					header.offset - BLKHDR_LEN);
+			Console.WriteLine("  Data Offset           : 0x{0:X}",
+					header.offset);
 			Console.WriteLine();
 		}
 
