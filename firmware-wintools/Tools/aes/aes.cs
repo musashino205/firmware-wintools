@@ -91,6 +91,7 @@ namespace firmware_wintools.Tools
 			{
 				keylen = 256,
 			};
+			CryptoStream Cs;
 			Firmware fw = new Firmware();
 
 			Init_args(args, arg_idx, ref subprops);
@@ -268,14 +269,27 @@ namespace firmware_wintools.Tools
 							FileAccess.Read, FileShare.Write))
 				using (fw.outFs = new FileStream(props.outFile, FileMode.Create,
 							FileAccess.Write, FileShare.None))
-				using (CryptoStream Cs = new CryptoStream(fw.inFs, endec,
-							CryptoStreamMode.Read))
+				using (Cs = new CryptoStream(fw.outFs, endec, CryptoStreamMode.Write))
 				{
 					fw.inFs.Seek(offset, SeekOrigin.Begin);
 
-					Cs.CopyTo(fw.outFs, 0x10000);
-
-					fw.outFs.SetLength(len);
+					byte[] buf = new byte[0x10000];
+					int readlen;
+					while ((readlen = fw.inFs.Read(buf, 0, buf.Length)) > 0)
+					{
+						if (subprops.len == null)
+							Cs.Write(buf, 0, readlen);
+						else if (len > readlen)
+						{
+							len -= readlen;
+							Cs.Write(buf, 0, readlen);
+						}
+						else
+						{
+							Cs.Write(buf, 0, (int)len);
+							break;
+						}
+					}
 				}
 			}
 			catch (Exception e)
