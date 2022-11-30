@@ -494,6 +494,13 @@ namespace firmware_wintools.Tools
 						BindingFlags.NonPublic);
 				uint val;
 
+				/*
+				 * バッファの残りが最低限の長さを満たさない場合は中止
+				 * (inum, entlen, type, namelen, name（最低1文字）
+				 */
+				if (buf.Length - offset < sizeof(uint) * 2 + sizeof(char))
+					return -1;
+
 				foreach (FieldInfo field in fields)
 				{
 					if (field.IsNotSerialized)
