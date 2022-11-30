@@ -160,7 +160,7 @@ namespace firmware_wintools.Tools
 			/// <param name="buf"></param>
 			/// <param name="isBE"></param>
 			/// <returns></returns>
-			internal int GetInodeData(in FileStream inFs, out byte[] buf, bool isBE)
+			internal int GetInodeData(in FileStream inFs, out byte[][] buf, bool isBE)
 			{
 				byte[] tmp = new byte[sizeof(uint)];
 				long offset;
@@ -173,14 +173,16 @@ namespace firmware_wintools.Tools
 				if (blocks <= 0)
 					return -1;
 
-				buf = new byte[blocks * 0x200];
+				buf = new byte[blocks][];
 				for (i = 0; i < blocks; i++)
 				{
+					buf[i] = new byte[0x200];
+
 					if (i < 0x60)
 					{
 						offset = directDiskBlks[i >> 3] + 0x200 * (i & 0x7);
 						inFs.Seek(parent.GetBlkOffset(offset), SeekOrigin.Begin);
-						inFs.Read(buf, i * 0x200, 0x200);
+						inFs.Read(buf[i], 0, 0x200);
 					}
 					else if (i < 0x1060)
 					{
@@ -193,7 +195,7 @@ namespace firmware_wintools.Tools
 							(uint)Utils.LE32toHost(BitConverter.ToInt32(tmp, 0));
 						offset = val * 0x200 + 0x200 * (j & 0x7);
 						inFs.Seek(parent.GetBlkOffset(offset), SeekOrigin.Begin);
-						inFs.Read(buf, i * 0x200, 0x200);
+						inFs.Read(buf[i], 0, 0x200);
 					}
 					else
 					{
@@ -212,7 +214,7 @@ namespace firmware_wintools.Tools
 							(uint)Utils.LE32toHost(BitConverter.ToInt32(tmp, 0));
 						offset = val * 0x200 + 0x200 * (j & 0x7);
 						inFs.Seek(parent.GetBlkOffset(offset), SeekOrigin.Begin);
-						inFs.Read(buf, i * 0x200, 0x200);
+						inFs.Read(buf[i], 0, 0x200);
 					}
 				}
 
@@ -234,7 +236,7 @@ namespace firmware_wintools.Tools
 						out Inode builtIno)
 			{
 				DirEntry entry;
-				byte[] inoData;
+				byte[][] inoData;
 				int ret, offset = 0;
 				Inode matchIno, _matchIno;
 
@@ -262,65 +264,69 @@ namespace firmware_wintools.Tools
 				ret = GetInodeData(in inFs, out inoData, isBE);
 				if (ret != 0)
 					return ret;
-				while (offset < inoData.Length)
+				for (int i = 0; i < blocks; i++)
 				{
-					entry = new DirEntry();
-					offset = entry.ParseDirEntry(in inoData, offset, isBE);
-					if (offset < 0)
-						break;
-
-					//Console.WriteLine("    {0,4}: type-> 0x{1:x02}, \"{2}\" ({3} chars)",
-					//		entry.inum, entry.type, entry.name, entry.namelen);
-
-					actInoList.Add(entry.inum);
-					if (inum == entry.inum && entry.name.Equals(".."))
-						ino_name = builtIno.ino_name = "/";
-
-					matchIno = baseInoList.Find(x =>
-								x.inum == entry.inum &&
-								x.ino_type == entry.type << FFSFileInfo.INOFT_OFS);
-					if (matchIno == null)
-						continue;
-
-					matchIno.ino_name = entry.name;
-					_matchIno = null;
-					if (entry.type == FFSFileInfo.FT_DIR)
+					offset = 0;
+					while (offset < 0x200)
 					{
-						if (matchIno.dirSetupDone == false)
-							matchIno.SetupDirInode(in inFs, isBE, in baseInoList,
-									ref actInoList, out _matchIno);
-					}
-					else
-					{
-						_matchIno = new Inode(parent)
+						entry = new DirEntry();
+						offset = entry.ParseDirEntry(in inoData[i], offset, isBE);
+						if (offset < 0)
+							break;
+
+						//Console.WriteLine("    {0,4}: type-> 0x{1:x02}, \"{2}\" ({3} chars)",
+						//		entry.inum, entry.type, entry.name, entry.namelen);
+
+						actInoList.Add(entry.inum);
+						if (inum == entry.inum && entry.name.Equals(".."))
+							ino_name = builtIno.ino_name = "/";
+
+						matchIno = baseInoList.Find(x =>
+									x.inum == entry.inum &&
+									x.ino_type == entry.type << FFSFileInfo.INOFT_OFS);
+						if (matchIno == null)
+							continue;
+
+						matchIno.ino_name = entry.name;
+						_matchIno = null;
+						if (entry.type == FFSFileInfo.FT_DIR)
 						{
-							nlink = matchIno.nlink,
-							len = matchIno.len,
-							atime = matchIno.atime,
-							mtime = matchIno.mtime,
-							ctime = matchIno.ctime,
-							directDiskBlks = matchIno.directDiskBlks,
-							indirectDiskBlks = matchIno.indirectDiskBlks,
-							flags = matchIno.flags,
-							blocks = matchIno.blocks,
+							if (matchIno.dirSetupDone == false)
+								matchIno.SetupDirInode(in inFs, isBE, in baseInoList,
+										ref actInoList, out _matchIno);
+						}
+						else
+						{
+							_matchIno = new Inode(parent)
+							{
+								nlink = matchIno.nlink,
+								len = matchIno.len,
+								atime = matchIno.atime,
+								mtime = matchIno.mtime,
+								ctime = matchIno.ctime,
+								directDiskBlks = matchIno.directDiskBlks,
+								indirectDiskBlks = matchIno.indirectDiskBlks,
+								flags = matchIno.flags,
+								blocks = matchIno.blocks,
 
-							inum = matchIno.inum,
-							ino_type = matchIno.ino_type,
-							ino_perm = matchIno.ino_perm,
-							ino_name = matchIno.ino_name,
-							ino_lnktarget = matchIno.ino_lnktarget,
-							buf = null,
-						};
+								inum = matchIno.inum,
+								ino_type = matchIno.ino_type,
+								ino_perm = matchIno.ino_perm,
+								ino_name = matchIno.ino_name,
+								ino_lnktarget = matchIno.ino_lnktarget,
+								buf = null,
+							};
+						}
+
+						if (_matchIno == null)
+							continue;
+						if (builtIno.dirFileEnt == null)
+							builtIno.dirFileEnt = new List<Inode>();
+
+						//if (_matchIno.ino_type != FFSFileInfo.INOFT_DIR)
+						//	_matchIno.PrintInode();
+						builtIno.dirFileEnt.Add(_matchIno);
 					}
-
-					if (_matchIno == null)
-						continue;
-					if (builtIno.dirFileEnt == null)
-						builtIno.dirFileEnt = new List<Inode>();
-
-					//if (_matchIno.ino_type != FFSFileInfo.INOFT_DIR)
-					//	_matchIno.PrintInode();
-					builtIno.dirFileEnt.Add(_matchIno);
 				}
 
 				//builtIno.PrintInode();
@@ -455,13 +461,20 @@ namespace firmware_wintools.Tools
 					/* Regular File */
 					case FFSFileInfo.FT_REG:
 						string file = outDir + path + ino_name;
-						ret = GetInodeData(in inFs, out byte[] data, isBE);
+						ret = GetInodeData(in inFs, out byte[][] data, isBE);
 						if (ret != 0)
 							return ret;
 						using (FileStream fs = new FileStream(@file, FileMode.Create,
 									FileAccess.Write, FileShare.None))
 						{
-							fs.Write(data, 0, Convert.ToInt32(len));
+							int _len = Convert.ToInt32(len);
+							foreach (byte[] _data in data)
+							{
+								if (_len < 0)
+									break;
+								fs.Write(_data, 0, _len < 0x200 ? _len : 0x200);
+								_len -= 0x200;
+							}
 						}
 						File.SetCreationTime(file, dt.AddSeconds(ctime));
 						File.SetLastWriteTime(file, dt.AddSeconds(mtime));
