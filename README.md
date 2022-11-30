@@ -28,13 +28,21 @@ OpenWrtのfirmware-utilsには存在しない独自機能です。AES-128-CBCま
 
 使用方法:
 
-encryption: ```firmware-wintools aes -i <input file> -o <output file> -k <text key> [-v <text iv>] [-l <length>] [-O <offset>] [-s]```
+- encryption:
+  ```
+  firmware-wintools aes -i <input file> -o <output file> -k <text key> [-v <text iv>] [-l <length>] [-O <offset>] [-s]
 
-(or ```firmware-wintools aes -i <input file> -o <output file> -K <hex key> [-V <hex iv>] [-l <length>] [-O <offset>] [-s]```)
+  (or)
+  firmware-wintools aes -i <input file> -o <output file> -K <hex key> [-V <hex iv>] [-l <length>] [-O <offset>] [-s]
+  ```
 
-decryption: ```firmware-wintools aes -d -i <input file> -o <output file> -k <text key> [-v <text iv>] [-l <length>] [-O <offset>] [-s]```
+- decryption:
+  ```
+  firmware-wintools aes -d -i <input file> -o <output file> -k <text key> [-v <text iv>] [-l <length>] [-O <offset>] [-s]
 
-(or ```firmware-wintools aes -d -i <input file> -o <output file> -K <hex key> [-V <hex iv>] [-l <length>] [-O <offset>] [-s]```)
+  (or)
+  firmware-wintools aes -d -i <input file> -o <output file> -K <hex key> [-V <hex iv>] [-l <length>] [-O <offset>] [-s]
+  ```
 
 注意:
 
@@ -48,9 +56,12 @@ OpenWrtのfirmware-utilsには存在しない独自機能です。指定され�
 
 使用方法:
 
-```firmware-wintools bincut -i <input file> -o <output file> [-l <length>] [-O <offset>] [-p <padding size]```
+```
+firmware-wintools bincut -i <input file> -o <output file> [-l <length>] [-O <offset>] [-p <padding size>]
 
-(or ```firmware-wintools bincut -i <input file> -o <output file> [-l <length>] [-O <offset>] [-P <blocksize]```)
+(or)
+firmware-wintools bincut -i <input file> -o <output file> [-l <length>] [-O <offset>] [-P <blocksize>]
+```
 
 注意:
 
@@ -64,9 +75,15 @@ OpenWrtにおけるbuffalo-encの機能を提供します。
 
 使用方法:
 
-encryption: ```firmware-wintools buffalo-enc -i <input file> -o <output file> -p <product> -v <version> [-m <magic>] [-k <key>] [-S <size>] [-l]```
+- encryption:
+  ```
+  firmware-wintools buffalo-enc -i <input file> -o <output file> -p <product> -v <version> [-m <magic>] [-k <key>] [-S <size>] [-l]
+  ```
 
-decryption: ```firmware-wintools buffalo-enc -i <input file> -o <output file> -d [-k <key>] [-O <offset>] [-l]```
+- decryption:
+  ```
+  firmware-wintools buffalo-enc -i <input file> -o <output file> -d [-k <key>] [-O <offset>] [-l]
+  ```
 
 ---
 
@@ -76,7 +93,9 @@ OpenWrtにおけるmkedimaximgの機能を提供します。
 
 使用方法:
 
-```firmware-wintools mkedimaximg -i <input file> -o <output file> -s <signature> -m <model> -f <flash> -S <start> [-b]```
+```
+firmware-wintools mkedimaximg -i <input file> -o <output file> -s <signature> -m <model> -f <flash> -S <start> [-b]
+```
 
 ---
 
@@ -86,9 +105,15 @@ OpenWrtにおけるmksenaofwの機能を提供します。
 
 使用方法:
 
-encode: ```mksenaofw -i <input file> -o <output file> -t <type> -r <vendor> -p <product> [-v <version>] [-z] [-b <blocksize>]```
+- encode:
+  ```
+  mksenaofw -i <input file> -o <output file> -t <type> -r <vendor> -p <product> [-v <version>] [-z] [-b <blocksize>]
+  ```
 
-decode: ```mksenaofw -i <input file> -o <output file> -d```
+- decode:
+  ```
+  mksenaofw -i <input file> -o <output file> -d
+  ```
 
 注意:
 
@@ -104,7 +129,9 @@ OpenWrtにおけるnec-encの機能を提供します。
 
 使用方法:
 
-```firmware-wintools nec-enc -i <input file> -o <output file> -k <key>```
+```
+firmware-wintools nec-enc -i <input file> -o <output file> -k <key>
+```
 
 確認済み機種:
 
@@ -132,7 +159,9 @@ OpenWrtにおけるxorimageの機能を提供します。
 
 使用方法:
 
-```firmware-wintools xorimage -i <input file> -o <output file> -p <pattern> [-x] [-O <offset>] [-l <length>] [-r]```
+```
+firmware-wintools xorimage -i <input file> -o <output file> -p <pattern> [-x] [-O <offset>] [-l <length>] [-r]
+```
 
 注意:
 
@@ -180,6 +209,8 @@ OpenWrtにおけるxorimageの機能を提供します。
 ## 対応言語
 
 - 日本語 (Japanese)
+  - 簡易機能を除く
+
 - 英語 (English)
 
 ## 開発方針
@@ -207,6 +238,10 @@ OpenWrtにおけるxorimageの機能を提供します。
   - 1903
   - 2004
   - 21H1
+
+- Windows 11 64bit
+  - 21H2
+
 - .NET Framework 4.8
 
 ## バージョン履歴
