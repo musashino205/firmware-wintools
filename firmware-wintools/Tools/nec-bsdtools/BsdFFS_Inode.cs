@@ -351,6 +351,13 @@ namespace firmware_wintools.Tools
 				if (ino_type == FFSFileInfo.INOFT_LNK)
 					Console.WriteLine("    LINK-> {0}",
 							ino_lnktarget);
+
+				if (ino_type == FFSFileInfo.INOFT_DIR &&
+				    dirFileEnt != null)
+				{
+					foreach (Inode _ino in dirFileEnt)
+						_ino.PrintInode();
+				}
 			}
 
 			/// <summary>
