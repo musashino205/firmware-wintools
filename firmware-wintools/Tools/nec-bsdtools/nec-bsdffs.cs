@@ -17,7 +17,7 @@ namespace firmware_wintools.Tools
 		internal bool listToText = false;
 		internal bool skipHardLink = true;
 		internal string outTxt = null;
-		internal string outDir = "necbsd-rootfs";
+		internal string outDir = "necbsd-root";
 
 		private long supBlkOffset = 0;
 		private long inoBlkOffset = 0;
