@@ -18,6 +18,7 @@ namespace firmware_wintools.Tools
 		internal bool skipHardLink = true;
 		internal string outTxt = null;
 		internal string outDir = "necbsd-root";
+		internal string outFsBin = null;
 
 		private long supBlkOffset = 0;
 		private long inoBlkOffset = 0;
@@ -25,6 +26,7 @@ namespace firmware_wintools.Tools
 		private bool isBE = true;
 
 		private const long defSupBlkOffset = 0x2000;
+		private const int defOutFsSize = 32 * 1024 * 1024;
 
 		/// <summary>
 		/// rtkwebの機能ヘルプを表示します
@@ -42,6 +44,7 @@ namespace firmware_wintools.Tools
 				"  -l\t\t\tshow list of directories/files instead of extracting\n" +
 				"  -L <output>\t\toutput directory/file list to <output>\n" +
 				"  -d [<directory>]\textract directories/files into <directory> (default: \"necbsd-rootfs\")\n" +
+				"  -f <output>[:<size>]\tcut out filesystem binary to <output> with <size> (default: 32MB)\n" +
 				"  -H\t\t\tdon't skip listing/extracting hard-link files\n");
 		}
 
@@ -128,6 +131,58 @@ namespace firmware_wintools.Tools
 					isBE = sBlk.isBE;
 					supBlkOffset = cur_off;
 					sBlk.PrintSuperBlk(cur_off);
+
+					/* ファイルシステム切り出し */
+					if (outFsBin != null)
+					{
+						string[] finfo = outFsBin.Split(':');
+						string dir = Path.GetDirectoryName(finfo[0]);
+						long len = defOutFsSize;
+
+						if (dir.Length > 0 && !Directory.Exists(dir))
+						{
+							Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+									"target directory for cut out fs binary doesn't exit");
+							return -1;
+						}
+
+						if (finfo.Length >= 2 &&
+							(finfo[1] != null && finfo[1].Length > 0))
+						{
+							if (!Utils.StrToLong(finfo[1], out len,
+												 System.Globalization.NumberStyles.None))
+							{
+								Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+										"failed to convert length");
+								return -1;
+							}
+
+							if (len > fw.inFs.Length - supBlkOffset)
+							{
+								Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+										"specifed length is longer than available");
+								return -1;
+							}
+						}
+
+						fw.inFs.Seek(supBlkOffset, SeekOrigin.Begin);
+						using (FileStream fs = new FileStream(finfo[0], FileMode.Create,
+								FileAccess.Write, FileShare.None))
+						{
+							byte[] buf = new byte[0x10000];
+							int readlen;
+
+							readlen = len < buf.Length ? Convert.ToInt32(len) : buf.Length;
+							while ((readlen = fw.inFs.Read(buf, 0, readlen)) > 0)
+							{
+								fs.Write(buf, 0, readlen);
+								len -= readlen;
+								readlen = len < buf.Length ? Convert.ToInt32(len) : buf.Length;
+							}
+						}
+
+						return 0;
+					}
 
 					/* 以下2つはsuper block前に0x2000あることを期待する */
 					inoBlkOffset = sBlk.inodeBlkCnt * 0x200;

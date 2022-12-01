@@ -21,6 +21,10 @@ namespace firmware_wintools.Tools
 						if (ArgMap.Set_StrParamFromArgs(args, i, ref outDir) == 0)
 							i++;
 						break;
+					case "f":
+						if (ArgMap.Set_StrParamFromArgs(args, i, ref outFsBin) == 0)
+							i++;
+						break;
 					case "H":
 						skipHardLink = false;
 						break;
