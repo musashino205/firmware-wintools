@@ -194,6 +194,12 @@ namespace firmware_wintools.Tools
 							(uint)Utils.BE32toHost(BitConverter.ToInt32(tmp, 0)) :
 							(uint)Utils.LE32toHost(BitConverter.ToInt32(tmp, 0));
 						offset = val * 0x200 + 0x200 * (j & 0x7);
+						/*
+						 * 余剰ブロック用なのか0x2000未満を指すことがあり、先頭0x2000の
+						 * オフセット無い場合負数になる為スキップ
+						 */
+						if (offset < 0x2000)
+							continue;
 						inFs.Seek(parent.GetBlkOffset(offset), SeekOrigin.Begin);
 						inFs.Read(buf[i], 0, 0x200);
 					}
@@ -213,6 +219,8 @@ namespace firmware_wintools.Tools
 							(uint)Utils.BE32toHost(BitConverter.ToInt32(tmp, 0)) :
 							(uint)Utils.LE32toHost(BitConverter.ToInt32(tmp, 0));
 						offset = val * 0x200 + 0x200 * (j & 0x7);
+						if (offset < 0x2000)
+							continue;
 						inFs.Seek(parent.GetBlkOffset(offset), SeekOrigin.Begin);
 						inFs.Read(buf[i], 0, 0x200);
 					}
