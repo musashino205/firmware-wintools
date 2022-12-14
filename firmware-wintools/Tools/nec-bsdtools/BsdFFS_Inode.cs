@@ -346,8 +346,7 @@ namespace firmware_wintools.Tools
 			/// </summary>
 			internal void PrintInode()
 			{
-				DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-				dt = dt.AddSeconds(mtime);
+				DateTime dt = Utils.UnixToUTC(Convert.ToUInt32(mtime)).AddSeconds(mtime);
 				Console.WriteLine("{0,4}: {1,20}, type: {2:x04}, perm: {3}, mtime: {4}, size: 0x{5:x08} ({5} bytes), blocks: {6}",
 						inum,
 						ino_name != null ? $"\"{ino_name}\"" : "(null)",
@@ -378,8 +377,7 @@ namespace firmware_wintools.Tools
 			internal void PrintDirFiles(in StreamWriter sw, in List<uint> actInoList,
 						string path, bool isBE, bool skipHard)
 			{
-				DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-				dt = dt.AddSeconds(mtime);
+				DateTime dt = Utils.UnixToUTC(Convert.ToUInt32(mtime)).AddSeconds(mtime);
 				string attr, uid_gid = string.Format($"{uid}/{gid}");
 				string line;
 

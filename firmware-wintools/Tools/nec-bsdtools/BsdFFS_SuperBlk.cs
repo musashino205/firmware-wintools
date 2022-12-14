@@ -101,8 +101,7 @@ namespace firmware_wintools.Tools
 
 			internal void PrintSuperBlk(long curoff)
 			{
-				DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-				dt = dt.AddSeconds(unixtime);
+				DateTime dt = Utils.UnixToUTC(Convert.ToUInt32(unixtime)).AddSeconds(unixtime);
 
 				Console.Error.WriteLine("--- Super Block Info ---");
 				Console.Error.WriteLine("1st SuperBlock Offset: 0x{0:X}", curoff);
@@ -112,7 +111,8 @@ namespace firmware_wintools.Tools
 				Console.Error.WriteLine("Cylinder Blocks      : {0}", cylBlkCnt);
 				Console.Error.WriteLine("inode Blocks         : {0}", inodeBlkCnt);
 				Console.Error.WriteLine("Data Blocks          : {0}", dataBlkCnt);
-				Console.Error.WriteLine("Last Written         : {0}", dt.ToString("yyyy/MM/dd HH:mm:ss"));
+				Console.Error.WriteLine("Last Written         : {0}",
+							dt.ToString("yyyy/MM/dd HH:mm:ss"));
 				Console.Error.WriteLine();
 			}
 		}
