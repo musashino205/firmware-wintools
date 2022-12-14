@@ -51,7 +51,7 @@ namespace firmware_wintools
 		/// 各ツールクラスのリスト
 		/// </summary>
 		private static readonly List<Tools.Tool> toolList = new List<Tools.Tool>() {
-			new Tools.Aes(),
+			new Tools.AesEnc(),
 			new Tools.BinCut(),
 			new Tools.Buffalo_Enc(),
 			new Tools.MkEdimaxImg(),

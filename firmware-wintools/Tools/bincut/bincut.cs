@@ -51,9 +51,9 @@ namespace firmware_wintools.Tools
 
 		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
-			Properties subprops = new Properties();
+			Properties subprops = new();
 
-			Firmware fw = new Firmware();
+			Firmware fw = new();
 
 			if (props.help)
 			{

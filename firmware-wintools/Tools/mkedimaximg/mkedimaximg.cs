@@ -83,8 +83,8 @@ namespace firmware_wintools.Tools
 		/// <returns></returns>
 		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
-			Properties subprops = new Properties();
-			EdimaxFirmware fw = new EdimaxFirmware();
+			Properties subprops = new();
+			EdimaxFirmware fw = new();
 
 			if (props.help)
 			{

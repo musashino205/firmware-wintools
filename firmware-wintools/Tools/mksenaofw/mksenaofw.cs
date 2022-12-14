@@ -255,8 +255,8 @@ namespace firmware_wintools.Tools
 		/// <returns>成功: 0, 失敗: 1</returns>
 		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
-			SenaoFirmware fw = new SenaoFirmware();
-			Properties subprops = new Properties()
+			SenaoFirmware fw = new();
+			Properties subprops = new()
 			{
 				fw_type = SenaoHeader.FirmwareType.TYPE_NONE,
 				version = SenaoHeader.DEF_VERSION,

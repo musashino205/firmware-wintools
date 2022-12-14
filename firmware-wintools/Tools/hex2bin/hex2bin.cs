@@ -54,7 +54,7 @@ namespace firmware_wintools.Tools
 		/// <returns></returns>
 		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
-			Firmware fw = new Firmware();
+			Firmware fw = new();
 
 			if (props.help)
 			{
@@ -66,7 +66,7 @@ namespace firmware_wintools.Tools
 
 			try
 			{
-				using (StreamReader sr = new StreamReader(props.inFile, Encoding.ASCII))
+				using (StreamReader sr = new(props.inFile, Encoding.ASCII))
 				using (fw.outFs = new FileStream(props.outFile, FileMode.Create,
 							FileAccess.Write, FileShare.Read))
 				{

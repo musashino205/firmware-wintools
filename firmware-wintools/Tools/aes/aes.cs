@@ -6,7 +6,7 @@ using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	internal partial class Aes : Tool
+	internal partial class AesEnc : Tool
 	{
 		/* ツール情報　*/
 		public override string name { get => "aes"; }
@@ -87,12 +87,12 @@ namespace firmware_wintools.Tools
 			int keylen;
 			long offset = 0;
 			long len = 0;
-			Properties subprops = new Properties()
+			Properties subprops = new()
 			{
 				keylen = 256,
 			};
 			CryptoStream Cs;
-			Firmware fw = new Firmware();
+			Firmware fw = new();
 
 			Init_args(args, arg_idx, ref subprops);
 
@@ -250,14 +250,12 @@ namespace firmware_wintools.Tools
 				PrintInfo(subprops, key, iv,
 					subprops.len != null ? len : fw.inFInfo.Length - offset);
 
-			AesManaged aes = new AesManaged
-			{
-				KeySize = keylen,
-				IV = iv,
-				Key = key,
-				Mode = CipherMode.CBC,
-				Padding = PaddingMode.Zeros
-			};
+			Aes aes = Aes.Create();
+			aes.KeySize = keylen;
+			aes.IV = iv;
+			aes.Key = key;
+			aes.Mode = CipherMode.CBC;
+			aes.Padding = PaddingMode.Zeros;
 
 			ICryptoTransform endec = subprops.decrypt ?
 				aes.CreateDecryptor(aes.Key, aes.IV) :

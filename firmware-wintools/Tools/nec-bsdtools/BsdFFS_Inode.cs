@@ -477,7 +477,7 @@ namespace firmware_wintools.Tools
 						ret = GetInodeData(in inFs, out byte[][] data, isBE);
 						if (ret != 0)
 							return ret;
-						using (FileStream fs = new FileStream(@file, FileMode.Create,
+						using (FileStream fs = new(@file, FileMode.Create,
 									FileAccess.Write, FileShare.None))
 						{
 							int _len = Convert.ToInt32(len);
@@ -611,8 +611,8 @@ namespace firmware_wintools.Tools
 			/// <summary>
 			/// リストにおけるファイル属性表示用
 			/// </summary>
-			internal static Dictionary<uint, string> ftchar
-					= new Dictionary<uint, string>()
+			internal static
+			Dictionary<uint, string> ftchar = new()
 			{
 				{ INOFT_FIFO, "p" },
 				{ INOFT_CHR, "c" },

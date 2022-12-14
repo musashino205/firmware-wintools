@@ -1,265 +1,203 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{32681909-9B6C-4E2A-9346-5CDAEB9BADF2}</ProjectGuid>
+    <TargetFramework>net6.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <RootNamespace>firmware_wintools</RootNamespace>
-    <AssemblyName>firmware-wintools</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <AssemblyVersion>0.6.5.2</AssemblyVersion>
+    <FileVersion>0.6.5.2</FileVersion>
+    <RepositoryUrl>https://github.com/musashino205/firmware-wintools</RepositoryUrl>
+    <Copyright>Copyright ©musashino205  2019-2022</Copyright>
+    <Version>0.6.5.2</Version>
+    <Product>Firmware-WinTools</Product>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ArgMap.cs" />
-    <Compile Include="Lang\CommonRes.Designer.cs">
+    <Compile Update="Lang\CommonRes.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>CommonRes.resx</DependentUpon>
     </Compile>
-    <Compile Include="Lang\Resource.ja-JP.Designer.cs">
+    <Compile Update="Lang\Resource.ja-JP.Designer.cs">
       <DependentUpon>Resource.ja-JP.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Lang\Resource.Designer.cs">
+    <Compile Update="Lang\Resource.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
-    <Compile Include="Lang\Tools\aes\AesRes.ja-JP.Designer.cs">
+    <Compile Update="Lang\Tools\aes\AesRes.ja-JP.Designer.cs">
       <DependentUpon>AesRes.ja-JP.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Lang\Tools\aes\AesRes.Designer.cs">
+    <Compile Update="Lang\Tools\aes\AesRes.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>AesRes.resx</DependentUpon>
     </Compile>
-    <Compile Include="Lang\Tools\bincut\BinCutRes.ja-JP.Designer.cs">
+    <Compile Update="Lang\Tools\bincut\BinCutRes.ja-JP.Designer.cs">
       <DependentUpon>BinCutRes.ja-JP.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Lang\Tools\bincut\BinCutRes.Designer.cs">
+    <Compile Update="Lang\Tools\bincut\BinCutRes.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>BinCutRes.resx</DependentUpon>
     </Compile>
-    <Compile Include="Lang\Tools\buffalo-enc\BuffaloEncRes.ja-JP.Designer.cs">
+    <Compile Update="Lang\Tools\buffalo-enc\BuffaloEncRes.Designer.cs">
+      <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>BuffaloEncRes.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Lang\Tools\buffalo-enc\BuffaloEncRes.ja-JP.Designer.cs">
       <DependentUpon>BuffaloEncRes.ja-JP.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Lang\Tools\buffalo-enc\BuffaloEncRes.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>BuffaloEncRes.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Lang\Tools\mkedimaximg\MkEdimaxImgRes.ja-JP.Designer.cs">
+    <Compile Update="Lang\Tools\mkedimaximg\MkEdimaxImgRes.ja-JP.Designer.cs">
       <DependentUpon>MkEdimaxImgRes.ja-JP.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Lang\Tools\mkedimaximg\MkEdimaxImgRes.Designer.cs">
+    <Compile Update="Lang\Tools\mkedimaximg\MkEdimaxImgRes.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>MkEdimaxImgRes.resx</DependentUpon>
     </Compile>
-    <Compile Include="Lang\Tools\mksenaofw\MkSenaoFwRes.ja-JP.Designer.cs">
+    <Compile Update="Lang\Tools\mksenaofw\MkSenaoFwRes.ja-JP.Designer.cs">
       <DependentUpon>MkSenaoFwRes.ja-JP.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Lang\Tools\mksenaofw\MkSenaoFwRes.Designer.cs">
+    <Compile Update="Lang\Tools\mksenaofw\MkSenaoFwRes.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>MkSenaoFwRes.resx</DependentUpon>
     </Compile>
-    <Compile Include="Lang\Tools\nec-enc\NecEncRes.ja-JP.Designer.cs">
+    <Compile Update="Lang\Tools\nec-enc\NecEncRes.ja-JP.Designer.cs">
       <DependentUpon>NecEncRes.ja-JP.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Lang\Tools\nec-enc\NecEncRes.Designer.cs">
+    <Compile Update="Lang\Tools\nec-enc\NecEncRes.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>NecEncRes.resx</DependentUpon>
     </Compile>
-    <Compile Include="Lang\Tools\xorimage\XorImageRes.ja-JP.Designer.cs">
+    <Compile Update="Lang\Tools\xorimage\XorImageRes.ja-JP.Designer.cs">
       <DependentUpon>XorImageRes.ja-JP.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Lang\Tools\xorimage\XorImageRes.Designer.cs">
+    <Compile Update="Lang\Tools\xorimage\XorImageRes.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>XorImageRes.resx</DependentUpon>
     </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tools\aes\aes.cs" />
-    <Compile Include="Tools\aes\ToolsArgMap.cs" />
-    <Compile Include="Tools\bincut\bincut.cs" />
-    <Compile Include="Tools\bincut\ToolsArgMap.cs" />
-    <Compile Include="Tools\buffalo-tools\BufBcrypt.cs" />
-    <Compile Include="Tools\buffalo-tools\buffalo-enc.cs" />
-    <Compile Include="Tools\buffalo-tools\BuffaloEncFirmware.cs" />
-    <Compile Include="Tools\buffalo-tools\ToolsArgMap.cs" />
-    <Compile Include="Tools\Firmware.cs" />
-    <Compile Include="Tools\mkedimaximg\EdimaxFirmware.cs" />
-    <Compile Include="Tools\mkedimaximg\mkedimaximg.cs" />
-    <Compile Include="Tools\mkedimaximg\ToolsArgMap.cs" />
-    <Compile Include="Tools\mksenaofw\mksenaofw.cs" />
-    <Compile Include="Tools\mksenaofw\SenaoFirmware.cs" />
-    <Compile Include="Tools\mksenaofw\ToolsArgMap.cs" />
-    <Compile Include="Tools\nec-bsdtools\BsdFFS_SuperBlk.cs" />
-    <Compile Include="Tools\nec-bsdtools\BsdFFS_Inode.cs" />
-    <Compile Include="Tools\nec-bsdtools\nec-bsdffs.cs" />
-    <Compile Include="Tools\nec-enc\NecEncFirmware.cs" />
-    <Compile Include="Tools\nec-enc\ToolsArgMap.cs" />
-    <Compile Include="Tools\nec-enc\nec-enc.cs" />
-    <Compile Include="Tools\hex2bin\hex2bin.cs" />
-    <Compile Include="Tools\hex2bin\ToolsArgMap.cs" />
-    <Compile Include="Tools\nec-bsdtools\nec-bsdfw.cs" />
-    <Compile Include="Tools\nec-bsdtools\ToolsArgMap.cs" />
-    <Compile Include="Tools\rtkweb\rtkweb.cs" />
-    <Compile Include="Tools\rtkweb\ToolsArgMap.cs" />
-    <Compile Include="Tools\Tool.cs" />
-    <Compile Include="Tools\xorimage\ToolsArgMap.cs" />
-    <Compile Include="Tools\xorimage\xorimage.cs" />
-    <Compile Include="Utils.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="SampleBin\openwrt-ath79-generic-elecom_wrc-1750ghbk2-i-initramfs-factory.bin" />
-    <None Include="SampleBin\openwrt-ath79-generic-elecom_wrc-1750ghbk2-i-initramfs-kernel.bin" />
-    <None Include="SampleBin\openwrt-ath79-generic-iodata_wn-ac1600dgr2-squashfs-dgr2-dgr3-factory.bin" />
-    <None Include="SampleBin\openwrt-ath79-generic-nec_wg1200cr-squashfs-factory.bin" />
-    <None Include="SampleBin\openwrt-ramips-mt7620-iodata_wn-ac733gr3-squashfs-factory.bin" />
-    <None Include="SampleBin\openwrt-ramips-mt76x8-buffalo_wcr-1166ds-squashfs-factory.bin" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Tools\compile_sample.txt" />
     <Content Include="Tools\debug_sample.txt" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <EmbeddedResource Include="Lang\CommonRes.ja-JP.resx" />
-    <EmbeddedResource Include="Lang\CommonRes.resx">
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.355802">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Lang\CommonRes.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CommonRes.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lang\Resource.ja-JP.resx">
+    <EmbeddedResource Update="Lang\Resource.ja-JP.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.ja-JP.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lang\Resource.resx">
+    <EmbeddedResource Update="Lang\Resource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lang\Tools\aes\AesRes.ja-JP.resx">
+    <EmbeddedResource Update="Lang\Tools\aes\AesRes.ja-JP.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>AesRes.ja-JP.Designer.cs</LastGenOutput>
       <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lang\Tools\aes\AesRes.resx">
+    <EmbeddedResource Update="Lang\Tools\aes\AesRes.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>AesRes.Designer.cs</LastGenOutput>
       <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lang\Tools\bincut\BinCutRes.ja-JP.resx">
+    <EmbeddedResource Update="Lang\Tools\bincut\BinCutRes.ja-JP.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>BinCutRes.ja-JP.Designer.cs</LastGenOutput>
       <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lang\Tools\bincut\BinCutRes.resx">
+    <EmbeddedResource Update="Lang\Tools\bincut\BinCutRes.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>BinCutRes.Designer.cs</LastGenOutput>
       <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lang\Tools\buffalo-enc\BuffaloEncRes.ja-JP.resx">
+    <EmbeddedResource Update="Lang\Tools\buffalo-enc\BuffaloEncRes.ja-JP.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>BuffaloEncRes.ja-JP.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
       <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lang\Tools\buffalo-enc\BuffaloEncRes.resx">
+    <EmbeddedResource Update="Lang\Tools\buffalo-enc\BuffaloEncRes.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>BuffaloEncRes.Designer.cs</LastGenOutput>
       <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lang\Tools\mkedimaximg\MkEdimaxImgRes.ja-JP.resx">
+    <EmbeddedResource Update="Lang\Tools\mkedimaximg\MkEdimaxImgRes.ja-JP.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MkEdimaxImgRes.ja-JP.Designer.cs</LastGenOutput>
       <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lang\Tools\mkedimaximg\MkEdimaxImgRes.resx">
+    <EmbeddedResource Update="Lang\Tools\mkedimaximg\MkEdimaxImgRes.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MkEdimaxImgRes.Designer.cs</LastGenOutput>
       <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lang\Tools\mksenaofw\MkSenaoFwRes.ja-JP.resx">
+    <EmbeddedResource Update="Lang\Tools\mksenaofw\MkSenaoFwRes.ja-JP.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MkSenaoFwRes.ja-JP.Designer.cs</LastGenOutput>
       <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lang\Tools\mksenaofw\MkSenaoFwRes.resx">
+    <EmbeddedResource Update="Lang\Tools\mksenaofw\MkSenaoFwRes.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MkSenaoFwRes.Designer.cs</LastGenOutput>
       <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lang\Tools\nec-enc\NecEncRes.ja-JP.resx">
+    <EmbeddedResource Update="Lang\Tools\nec-enc\NecEncRes.ja-JP.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>NecEncRes.ja-JP.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lang\Tools\nec-enc\NecEncRes.resx">
+    <EmbeddedResource Update="Lang\Tools\nec-enc\NecEncRes.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>NecEncRes.Designer.cs</LastGenOutput>
       <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lang\Tools\xorimage\XorImageRes.ja-JP.resx">
+    <EmbeddedResource Update="Lang\Tools\xorimage\XorImageRes.ja-JP.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>XorImageRes.ja-JP.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lang\Tools\xorimage\XorImageRes.resx">
+    <EmbeddedResource Update="Lang\Tools\xorimage\XorImageRes.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>XorImageRes.Designer.cs</LastGenOutput>
       <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
     </EmbeddedResource>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Remove="Lang\Tools\buffalo-enc\Resource1.Designer.cs" />
+    <EmbeddedResource Remove="Lang\Tools\buffalo-enc\Resource1.resx" />
+  </ItemGroup>
 </Project>

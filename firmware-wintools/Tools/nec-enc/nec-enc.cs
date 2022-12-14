@@ -107,8 +107,8 @@ namespace firmware_wintools.Tools
 			int k_off = 0;
 			int k_len = 0;
 			byte[] key = new byte[0];
-			Properties subprops = new Properties();
-			NecEncFirmware fw = new NecEncFirmware() {
+			Properties subprops = new();
+			NecEncFirmware fw = new() {
 				data = new byte[4096],
 				buf_ptn = new byte[4096]
 			};

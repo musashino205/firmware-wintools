@@ -110,8 +110,8 @@ namespace firmware_wintools.Tools
 		/// <returns></returns>
 		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
-			Firmware fw = new Firmware();
-			List<BlkHeader> hdrs = new List<BlkHeader>();
+			Firmware fw = new();
+			List<BlkHeader> hdrs = new();
 
 			if (props.help)
 			{

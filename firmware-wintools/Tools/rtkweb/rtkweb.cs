@@ -45,7 +45,7 @@ namespace firmware_wintools.Tools
 		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
 			int read_len, fcnt = 0;
-			Firmware fw = new Firmware();
+			Firmware fw = new ();
 
 			if (props.help)
 			{
@@ -121,7 +121,7 @@ namespace firmware_wintools.Tools
 
 						if (!Directory.Exists(dir))
 							Directory.CreateDirectory(dir);
-						using (FileStream outfile = new FileStream(dir + "/" + fname,
+						using (FileStream outfile = new(dir + "/" + fname,
 											FileMode.Create, FileAccess.Write, FileShare.Read))
 							outfile.Write(fw.data, 0, (int)flen);
 

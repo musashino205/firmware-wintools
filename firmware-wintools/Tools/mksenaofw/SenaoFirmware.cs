@@ -198,10 +198,7 @@ namespace firmware_wintools.Tools
 		/* for encoding */
 		internal byte[] GetMd5sum()
 		{
-			MD5CryptoServiceProvider md5p =
-				new MD5CryptoServiceProvider();
-
-			return md5p.ComputeHash(inFs);
+			return MD5.Create().ComputeHash(inFs);
 		}
 
 		/* for decoding */

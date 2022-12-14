@@ -93,7 +93,7 @@ namespace firmware_wintools.Tools
 		{
 			byte[] bckey = new byte[BCRYPT_MAX_KEYLEN + 1];
 			int keylen;
-			Bcrypt_ctx ctx = new Bcrypt_ctx();
+			Bcrypt_ctx ctx = new();
 
 			ctx.buf = null;
 

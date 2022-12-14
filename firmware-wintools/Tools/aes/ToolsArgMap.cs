@@ -1,6 +1,6 @@
 namespace firmware_wintools.Tools
 {
-	internal partial class Aes
+	internal partial class AesEnc
 	{
 		/// <summary>
 		/// コマンドライン引数 (<paramref name="args"/>) を解析し、nec-encの機能プロパティを取得します

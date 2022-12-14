@@ -63,9 +63,9 @@ namespace firmware_wintools.Tools
 		/// <returns></returns>
 		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
-			Firmware fw = new Firmware();
+			Firmware fw = new();
 			DiskSuperBlk sBlk;
-			List<Inode> inodes = new List<Inode>();
+			List<Inode> inodes = new();
 			/*
 			 * 実際に存在していたinodeのリスト
 			 * inodeブロックをなめていく際、inode番号がブロック内に格納されておらず
@@ -73,7 +73,7 @@ namespace firmware_wintools.Tools
 			 * 対し指定されている実際のinode番号と異なる
 			 * 後でinodeがhardlinkされているか否かのチェック用
 			 */
-			List<uint> actInoList = new List<uint>();
+			List<uint> actInoList = new();
 
 			if (props.help)
 			{
@@ -166,7 +166,7 @@ namespace firmware_wintools.Tools
 						}
 
 						fw.inFs.Seek(supBlkOffset, SeekOrigin.Begin);
-						using (FileStream fs = new FileStream(finfo[0], FileMode.Create,
+						using (FileStream fs = new(finfo[0], FileMode.Create,
 								FileAccess.Write, FileShare.None))
 						{
 							byte[] buf = new byte[0x10000];
@@ -228,7 +228,7 @@ namespace firmware_wintools.Tools
 													FileAccess.Write, FileShare.None) :
 											Console.OpenStandardOutput();
 									using (listStream)
-									using (StreamWriter sw = new StreamWriter(listStream))
+									using (StreamWriter sw = new(listStream))
 										tmp.PrintDirFiles(in sw, in actInoList, null, isBE,
 												skipHardLink);
 								}

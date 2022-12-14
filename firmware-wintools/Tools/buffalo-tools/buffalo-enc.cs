@@ -148,7 +148,7 @@ namespace firmware_wintools.Tools
 
 			fw.footer = new BufEncFooter();
 
-			MemoryStream bufStream = new MemoryStream();
+			MemoryStream bufStream = new();
 
 			/* キーは 0x00 ('\0') で終端 */
 			key = Encoding.ASCII.GetBytes(subprops.crypt_key + "\0");
@@ -346,8 +346,8 @@ namespace firmware_wintools.Tools
 		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
 			int ret;
-			BufEncFirmware fw = new BufEncFirmware();
-			Properties subprops = new Properties
+			BufEncFirmware fw = new();
+			Properties subprops = new()
 			{
 				crypt_key = DEFAULT_KEY,
 				magic = DEFAULT_MAGIC,
