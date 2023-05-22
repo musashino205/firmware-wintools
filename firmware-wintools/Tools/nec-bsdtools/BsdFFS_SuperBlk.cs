@@ -101,7 +101,7 @@ namespace firmware_wintools.Tools
 
 			internal void PrintSuperBlk(long curoff)
 			{
-				DateTime dt = Utils.UnixToUTC(Convert.ToUInt32(unixtime)).AddSeconds(unixtime);
+				DateTime dt = Utils.UnixToUTC(Convert.ToUInt32(unixtime));
 
 				Console.Error.WriteLine("--- Super Block Info ---");
 				Console.Error.WriteLine("1st SuperBlock Offset: 0x{0:X}", curoff);
