@@ -26,7 +26,6 @@ namespace firmware_wintools.Tools
 		private bool isBE = true;
 
 		private const long defSupBlkOffset = 0x2000;
-		private const int defOutFsSize = 32 * 1024 * 1024;
 
 		/// <summary>
 		/// rtkwebの機能ヘルプを表示します
@@ -113,12 +112,9 @@ namespace firmware_wintools.Tools
 						ret = sBlk.CheckSuperBlk();
 						if (ret == 0)
 							break;
-						else if (ret != -1)
-							return ret;
 
 						fw.inFs.Seek(-(DiskSuperBlk.SUPERBLK_LEN - sizeof(uint) * 2),
 								SeekOrigin.Current);
-						continue;
 					}
 
 					if (ret != 0)
@@ -137,7 +133,7 @@ namespace firmware_wintools.Tools
 					{
 						string[] finfo = outFsBin.Split(':');
 						string dir = Path.GetDirectoryName(finfo[0]);
-						long len = defOutFsSize;
+						long len = sBlk._totalBlks * DiskSuperBlk.BLKSZ;
 
 						if (dir.Length > 0 && !Directory.Exists(dir))
 						{
@@ -146,6 +142,7 @@ namespace firmware_wintools.Tools
 							return -1;
 						}
 
+						/* サイズ指定時 */
 						if (finfo.Length >= 2 &&
 							(finfo[1] != null && finfo[1].Length > 0))
 						{
@@ -164,8 +161,24 @@ namespace firmware_wintools.Tools
 								return -1;
 							}
 						}
+						/* サイズ未指定時 */
+						else
+						{
+							if (fw.inFs.Length < len - defSupBlkOffset)
+							{
+								Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+										"input file is smaller than FS size");
+								return -1;
+							}
 
-						fw.inFs.Seek(supBlkOffset, SeekOrigin.Begin);
+							if (supBlkOffset < defSupBlkOffset)
+								len -= defSupBlkOffset;
+						}
+
+						fw.inFs.Seek(
+							(supBlkOffset < defSupBlkOffset) ?
+								supBlkOffset : supBlkOffset - defSupBlkOffset,
+							SeekOrigin.Begin);
 						using (FileStream fs = new FileStream(finfo[0], FileMode.Create,
 								FileAccess.Write, FileShare.None))
 						{
@@ -185,12 +198,12 @@ namespace firmware_wintools.Tools
 					}
 
 					/* 以下2つはsuper block前に0x2000あることを期待する */
-					inoBlkOffset = sBlk.inodeBlkCnt * 0x200;
-					datBlkOffset = sBlk.dataBlkCnt * 0x200;
+					inoBlkOffset = sBlk._iBlkOffs * 0x200;
+					datBlkOffset = sBlk._dBlkOffs * 0x200;
 					fw.inFs.Seek(GetBlkOffset(inoBlkOffset), SeekOrigin.Begin);
 
 					/* inodeパース */
-					for (i = 0; i < (sBlk.dataBlkCnt - sBlk.inodeBlkCnt) * 4; i++)
+					for (i = 0; i < (sBlk._dBlkOffs - sBlk._iBlkOffs) * 4; i++)
 					{
 						ino = new Inode(this);
 
