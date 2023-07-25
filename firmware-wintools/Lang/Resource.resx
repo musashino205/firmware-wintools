@@ -120,6 +120,9 @@
   <data name="Main.Error.InvalidParam" xml:space="preserve">
     <value>invalid parameter is specified</value>
   </data>
+  <data name="Main.Error.MissInputFile" xml:space="preserve">
+    <value>there is no specified input file</value>
+  </data>
   <data name="Main.Error.NoInOutFile" xml:space="preserve">
     <value>input or output file is not specified</value>
   </data>

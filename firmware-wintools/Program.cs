@@ -221,6 +221,13 @@ namespace firmware_wintools
 					return 1;
 				}
 
+				if (!File.Exists(props.inFile))
+				{
+					Console.Error.WriteLine(
+						Lang.Resource.Main_Error_Prefix + Lang.Resource.Main_Error_MissInputFile);
+					return 1;
+				}
+
 				if (!props.quiet && props.debug)
 					Console.WriteLine(Lang.Resource.Main_Info + Environment.NewLine,
 						Path.GetFileName(props.inFile), Directory.GetParent(props.inFile),

@@ -120,6 +120,9 @@
   <data name="Main.Error.InvalidParam" xml:space="preserve">
     <value>無効なパラメーターが指定されています</value>
   </data>
+  <data name="Main.Error.MissInputFile" xml:space="preserve">
+    <value>指定された入力ファイルはありません</value>
+  </data>
   <data name="Main.Error.NoInOutFile" xml:space="preserve">
     <value>入力または出力ファイルが指定されていません</value>
   </data>
