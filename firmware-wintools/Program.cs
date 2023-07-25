@@ -174,17 +174,6 @@ namespace firmware_wintools
 			if (props.paramcnt == 0)
 				props.help = true;		// -* パラメータの個数が0なら指定されたモードの有無/有効性に関わらずhelpフラグを立てる
 
-			if (props.debug)
-			{
-				Console.WriteLine("\n==== args ====");
-				foreach (string arg in args)
-				{
-					Console.WriteLine(arg);
-				}
-				Console.WriteLine("=============\n");
-			}
-
-
 			mode = args[arg_idx];
 			/*
 			 * symlinkからの呼び出しまたはfirmware-wintools.exeを機能名に変更した場合、
