@@ -5,6 +5,14 @@ namespace firmware_wintools
 {
 	internal static class Utils
 	{
+		public static string GetStrParamFromArg(string[] args, int index)
+		{
+			if (index + 1 < args.Length && !args[index + 1].StartsWith("-"))
+				return args[index + 1];
+			else
+				return null;
+		}
+
 		public static bool StrToLong(string valStr, out long cnv, NumberStyles styles)
 		{
 			int suf = 1;
