@@ -1,4 +1,4 @@
-﻿namespace firmware_wintools
+namespace firmware_wintools
 {
 	class ArgMap
 	{
@@ -20,46 +20,6 @@
 			else
 			{
 				return 1;
-			}
-		}
-
-		/// <summary>
-		/// コマンドライン引数 (<paramref name="args"/>) を解析し、メインプロパティを取得します
-		/// </summary>
-		/// <param name="args">コマンドライン引数</param>
-		/// <param name="props">取得したオプションを格納するターゲット</param>
-		public void Init_args(string[] args, int arg_idx, ref Program.Properties props)
-		{
-			for (int i = arg_idx; i < args.Length; i++)
-			{
-				if (args[i].StartsWith("-"))
-				{
-					switch (args[i].Replace("-", ""))
-					{
-						case "i":
-							if (Set_StrParamFromArgs(args, i, ref props.inFile) == 0)
-								i++;
-							break;
-						case "o":
-							if (Set_StrParamFromArgs(args, i, ref props.outFile) == 0)
-								i++;
-							break;
-						case "h":
-						case "help":
-							props.help = true;
-							break;
-						case "D":
-							props.debug = true;
-							break;
-						case "Q":
-							props.quiet = true;
-							break;
-						case "":    // ハイフンのみ ('-') 対策
-							props.param_invalid = true;
-							break;
-					}
-					props.paramcnt++;
-				}
 			}
 		}
 	}

@@ -37,14 +37,6 @@ namespace firmware_wintools
 			/// 出力ファイル パス
 			/// </summary>
 			public string outFile;
-			/// <summary>
-			/// -* オプションの数（指定されたモードは含まない）
-			/// </summary>
-			public int paramcnt;
-			/// <summary>
-			/// 無効なパラメータの有無 ('-')
-			/// </summary>
-			public bool param_invalid;
 		}
 
 		/// <summary>
@@ -88,6 +80,42 @@ namespace firmware_wintools
 			PrintCommonOption();
 		}
 
+		private static int InitArgs(string[] args, int arg_idx, ref Properties props)
+		{
+			int ret = 0;
+			string tmp;
+
+			for (int i = arg_idx; i < args.Length; i++)
+				if (args[i].StartsWith("-"))
+					switch (args[i].Replace("-", ""))
+					{
+						case "i":
+							if ((tmp = Utils.GetStrParamFromArg(args, i)) != null)
+								props.inFile = tmp;
+							ret++;
+							break;
+						case "o":
+							if ((tmp = Utils.GetStrParamFromArg(args, i)) != null)
+								props.outFile = tmp;
+							ret++;
+							break;
+						case "h":
+						case "help":
+							props.help = true;
+							break;
+						case "D":
+							props.debug = true;
+							break;
+						case "Q":
+							props.quiet = true;
+							break;
+						case "":
+							return -22;
+					}
+
+			return ret;
+		}
+
 		/// <summary>
 		/// 共通ヘルプを表示
 		/// </summary>
@@ -116,7 +144,6 @@ namespace firmware_wintools
 			string[] args;
 			Properties props = new Properties();
 			string lc_all, lang, shell;
-			string mode;
 			Tools.Tool tool;
 
 			lc_all = Environment.GetEnvironmentVariable("LC_ALL");
@@ -151,65 +178,65 @@ namespace firmware_wintools
 
 			args = Environment.GetCommandLineArgs();
 
-			if (toolList.Exists(x => x.name == Path.GetFileName(args[0])))
-				arg_idx = 0;            // symlinkからの呼び出しまたはバイナリ名が機能名の場合、機能名を取る為0スタート
-			else
-				if (args.Length == 1)   // 引数が1（firmware-wintoolsのパス）ならヘルプ表示して終了
+			/* 実行ファイル名からモード取得試行 */
+			tool = toolList.Find(x => x.name == Path.GetFileNameWithoutExtension(args[0]));
+			if (tool == null) /* 実行ファイル名が機能名ではない */
+			{
+				if (args.Length == 1) /* - 引数無し */
 				{
 					PrintHelp();
 					return 0;
 				}
 
-
-			ArgMap argMap = new ArgMap();
-			argMap.Init_args(args, arg_idx, ref props);
-
-			if (props.param_invalid)
+				/* 最初の引数からモード取得試行 */
+				tool = toolList.Find(x => x.name == args[1]);
+				if (tool != null)
+					arg_idx++;
+			}
+			else /* 実行ファイル名が機能名 */
 			{
-				Console.Error.WriteLine(
-					Lang.Resource.Main_Error_Prefix + Lang.Resource.Main_Error_InvalidParam);
-				return 1;
+				/* 機能に飛んだ後ヘルプ表示させる */
+				if (args.Length == 1)
+					props.help = true;
 			}
 
-			if (props.paramcnt == 0)
-				props.help = true;		// -* パラメータの個数が0なら指定されたモードの有無/有効性に関わらずhelpフラグを立てる
+			ret = InitArgs(args, arg_idx, ref props);
+				if (ret < 0) /* エラー */
+				{
+					Console.Error.WriteLine(
+						Lang.Resource.Main_Error_Prefix + Lang.Resource.Main_Error_InvalidParam);
+					return ret;
+				}
 
-			mode = args[arg_idx];
-			/*
-			 * symlinkからの呼び出しまたはfirmware-wintools.exeを機能名に変更した場合、
-			 * 実行ファイルパスからディレクトリパスと拡張子を除去して機能名を取得
-			 */
-			if (arg_idx == 0)
-				mode = Path.GetFileNameWithoutExtension(mode);
+			/* 最初の引数からのモード取得試行に失敗した場合 */
+			if (tool == null)
+			{
+				/* 最初の引数がモードではなく、ヘルプが指定されている */
+				if (args[1].StartsWith("-") && props.help)
+				{
+					PrintHelp();
+					return 0;
+				}
 
-			arg_idx += 1;	// インデックスをモード名の次（オプション）へ進める
-
-			if (mode.StartsWith("-") && props.help) {
-				PrintHelp();
-				return 0;
-			}
-
-			tool = toolList.Find(x => x.name == mode);
-			if (tool == null) {
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Error_Prefix
 					+ Lang.Resource.Main_Error_NoInvalidMode);
 
-				return -99;
+				return -22;
 			}
 
 			if (!props.help)
 			{
+				/* 入出力ファイル指定有無チェック */
 				if (props.inFile == null ||
 				    (!tool.skipOFChk && props.outFile == null))
 				{
 					Console.Error.WriteLine(
 						Lang.Resource.Main_Error_Prefix + Lang.Resource.Main_Error_NoInOutFile);
-					if (props.debug)
-						Thread.Sleep(4000);
 					return 1;
 				}
 
+				/* 入力ファイル存在チェック */
 				if (!File.Exists(props.inFile))
 				{
 					Console.Error.WriteLine(
@@ -217,6 +244,7 @@ namespace firmware_wintools
 					return 1;
 				}
 
+				/* ファイル情報表示（デバッグ） */
 				if (!props.quiet && props.debug)
 					Console.WriteLine(Lang.Resource.Main_Info + Environment.NewLine,
 						Path.GetFileName(props.inFile), Directory.GetParent(props.inFile),
