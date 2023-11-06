@@ -455,13 +455,6 @@ namespace firmware_wintools.Tools
 						string dir = outDir + path + ino_name;
 						if (!Directory.Exists(dir))
 							Directory.CreateDirectory(dir);
-						/*
-						 * 当該ディレクトリをExplorerで開いていると例外になる為
-						 * それに中にファイルを書くとどのみちmtimeが更新される
-						 */
-						//Directory.SetCreationTime(dir, dt.AddSeconds(ctime));
-						//Directory.SetLastWriteTime(dir, dt.AddSeconds(mtime));
-						//Directory.SetLastAccessTime(dir, dt.AddSeconds(atime));
 
 						if (dirFileEnt != null)
 						{
@@ -470,6 +463,19 @@ namespace firmware_wintools.Tools
 								_ino.ExtractDirFiles(in inFs, in actInoList, path,
 										outDir, isBE, skipHard);
 						}
+
+						/*
+						 * 中身書き込むとmtime更新されるため、書き込み終了後にセット
+						 * 当該ディレクトリをExplorer等で開いている場合ロックされ例外になる為
+						 * try-catchを用いる
+						 */
+						try
+						{
+							Directory.SetCreationTime(dir, dt.AddSeconds(ctime));
+							Directory.SetLastWriteTime(dir, dt.AddSeconds(mtime));
+							Directory.SetLastAccessTime(dir, dt.AddSeconds(atime));
+						}
+						catch (IOException) { }
 						break;
 					/* Regular File */
 					case FFSFileInfo.FT_REG:
