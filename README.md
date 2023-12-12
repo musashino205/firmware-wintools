@@ -241,6 +241,7 @@ firmware-wintools xorimage -i <input file> -o <output file> -p <pattern> [-x] [-
 
 - Windows 11 64bit
   - 21H2
+  - 22H2
 
 - .NET Framework 4.8
 
