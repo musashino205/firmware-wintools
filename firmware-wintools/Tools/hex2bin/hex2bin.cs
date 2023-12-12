@@ -30,6 +30,7 @@ namespace firmware_wintools.Tools
 			Program.PrintCommonOption(true);
 			// 機能オプション表示
 			Console.WriteLine(Lang.CommonRes.Help_FunctionOpts +
+				"  -s			specify column width of table\n" +
 				"  -t			convert table format (ex.: hexdump, od)\n" +
 				"  -H			skip first block of line on table mode\n" +
 				"  -O <offset>		start conversion from <offset> on table mode\n");
@@ -92,15 +93,7 @@ namespace firmware_wintools.Tools
 								if (firstSpace == -1)
 									break;
 
-								line = line.Remove(0, firstSpace).Replace(" ", "");
-							}
-
-							if (LineToFile(ref line, ref fw.outFs, width) != 0)
-							{
-								Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
-											"invalid character detected \"{0}\" at line {1}",
-											line, i);
-								return 1;
+								line = line.Remove(0, firstSpace);
 							}
 						}
 						else
@@ -109,13 +102,19 @@ namespace firmware_wintools.Tools
 
 							readLen = sr.ReadBlock(charBuf, 0, charBuf.Length);
 							line = new string(charBuf, 0, readLen);
-							if (LineToFile(ref line, ref fw.outFs, line.Length / 2) != 0)
-							{
-								Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
-										"invalid character detected \"{0}\"",
-										line);
-								return 1;
-							}
+						}
+
+						line = line.Replace(" ", "");
+						if (!isTable)
+							width = line.Length / 2;
+
+						if (LineToFile(ref line, ref fw.outFs, width) != 0)
+						{
+							Console.Error.Write(Lang.Resource.Main_Error_Prefix +
+									"invalid character detected \"{0}\"", line);
+							if (isTable)
+								Console.Error.WriteLine(" at line {0}", i);
+							return 1;
 						}
 					}
 				}
