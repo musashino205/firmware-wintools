@@ -13,6 +13,37 @@ namespace firmware_wintools
 				return null;
 		}
 
+		/// <summary>
+		/// オプションに指定された文字列値の引数を読み取り、 <paramref name="value"/> に
+		/// 代入して返します
+		/// </summary>
+		/// <param name="args"></param>
+		/// <param name="index"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public static bool GetStrParam(string[] args, int index, out string value)
+			=> (value = GetStrParamFromArg(args, index)) != null;
+
+		/// <summary>
+		/// オプションに指定された文字列値の引数を読み取り、有効な文字列であれば
+		/// <paramref name="value"/> に上書きして返します
+		/// </summary>
+		/// <param name="args"></param>
+		/// <param name="index"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public static bool GetStrParamOrKeep(string[] args, int index, ref string value)
+		{
+			string tmp;
+
+			tmp = GetStrParamFromArg(args, index);
+			if (tmp == null || tmp.Length <= 0)
+				return false;
+
+			value = tmp;
+			return true;
+		}
+
 		public static bool StrToLong(string valStr, out long cnv, NumberStyles styles)
 		{
 			int suf = 1;
