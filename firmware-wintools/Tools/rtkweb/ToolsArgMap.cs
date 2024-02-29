@@ -10,6 +10,8 @@ namespace firmware_wintools.Tools
 		public void
 		Init_args(string[] args, int arg_idx)
 		{
+			string tmp;
+
 			for (int i = arg_idx; i < args.Length; i++)
 			{
 				if (!args[i].StartsWith("-"))
@@ -18,16 +20,15 @@ namespace firmware_wintools.Tools
 				switch (args[i].Replace("-", ""))
 				{
 					case "d":	// directory
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref dir) == 0)
+						if (Utils.GetStrParamOrKeep(args, i, ref dir))
 							i++;
 						break;
 					case "H":
-						string finfo_len_s = null;
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref finfo_len_s) == 0 &&
-						    Utils.StrToInt(finfo_len_s, out int _finfo_len,
-									System.Globalization.NumberStyles.None))
+						if (Utils.GetStrParam(args, i, out tmp) &&
+						    Utils.StrToInt(tmp, out int conv_finfo_len,
+							    System.Globalization.NumberStyles.None))
 						{
-							finfo_len = _finfo_len;
+							finfo_len = conv_finfo_len;
 							i++;
 						}
 						break;

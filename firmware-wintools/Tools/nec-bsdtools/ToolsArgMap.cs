@@ -18,11 +18,11 @@ namespace firmware_wintools.Tools
 				switch (args[i].Replace("-", ""))
 				{
 					case "d":
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref outDir) == 0)
+						if (Utils.GetStrParamOrKeep(args, i, ref outDir))
 							i++;
 						break;
 					case "f":
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref outFsBin) == 0)
+						if (Utils.GetStrParamOrKeep(args, i, ref outFsBin))
 							i++;
 						break;
 					case "H":
@@ -30,7 +30,7 @@ namespace firmware_wintools.Tools
 						break;
 					case "L":
 						listToText = true;
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref outTxt) == 0)
+						if (Utils.GetStrParamOrKeep(args, i, ref outTxt))
 							i++;
 							goto case "l";
 					case "l":   // List Mode
@@ -51,6 +51,8 @@ namespace firmware_wintools.Tools
 		public void
 		Init_args(string[] args, int arg_idx)
 		{
+			string tmp;
+
 			for (int i = arg_idx; i < args.Length; i++)
 			{
 				if (!args[i].StartsWith("-"))
@@ -62,16 +64,15 @@ namespace firmware_wintools.Tools
 						isListMode = true;
 						break;
 					case "o":	// output
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref output) == 0)
+						if (Utils.GetStrParamOrKeep(args, i, ref output))
 							i++;
 						break;
 					case "p":   // output position
-						string outPos_s = null;
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref outPos_s) == 0 &&
-							Utils.StrToInt(outPos_s, out int _outPos,
+						if (Utils.GetStrParam(args, i, out tmp) &&
+							Utils.StrToInt(tmp, out int conv_outPos,
 								   System.Globalization.NumberStyles.None))
 						{
-							outPos = _outPos;
+							outPos = conv_outPos;
 							i++;
 						}
 						break;

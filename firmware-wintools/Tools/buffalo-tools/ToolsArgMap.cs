@@ -13,6 +13,8 @@ namespace firmware_wintools.Tools
 		public static void
 		Init_args(string[] args, int arg_idx, ref Properties subprops)
 		{
+			string tmp;
+
 			CultureInfo provider = CultureInfo.CurrentCulture;
 			for (int i = arg_idx; i < args.Length; i++)
 			{
@@ -31,26 +33,25 @@ namespace firmware_wintools.Tools
 						subprops.islong = true;
 						break;
 					case "k":
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.crypt_key) == 0)
+						if (Utils.GetStrParam(args, i, out subprops.crypt_key))
 							i++;
 						break;
 					case "m":
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.magic) == 0)
+						if (Utils.GetStrParamOrKeep(args, i, ref subprops.magic))
 							i++;
 						break;
 					case "p":
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.product) == 0)
+						if (Utils.GetStrParam(args, i, out subprops.product))
 							i++;
 						break;
 					case "v":
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.version) == 0)
+						if (Utils.GetStrParam(args, i, out subprops.version))
 							i++;
 						break;
 					case "s":
-						string seed = null;
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref seed) == 0 &&
-							byte.TryParse((seed.StartsWith("0x") ? seed.Replace("0x", "") : seed),
-							NumberStyles.HexNumber, provider, out byte conv_seed))
+						if (Utils.GetStrParam(args, i, out tmp) &&
+						    byte.TryParse((tmp.StartsWith("0x") ? tmp.Replace("0x", "") : tmp),
+							    NumberStyles.HexNumber, provider, out byte conv_seed))
 						{
 							subprops.seed = conv_seed;
 							i++;
@@ -60,18 +61,18 @@ namespace firmware_wintools.Tools
 						subprops.force = true;
 						break;
 					case "O":
-						string offset = null;
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref offset) == 0 &&
-							Utils.StrToInt(offset, out int conv_offset, 0))
+						if (Utils.GetStrParam(args, i, out tmp) &&
+						    Utils.StrToInt(tmp, out int conv_offset,
+							    NumberStyles.None))
 						{
 							subprops.offset = conv_offset;
 							i++;
 						}
 						break;
 					case "S":
-						string size = null;
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref size) == 0 &&
-							Utils.StrToInt(size, out int conv_size, 0))
+						if (Utils.GetStrParam(args, i, out tmp) &&
+						    Utils.StrToInt(tmp, out int conv_size,
+							    NumberStyles.None))
 						{
 							subprops.size = conv_size;
 							i++;

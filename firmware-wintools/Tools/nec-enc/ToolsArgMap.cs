@@ -18,7 +18,7 @@ namespace firmware_wintools.Tools
 				switch (args[i].Replace("-", ""))
 				{
 					case "k":
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.key) == 0)
+						if (Utils.GetStrParamOrKeep(args, i, ref subprops.key))
 							i++;
 						break;
 					case "H":

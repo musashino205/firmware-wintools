@@ -86,34 +86,34 @@ namespace firmware_wintools
 			string tmp;
 
 			for (int i = arg_idx; i < args.Length; i++)
-				if (args[i].StartsWith("-"))
-					switch (args[i].Replace("-", ""))
-					{
-						case "i":
-							if ((tmp = Utils.GetStrParamFromArg(args, i)) != null)
-								props.inFile = tmp;
-							ret++;
-							break;
-						case "o":
-							if ((tmp = Utils.GetStrParamFromArg(args, i)) != null)
-								props.outFile = tmp;
-							ret++;
-							break;
-						case "h":
-						case "help":
-							props.help = true;
-							break;
-						case "D":
-							props.debug = true;
-							break;
-						case "Q":
-							props.quiet = true;
-							break;
-						case "":
-							return -22;
-					}
+			{
+				if (!args[i].StartsWith("-"))
+					continue;
 
-			return ret;
+				switch (args[i].Replace("-", ""))
+				{
+					case "i":
+						Utils.GetStrParam(args, i, out props.inFile);
+						break;
+					case "o":
+						Utils.GetStrParam(args, i, out props.outFile);
+						break;
+					case "h":
+					case "help":
+						props.help = true;
+						break;
+					case "D":
+						props.debug = true;
+						break;
+					case "Q":
+						props.quiet = true;
+						break;
+					case "":
+						return -22;
+				}
+			}
+
+			return 0;
 		}
 
 		/// <summary>

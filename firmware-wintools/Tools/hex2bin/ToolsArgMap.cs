@@ -10,6 +10,8 @@ namespace firmware_wintools.Tools
 		public void
 		Init_args(string[] args, int arg_idx)
 		{
+			string tmp;
+
 			for (int i = arg_idx; i < args.Length; i++)
 			{
 				if (!args[i].StartsWith("-"))
@@ -21,12 +23,11 @@ namespace firmware_wintools.Tools
 						skipFirstBlock = true;
 						break;
 					case "O":   // offset
-						string offset_s = null;
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref offset_s) == 0 &&
-							Utils.StrToInt(offset_s, out int _offset,
-										   System.Globalization.NumberStyles.None))
+						if (Utils.GetStrParam(args, i, out tmp) &&
+						    Utils.StrToInt(tmp, out int conv_offset,
+							    System.Globalization.NumberStyles.None))
 						{
-							offset = _offset;
+							offset = conv_offset;
 							i++;
 						}
 						break;
@@ -34,12 +35,11 @@ namespace firmware_wintools.Tools
 						isTable = true;
 						break;
 					case "w":   // column width
-						string width_s = null;
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref width_s) == 0 &&
-							Utils.StrToInt(width_s, out int _width,
-										   System.Globalization.NumberStyles.None))
+						if (Utils.GetStrParam(args, i, out tmp) &&
+						    Utils.StrToInt(tmp, out int conv_width,
+							    System.Globalization.NumberStyles.None))
 						{
-							width = _width;
+							width = conv_width;
 							i++;
 						}
 						break;

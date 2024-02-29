@@ -10,6 +10,8 @@ namespace firmware_wintools.Tools
 		public static void
 		Init_args(string[] args, int arg_idx, ref Properties subprops)
 		{
+			string tmp;
+
 			for (int i = arg_idx; i < args.Length; i++)
 			{
 				if (!args[i].StartsWith("-"))
@@ -24,18 +26,17 @@ namespace firmware_wintools.Tools
 						subprops.hex_key = true;
 						goto case "k";
 					case "k":	// aes key (text)
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.key) == 0)
+						if (Utils.GetStrParam(args, i, out subprops.key))
 							i++;
 						break;
 					case "l":	// length
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.len) == 0)
+						if (Utils.GetStrParam(args, i, out subprops.len))
 							i++;
 						break;
 					case "O":	// offset
-						string offset = null;
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref offset) == 0 &&
-							Utils.StrToInt(offset, out int conv_offset,
-								System.Globalization.NumberStyles.None))
+						if (Utils.GetStrParam(args, i, out tmp) &&
+						    Utils.StrToInt(tmp, out int conv_offset,
+							    System.Globalization.NumberStyles.None))
 						{
 							subprops.offset = conv_offset;
 							i++;
@@ -48,7 +49,7 @@ namespace firmware_wintools.Tools
 						subprops.hex_iv = true;
 						goto case "v";
 					case "v":	// aes iv (text)
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.iv) == 0)
+						if (Utils.GetStrParam(args, i, out subprops.iv))
 							i++;
 						break;
 				}

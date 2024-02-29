@@ -12,6 +12,8 @@ namespace firmware_wintools.Tools
 		public static void
 		Init_args(string[] args, int arg_idx, ref Properties subprops)
 		{
+			string tmp;
+
 			for (int i = arg_idx; i < args.Length; i++)
 			{
 				if (!args[i].StartsWith("-"))
@@ -20,28 +22,26 @@ namespace firmware_wintools.Tools
 				switch (args[i].Replace("-", ""))
 				{
 					case "s":
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.signature) == 0)
+						if (Utils.GetStrParam(args, i, out subprops.signature))
 							i++;
 						break;
 					case "m":
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref subprops.model) == 0)
+						if (Utils.GetStrParam(args, i, out subprops.model))
 							i++;
 						break;
 					case "f":
-						string flash = null;
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref flash) == 0 &&
-							Utils.StrToInt(flash, out int conv_flash,
-									NumberStyles.None))
+						if (Utils.GetStrParam(args, i, out tmp) &&
+						    Utils.StrToInt(tmp, out int conv_flash,
+							    NumberStyles.None))
 						{
 							subprops.flash = conv_flash;
 							i++;
 						}
 						break;
 					case "S":
-						string start = null;
-						if (ArgMap.Set_StrParamFromArgs(args, i, ref start) == 0 &&
-							Utils.StrToInt(start, out int conv_start,
-									NumberStyles.None))
+						if (Utils.GetStrParam(args, i, out tmp) &&
+						    Utils.StrToInt(tmp, out int conv_start,
+							    NumberStyles.None))
 						{
 							subprops.start = conv_start;
 							i++;
