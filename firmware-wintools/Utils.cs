@@ -7,7 +7,8 @@ namespace firmware_wintools
 	{
 		public static string GetStrParamFromArg(string[] args, int index)
 		{
-			if (index + 1 < args.Length && !args[index + 1].StartsWith("-"))
+			if (index + 1 < args.Length &&
+			    !args[index + 1].StartsWith("-") && args[index + 1].Length > 0)
 				return args[index + 1];
 			else
 				return null;
