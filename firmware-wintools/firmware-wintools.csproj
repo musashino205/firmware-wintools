@@ -131,7 +131,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\aes\aes.cs" />
-    <Compile Include="Tools\aes\ToolsArgMap.cs" />
     <Compile Include="Tools\bincut\bincut.cs" />
     <Compile Include="Tools\bincut\ToolsArgMap.cs" />
     <Compile Include="Tools\buffalo-tools\BufBcrypt.cs" />

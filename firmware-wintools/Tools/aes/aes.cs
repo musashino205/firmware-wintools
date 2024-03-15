@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
@@ -6,24 +7,32 @@ using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	internal partial class Aes : Tool
+	internal class Aes : Tool
 	{
 		/* ツール情報　*/
 		public override string name { get => "aes"; }
 		public override string desc { get => Lang.Tools.AesRes.FuncDesc; }
 		public override string descFmt { get => Lang.Tools.AesRes.Main_FuncDesc_Fmt; }
 
-		public struct Properties
-		{
-			public string iv;
-			public string key;
-			public bool hex_iv;
-			public bool hex_key;
-			public int keylen;
-			public long offset;
-			public string len;
-			public bool decrypt;
-		}
+		private bool Decrypt = false;
+		private string Key = "";
+		private string IV = "";
+		private bool HexKey = false;
+		private bool HexIV = false;
+		private bool ShortKey = false;
+		private long Length = -1;
+		private long Offset = 0;
+
+		internal override List<Param> ParamList => new List<Param>() {
+			new Param() { PChar = 'd', PType = Param.PTYPE.BOOL, SetField = "Decrypt" },
+			new Param() { PChar = 'k', PType = Param.PTYPE.STR, SetField = "Key" },
+			new Param() { PChar = 'K', PType = Param.PTYPE.STR, SetField = "Key", SetBool = "HexKey" },
+			new Param() { PChar = 'l', PType = Param.PTYPE.LONG, SetField = "Length" },
+			new Param() { PChar = 'O', PType = Param.PTYPE.LONG, SetField = "Offset" },
+			new Param() { PChar = 's', PType = Param.PTYPE.BOOL, SetField = "ShortKey" },
+			new Param() { PChar = 'v', PType = Param.PTYPE.STR, SetField = "IV" },
+			new Param() { PChar = 'V', PType = Param.PTYPE.STR, SetField = "IV", SetBool = "HexIV" }
+		};
 
 		private static void PrintHelp(int arg_idx)
 		{
@@ -45,56 +54,43 @@ namespace firmware_wintools.Tools
 				Lang.Tools.AesRes.Help_Options_s);
 		}
 
-		private static void PrintInfo(Properties subprops, byte[] key, byte[] iv, long filelen)
+		private void PrintInfo(byte[] key, byte[] iv)
 		{
-			Console.WriteLine(Lang.Tools.AesRes.Info,		// mode info
-				subprops.decrypt ?
-				Lang.Tools.AesRes.Info_Decrypt :
-				Lang.Tools.AesRes.Info_Encrypt);
-			Console.WriteLine(					// aes mode (128/256)
-				Lang.Tools.AesRes.Info_mode,
-				"AES-" + subprops.keylen + "-CBC");
-			if (subprops.hex_key)					// key
-				Console.WriteLine(
-					Lang.Tools.AesRes.Info_key2,
+			Console.WriteLine(Lang.Tools.AesRes.Info,
+				Decrypt ?
+					Lang.Tools.AesRes.Info_Decrypt :
+					Lang.Tools.AesRes.Info_Encrypt);
+			Console.WriteLine(Lang.Tools.AesRes.Info_mode,
+				"AES-" + (ShortKey ? 128 : 256) + "-CBC");
+			if (HexKey)
+				Console.WriteLine(Lang.Tools.AesRes.Info_key2,
 					BitConverter.ToString(key).Replace("-", ""));
 			else
-				Console.WriteLine(
-					Lang.Tools.AesRes.Info_key,
-					subprops.key,
+				Console.WriteLine(Lang.Tools.AesRes.Info_key,
+					Key,
 					BitConverter.ToString(key).Replace("-", ""));
-			if (subprops.hex_iv || subprops.iv == null)
-				Console.WriteLine(				// iv
-					Lang.Tools.AesRes.Info_iv2,
+			if (HexIV || IV.Length == 0)
+				Console.WriteLine(Lang.Tools.AesRes.Info_iv2,
 					BitConverter.ToString(iv).Replace("-", ""));
 			else
-				Console.WriteLine(
-					Lang.Tools.AesRes.Info_iv,
-					subprops.iv,
+				Console.WriteLine(Lang.Tools.AesRes.Info_iv,
+					IV,
 					BitConverter.ToString(iv).Replace("-", ""));
-			Console.WriteLine(					// length
-				Lang.Tools.AesRes.Info_len,
-				filelen);
-			Console.WriteLine(					// offset
-				Lang.Tools.AesRes.Info_offset,
-				subprops.offset);
+			Console.WriteLine(Lang.Tools.AesRes.Info_len, Length);
+			Console.WriteLine(Lang.Tools.AesRes.Info_offset, Offset);
 		}
 
 		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
 			byte[] iv;
 			byte[] key;
-			int keylen;
-			long offset = 0;
-			long len = 0;
-			Properties subprops = new Properties()
-			{
-				keylen = 256,
-			};
+			int ret;
 			CryptoStream Cs;
 			Firmware fw = new Firmware();
 
-			Init_args(args, arg_idx, ref subprops);
+			ret = InitArgs(args, arg_idx);
+			if (ret != 0)
+				return ret;
 
 			if (props.help)
 			{
@@ -105,16 +101,14 @@ namespace firmware_wintools.Tools
 			fw.inFInfo = new FileInfo(props.inFile);
 			fw.outFile = props.outFile;
 
-			keylen = subprops.keylen;
-
 			iv = new byte[16];
-			key = new byte[keylen / 8];	// keylenはbit値、128または256
+			key = new byte[(ShortKey ? 128 : 256) / 8];	// 128または256bit
 
 			/*
 			 * check/build iv and key
 			 */
 			/* iv */
-			if (subprops.iv == null || subprops.iv.Length == 0)	// if iv is not specified or blank
+			if (IV.Length == 0)	// if iv is not specified
 			{
 				/* use default array of iv (filled by '0') */
 				Console.Error.WriteLine(
@@ -123,83 +117,74 @@ namespace firmware_wintools.Tools
 			}
 			else	// if iv is specified
 			{
-				if ((!subprops.hex_iv && subprops.iv.Length > iv.Length) ||
-				    (subprops.hex_iv && subprops.iv.Length != iv.Length * 2))
+				if ((!HexIV && IV.Length > iv.Length) ||
+				    (HexIV && IV.Length != iv.Length * 2))
 				{
-
-					if (subprops.hex_iv)
-						Console.Error.Write(
-							Lang.Resource.Main_Error_Prefix +
-							Lang.Tools.AesRes.Error_InvalidIVLenHex);
-					else
-						Console.Error.Write(
-							Lang.Resource.Main_Error_Prefix +
-							Lang.Tools.AesRes.Error_LongIVLen);
+					Console.Error.Write(
+						Lang.Resource.Main_Error_Prefix +
+						(HexIV ?
+							Lang.Tools.AesRes.Error_InvalidIVLenHex :
+							Lang.Tools.AesRes.Error_LongIVLen));
 
 					return 1;
 				}
 
-				if (subprops.hex_iv)
+				if (HexIV)
 				{
-					if (!Utils.StrToByteArray(ref subprops.iv, out iv))
+					if (!Utils.StrToByteArray(ref IV, out iv))
 					{
 						Console.Error.WriteLine(
 							Lang.Resource.Main_Error_Prefix +
 							Lang.Tools.AesRes.Error_InvalidIVHex);
 						if (iv != null)
-							Console.Error.WriteLine("(char: \"{0}\")", subprops.iv);
+							Console.Error.WriteLine("(char: \"{0}\")", IV);
 
 						return 1;
 					}
 				}
 				else
 				{
-					byte[] tmp_iv = Encoding.ASCII.GetBytes(subprops.iv);
+					byte[] tmp_iv = Encoding.ASCII.GetBytes(IV);
 					Array.Copy(tmp_iv, iv, tmp_iv.Length);
 				}
 			}
 			/* iv end */
 
 			/* key */
-			if (subprops.key == null || subprops.key.Length == 0)
+			if (HexKey)
 			{
-				Console.Error.WriteLine(
-					Lang.Resource.Main_Error_Prefix +
-					Lang.Tools.AesRes.Error_NoKey);
-				return 1;
-			}
-
-			if ((!subprops.hex_key && subprops.key.Length > key.Length) ||
-				(subprops.hex_key && subprops.key.Length != key.Length * 2))
-			{
-				if (subprops.hex_key)
+				if (Key.Length != key.Length * 2)
+				{
 					Console.Error.Write(
 						Lang.Resource.Main_Error_Prefix +
 						Lang.Tools.AesRes.Error_InvalidKeyLenHex);
-				else
-					Console.Error.Write(
-						Lang.Resource.Main_Error_Prefix +
-						Lang.Tools.AesRes.Error_LongKeyLen, key.Length);
 
-				return 1;
-			}
+					return 1;
+				}
 
-			if (subprops.hex_key)
-			{
-				if (!Utils.StrToByteArray(ref subprops.key, out key))
+				if (!Utils.StrToByteArray(ref Key, out key))
 				{
 					Console.Error.WriteLine(
 						Lang.Resource.Main_Error_Prefix +
 						Lang.Tools.AesRes.Error_InvalidKeyHex);
-					if (iv != null)
-						Console.Error.WriteLine("(char: \"{0}\")", subprops.key);
+					if (key != null)
+						Console.Error.WriteLine("(char: \"{0}\")", Key);
 
 					return 1;
 				}
 			}
 			else
 			{
-				byte[] tmp_key = Encoding.ASCII.GetBytes(subprops.key);
+				if (Key.Length > key.Length)
+				{
+					Console.Error.Write(
+					Lang.Resource.Main_Error_Prefix +
+					Lang.Tools.AesRes.Error_LongKeyLen, key.Length);
+
+					return 1;
+				}
+
+				byte[] tmp_key = Encoding.ASCII.GetBytes(Key);
 				Array.Copy(tmp_key, key, tmp_key.Length);
 			}
 			/* key end */
@@ -208,58 +193,52 @@ namespace firmware_wintools.Tools
 			 */
 
 			/* check offset/length */
-			if (subprops.offset > fw.inFInfo.Length)
+			if (Offset >= fw.inFInfo.Length)
+			{
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Warning_Prefix +
 					Lang.Tools.AesRes.Warning_LargeOffset);
-			else
-				offset = subprops.offset;
+				Offset = 0;
+			}
 
-			if (subprops.len != null &&						// something is specified for len
-				(!Utils.StrToLong(subprops.len, out len, NumberStyles.None) ||// fail to convert (invalid chars for num)
-				len <= 0 ||							// equal or smaller than 0
-				len > fw.inFInfo.Length - offset))				// larger than valid length
+			if (Length == -1)
+				Length = fw.inFInfo.Length - Offset;
+
+			if (Length == 0 ||
+			    Length > fw.inFInfo.Length - Offset)
 			{
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Warning_Prefix +
 					Lang.Tools.AesRes.Warning_InvalidLength);
-				subprops.len = null;
+				Length = fw.inFInfo.Length - Offset;
 			}
 
-			if (subprops.len != null ?
-				len % 16 != 0 :				// if "length" specified
-				(fw.inFInfo.Length - offset) % 16 != 0)	// no length specified
+			if (Length % 16 != 0)
 			{
-				if (subprops.decrypt)
-				{
-					Console.Error.WriteLine(
+				Console.Error.WriteLine(
+					Decrypt ?
 						Lang.Resource.Main_Error_Prefix +
-						Lang.Tools.AesRes.Error_InvalidDecLen);
-					return 1;
-				}
-				else
-				{
-					Console.Error.WriteLine(
+						Lang.Tools.AesRes.Error_InvalidDecLen :
 						Lang.Resource.Main_Warning_Prefix +
 						Lang.Tools.AesRes.Warning_ShortEncLen);
-				}
+				if (Decrypt)
+					return 1;
 			}
 			/* check offset/length end */
 
 			if (!props.quiet)
-				PrintInfo(subprops, key, iv,
-					subprops.len != null ? len : fw.inFInfo.Length - offset);
+				PrintInfo(key, iv);
 
 			AesManaged aes = new AesManaged
 			{
-				KeySize = keylen,
+				KeySize = ShortKey ? 128 : 256,
 				IV = iv,
 				Key = key,
 				Mode = CipherMode.CBC,
 				Padding = PaddingMode.Zeros
 			};
 
-			ICryptoTransform endec = subprops.decrypt ?
+			ICryptoTransform endec = Decrypt ?
 				aes.CreateDecryptor(aes.Key, aes.IV) :
 				aes.CreateEncryptor(aes.Key, aes.IV);
 
@@ -271,22 +250,20 @@ namespace firmware_wintools.Tools
 							FileAccess.Write, FileShare.None))
 				using (Cs = new CryptoStream(fw.outFs, endec, CryptoStreamMode.Write))
 				{
-					fw.inFs.Seek(offset, SeekOrigin.Begin);
+					fw.inFs.Seek(Offset, SeekOrigin.Begin);
 
 					byte[] buf = new byte[0x10000];
 					int readlen;
 					while ((readlen = fw.inFs.Read(buf, 0, buf.Length)) > 0)
 					{
-						if (subprops.len == null)
-							Cs.Write(buf, 0, readlen);
-						else if (len > readlen)
+						if (Length > readlen)
 						{
-							len -= readlen;
+							Length -= readlen;
 							Cs.Write(buf, 0, readlen);
 						}
 						else
 						{
-							Cs.Write(buf, 0, (int)len);
+							Cs.Write(buf, 0, (int)Length);
 							break;
 						}
 					}
