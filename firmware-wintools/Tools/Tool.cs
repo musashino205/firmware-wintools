@@ -11,6 +11,7 @@ namespace firmware_wintools.Tools
 		public PTYPE PType;
 		public string SetField = "";
 		public string SetBool = "";
+		public string HelpKey;
 		public bool Override;
 
 		public enum PTYPE
@@ -28,6 +29,7 @@ namespace firmware_wintools.Tools
 		public virtual string name { get => ""; }
 		public virtual string desc { get => ""; }
 		public virtual string descFmt { get => ""; }
+		public virtual string resName { get => ""; }
 		public virtual bool skipOFChk { get => false; }
 
 		internal virtual List<Param> ParamList { get; }
@@ -123,6 +125,49 @@ namespace firmware_wintools.Tools
 			}
 
 			return 0;
+		}
+
+		private string GetResText(Type t, string key)
+		{
+			PropertyInfo pi;
+
+			if (t == null || key == null)
+				return null;
+
+			pi = t.GetProperty(key,
+					BindingFlags.Static | BindingFlags.NonPublic);
+			return pi == null ? null : (string)pi.GetValue(null);
+		}
+
+		internal void PrintHelp(int argIdx)
+		{
+			Type t = Type.GetType("firmware_wintools.Lang.Tools." + resName);
+			string buf, tmp;
+
+			if (t == null)
+				return;
+
+			/* 先頭部 */
+			if ((tmp = GetResText(t, "Help_Usage")) == null)
+				return;
+			buf = tmp;
+			if ((tmp = GetResText(t, "FuncDesc")) == null)
+				return;
+			buf += tmp;
+			buf += Environment.NewLine;
+			Console.WriteLine(buf, argIdx < 2 ? "" : "firmware-wintools ");
+
+			/* 共通オプション */
+			Program.PrintCommonOption();
+
+			/* 機能オプション */
+			buf = Lang.CommonRes.Help_FunctionOpts;
+			foreach (Param p in ParamList) {
+				if ((tmp = GetResText(t, p.HelpKey)) == null)
+					continue;
+				buf += tmp;
+			}
+			Console.WriteLine(buf);
 		}
 	}
 }
