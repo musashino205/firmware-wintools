@@ -13,6 +13,7 @@ namespace firmware_wintools.Tools
 		public override string name { get => "aes"; }
 		public override string desc { get => Lang.Tools.AesRes.FuncDesc; }
 		public override string descFmt { get => Lang.Tools.AesRes.Main_FuncDesc_Fmt; }
+		public override string resName => "AesRes";
 
 		private bool Decrypt = false;
 		private string Key = "";
@@ -24,35 +25,15 @@ namespace firmware_wintools.Tools
 		private long Offset = 0;
 
 		internal override List<Param> ParamList => new List<Param>() {
-			new Param() { PChar = 'd', PType = Param.PTYPE.BOOL, SetField = "Decrypt" },
-			new Param() { PChar = 'k', PType = Param.PTYPE.STR, SetField = "Key" },
-			new Param() { PChar = 'K', PType = Param.PTYPE.STR, SetField = "Key", SetBool = "HexKey" },
-			new Param() { PChar = 'l', PType = Param.PTYPE.LONG, SetField = "Length" },
-			new Param() { PChar = 'O', PType = Param.PTYPE.LONG, SetField = "Offset" },
-			new Param() { PChar = 's', PType = Param.PTYPE.BOOL, SetField = "ShortKey" },
-			new Param() { PChar = 'v', PType = Param.PTYPE.STR, SetField = "IV" },
-			new Param() { PChar = 'V', PType = Param.PTYPE.STR, SetField = "IV", SetBool = "HexIV" }
+			new Param() { PChar = 'd', PType = Param.PTYPE.BOOL, SetField = "Decrypt", HelpKey = "Help_Options_d" },
+			new Param() { PChar = 'k', PType = Param.PTYPE.STR, SetField = "Key", HelpKey = "Help_Options_k" },
+			new Param() { PChar = 'K', PType = Param.PTYPE.STR, SetField = "Key", SetBool = "HexKey", HelpKey = "Help_Options_K2" },
+			new Param() { PChar = 'v', PType = Param.PTYPE.STR, SetField = "IV", HelpKey = "Help_Options_v" },
+			new Param() { PChar = 'V', PType = Param.PTYPE.STR, SetField = "IV", SetBool = "HexIV", HelpKey = "Help_Options_V2" },
+			new Param() { PChar = 'l', PType = Param.PTYPE.LONG, SetField = "Length", HelpKey = "Help_Options_l" },
+			new Param() { PChar = 'O', PType = Param.PTYPE.LONG, SetField = "Offset", HelpKey = "Help_Options_O2" },
+			new Param() { PChar = 's', PType = Param.PTYPE.BOOL, SetField = "ShortKey", HelpKey = "Help_Options_s" },
 		};
-
-		private static void PrintHelp(int arg_idx)
-		{
-			Console.WriteLine(Lang.Tools.AesRes.Help_Usage +
-				Lang.Tools.AesRes.FuncDesc +
-				Environment.NewLine,
-				arg_idx < 2 ? "" : "firmware-wintools ");	// 引数インデックスが2未満（symlink呼び出し）の場合機能名のみ
-			// 共通オプション表示
-			Program.PrintCommonOption();
-			// 機能オプション表示
-			Console.WriteLine(Lang.CommonRes.Help_FunctionOpts +
-				Lang.Tools.AesRes.Help_Options_d +
-				Lang.Tools.AesRes.Help_Options_k +
-				Lang.Tools.AesRes.Help_Options_K2 +
-				Lang.Tools.AesRes.Help_Options_v +
-				Lang.Tools.AesRes.Help_Options_V2 +
-				Lang.Tools.AesRes.Help_Options_l +
-				Lang.Tools.AesRes.Help_Options_O2 +
-				Lang.Tools.AesRes.Help_Options_s);
-		}
 
 		private void PrintInfo(byte[] key, byte[] iv)
 		{
