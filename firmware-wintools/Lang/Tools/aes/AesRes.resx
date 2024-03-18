@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Error.FailReadSalt" xml:space="preserve">
+    <value>failed to read salt from input data</value>
+  </data>
   <data name="Error.InvalidDecLen" xml:space="preserve">
     <value>the length of target data is not a multiple of 16</value>
   </data>
@@ -162,6 +165,10 @@
   </data>
   <data name="Help.Options.O2" xml:space="preserve">
     <value>  -O &lt;offset&gt;		encrypt/decrypt from specified offset of the input image
+</value>
+  </data>
+  <data name="Help.Options.p" xml:space="preserve">
+    <value>  -p &lt;passphrase&gt;	use &lt;passphrase&gt; for encryption/decryption the image instead of key/iv (MD5)
 </value>
   </data>
   <data name="Help.Options.s" xml:space="preserve">
@@ -213,6 +220,9 @@
   <data name="Info.offset" xml:space="preserve">
     <value> Offset		: {0:N0} bytes
 		  (0x{0:X})</value>
+  </data>
+  <data name="Info.salt" xml:space="preserve">
+    <value> Salt		: {0} (hex)</value>
   </data>
   <data name="Main.FuncDesc.Fmt" xml:space="preserve">
     <value>    {0}			: {1}</value>

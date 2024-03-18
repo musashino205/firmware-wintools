@@ -61,6 +61,15 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
+        ///   failed to read salt from input data に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Error_FailReadSalt {
+            get {
+                return ResourceManager.GetString("Error.FailReadSalt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   the length of target data is not a multiple of 16 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Error_InvalidDecLen {
@@ -188,6 +197,16 @@ namespace firmware_wintools.Lang.Tools {
         internal static string Help_Options_O2 {
             get {
                 return ResourceManager.GetString("Help.Options.O2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///     -p &lt;passphrase&gt;	use &lt;passphrase&gt; for encryption/decryption the image instead of key/iv (MD5)
+        /// に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Help_Options_p {
+            get {
+                return ResourceManager.GetString("Help.Options.p", resourceCulture);
             }
         }
         
@@ -322,6 +341,15 @@ namespace firmware_wintools.Lang.Tools {
         internal static string Info_offset {
             get {
                 return ResourceManager.GetString("Info.offset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Salt		: {0} (hex) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Info_salt {
+            get {
+                return ResourceManager.GetString("Info.salt", resourceCulture);
             }
         }
         

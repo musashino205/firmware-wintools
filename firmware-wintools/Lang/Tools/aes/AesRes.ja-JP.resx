@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Error.FailReadSalt" xml:space="preserve">
+    <value>入力データからのソルトの読み取りに失敗しました</value>
+  </data>
   <data name="Error.InvalidDecLen" xml:space="preserve">
     <value>対象データの長さが 16 の倍数ではありません</value>
   </data>
@@ -162,6 +165,10 @@
   </data>
   <data name="Help.Options.O2" xml:space="preserve">
     <value>  -O &lt;オフセット&gt;	入力ファイルの暗号化 / 復号を開始するオフセットを指定します
+</value>
+  </data>
+  <data name="Help.Options.p" xml:space="preserve">
+    <value>  -p &lt;パスワード&gt;	キーとIVの代わりにイメージの暗号化 / 復号に使用する &lt;パスワード&gt; を指定します (MD5)
 </value>
   </data>
   <data name="Help.Options.s" xml:space="preserve">
@@ -213,6 +220,9 @@
   <data name="Info.offset" xml:space="preserve">
     <value> オフセット	: {0:N0} バイト
 		  (0x{0:X})</value>
+  </data>
+  <data name="Info.salt" xml:space="preserve">
+    <value> ソルト		: {0} （16進数）</value>
   </data>
   <data name="Main.FuncDesc.Fmt" xml:space="preserve">
     <value>    {0}			: {1}</value>
