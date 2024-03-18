@@ -126,6 +126,12 @@
   <data name="Error.FailParseVal" xml:space="preserve">
     <value>failed to parse value "{0}" ({1})</value>
   </data>
+  <data name="Error.InvalidLen2x" xml:space="preserve">
+    <value>argument length of "-{0}" option is not multiple of 2</value>
+  </data>
+  <data name="Error.InvalidLenReq" xml:space="preserve">
+    <value>invalid length for "-{0}" option (required: {1} bytes)</value>
+  </data>
   <data name="Help.CommonOpts" xml:space="preserve">
     <value>Common Options:
 </value>

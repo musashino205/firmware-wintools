@@ -126,6 +126,12 @@
   <data name="Error.FailParseVal" xml:space="preserve">
     <value>指定された値 "{0}" の変換に失敗しました ({1}型)</value>
   </data>
+  <data name="Error.InvalidLen2x" xml:space="preserve">
+    <value>"-{0}" オプションの引数の長さが2の倍数ではありません</value>
+  </data>
+  <data name="Error.InvalidLenReq" xml:space="preserve">
+    <value>"-{0}" オプションの引数の長さが正しくありません（要: {1} バイト）</value>
+  </data>
   <data name="Help.CommonOpts" xml:space="preserve">
     <value>共通オプション:
 </value>

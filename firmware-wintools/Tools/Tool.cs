@@ -19,6 +19,8 @@ namespace firmware_wintools.Tools
 		{
 			INT = 0,
 			LONG,
+			BARY,
+			BARY_H,
 			BOOL,
 			STR,
 		};
@@ -40,7 +42,7 @@ namespace firmware_wintools.Tools
 
 		internal int InitArgs(string[] args, int offset)
 		{
-			string tmp = "", errtype;
+			string tmp = "", errtype, errmsg;
 
 			for (int i = offset; i < args.Length; i++) {
 				if (!args[i].StartsWith("-") || args[i].Length < 2)
@@ -85,6 +87,7 @@ namespace firmware_wintools.Tools
 				}
 
 				errtype = "";
+				errmsg = "";
 				switch (p.PType)
 				{
 					case PTYPE.INT:
@@ -101,6 +104,41 @@ namespace firmware_wintools.Tools
 						else
 							errtype = "long";
 						break;
+					case PTYPE.BARY_H:
+						/* 指定された文字列の長さが２の倍数でない */
+						if (tmp.Length % 2 != 0)
+						{
+							errtype = "array(byte)";
+							errmsg = string.Format(
+								Lang.CommonRes.Error_InvalidLen2x,
+								p.PChar);
+							break;
+						}
+
+						if (!Utils.StrToByteArray(ref tmp, out byte[] cnvBary))
+						{
+							errtype = "array(byte)";
+							if (cnvBary != null)
+								errmsg = string.Format("(char: \"{0}\")", tmp);
+							break;
+						}
+
+						byte[] val = (byte[])setf.GetValue(this);
+						/*
+						 * - 設定先が定義済（長さ指定がある）
+						 * - 変換した配列の長さが設定先と異なる
+						 */
+						if (val != null && cnvBary.Length != val.Length)
+						{
+							errtype = "array(byte)";
+							errmsg = string.Format(
+								Lang.CommonRes.Error_InvalidLenReq,
+								p.PChar, val.Length);
+							break;
+						}
+
+						setf.SetValue(this, cnvBary);
+						break;
 					case PTYPE.BOOL:
 						setf.SetValue(this, true);
 						break;
@@ -116,6 +154,8 @@ namespace firmware_wintools.Tools
 					Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 							Lang.CommonRes.Error_FailParseVal,
 							tmp, errtype);
+					if (errmsg.Length > 0)
+						Console.Error.WriteLine(errmsg);
 					return -22;
 				}
 

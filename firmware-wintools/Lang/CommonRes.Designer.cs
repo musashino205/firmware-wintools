@@ -88,6 +88,24 @@ namespace firmware_wintools.Lang {
         }
         
         /// <summary>
+        ///   argument length of &quot;-{0}&quot; option is not multiple of 2 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Error_InvalidLen2x {
+            get {
+                return ResourceManager.GetString("Error.InvalidLen2x", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   invalid length for &quot;-{0}&quot; option (required: {1} bytes) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Error_InvalidLenReq {
+            get {
+                return ResourceManager.GetString("Error.InvalidLenReq", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Common Options:
         /// に類似しているローカライズされた文字列を検索します。
         /// </summary>
