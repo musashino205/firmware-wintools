@@ -64,7 +64,8 @@ namespace firmware_wintools.Tools
 					IV,
 					BitConverter.ToString(iv).Replace("-", ""));
 			Console.WriteLine(Lang.Tools.AesRes.Info_len, Length);
-			Console.WriteLine(Lang.Tools.AesRes.Info_offset, Offset - (UsePSK ? 0x10 : 0));
+			Console.WriteLine(Lang.Tools.AesRes.Info_offset,
+				Offset - (UsePSK && Decrypt ? 0x10 : 0));
 		}
 
 		internal override int Do(string[] args, int arg_idx, Program.Properties props)
@@ -224,6 +225,9 @@ namespace firmware_wintools.Tools
 						Console.Error.WriteLine(e.Message);
 						return 1;
 					}
+
+					/* 暗号化データは "Salted__"(0x8) + salt(0x8) の後 */
+					Offset += 0x10;
 				}
 
 				/* Key, IV算出 (MD5) */
@@ -254,9 +258,6 @@ namespace firmware_wintools.Tools
 					Buffer.BlockCopy(ShortKey ? key : hash, 0, tmp, 0, hash.Length);
 					iv = md5.ComputeHash(tmp);
 				}
-
-				/* 暗号化データは "Salted__"(0x8) + salt(0x8) の後 */
-				Offset += 0x10;
 			}
 
 			/* check offset/length */
@@ -320,6 +321,15 @@ namespace firmware_wintools.Tools
 					fw.inFs.Seek(Offset, SeekOrigin.Begin);
 
 					byte[] buf = new byte[0x10000];
+
+					if (!Decrypt && UsePSK) {
+						Buffer.BlockCopy(
+							Encoding.ASCII.GetBytes("Salted__"), 0, buf, 0, 8);
+						Buffer.BlockCopy(salt, 0, buf, 8, 8);
+
+						fw.outFs.Write(buf, 0, 16);
+					}
+
 					int readlen;
 					while ((readlen = fw.inFs.Read(buf, 0, buf.Length)) > 0)
 					{
