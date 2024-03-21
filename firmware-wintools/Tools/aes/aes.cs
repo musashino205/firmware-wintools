@@ -16,8 +16,8 @@ namespace firmware_wintools.Tools
 		public override string resName => "AesRes";
 
 		private bool Decrypt = false;
-		private string Key = "";
-		private string IV = "";
+		private byte[] KeyAry = null;
+		private byte[] IVAry = null;
 		private string PSK = "";
 		private bool HexKey = false;
 		private bool HexIV = false;
@@ -29,10 +29,10 @@ namespace firmware_wintools.Tools
 
 		internal override List<Param> ParamList => new List<Param>() {
 			new Param() { PChar = 'd', PType = Param.PTYPE.BOOL, SetField = "Decrypt", HelpKey = "Help_Options_d" },
-			new Param() { PChar = 'k', PType = Param.PTYPE.STR, SetField = "Key", HelpKey = "Help_Options_k" },
-			new Param() { PChar = 'K', PType = Param.PTYPE.STR, SetField = "Key", SetBool = "HexKey", HelpKey = "Help_Options_K2" },
-			new Param() { PChar = 'v', PType = Param.PTYPE.STR, SetField = "IV", HelpKey = "Help_Options_v" },
-			new Param() { PChar = 'V', PType = Param.PTYPE.STR, SetField = "IV", SetBool = "HexIV", HelpKey = "Help_Options_V2" },
+			new Param() { PChar = 'k', PType = Param.PTYPE.BARY, SetField = "KeyAry", HelpKey = "Help_Options_k" },
+			new Param() { PChar = 'K', PType = Param.PTYPE.BARY_H, SetField = "KeyAry", SetBool = "HexKey", HelpKey = "Help_Options_K2" },
+			new Param() { PChar = 'v', PType = Param.PTYPE.BARY, SetField = "IVAry", HelpKey = "Help_Options_v" },
+			new Param() { PChar = 'V', PType = Param.PTYPE.BARY_H, SetField = "IVAry", SetBool = "HexIV", HelpKey = "Help_Options_V2" },
 			new Param() { PChar = 'p', PType = Param.PTYPE.STR, SetField = "PSK", SetBool = "UsePSK", HelpKey = "Help_Options_p" },
 			new Param() { PChar = 'l', PType = Param.PTYPE.LONG, SetField = "Length", HelpKey = "Help_Options_l" },
 			new Param() { PChar = 'O', PType = Param.PTYPE.LONG, SetField = "Offset", HelpKey = "Help_Options_O2" },
@@ -56,14 +56,14 @@ namespace firmware_wintools.Tools
 					BitConverter.ToString(key).Replace("-", ""));
 			else
 				Console.WriteLine(Lang.Tools.AesRes.Info_key,
-					Key,
+					Encoding.ASCII.GetString(key),
 					BitConverter.ToString(key).Replace("-", ""));
-			if (HexIV || UsePSK || IV.Length == 0)
+			if (HexIV || UsePSK || IVAry == null)
 				Console.WriteLine(Lang.Tools.AesRes.Info_iv2,
 					BitConverter.ToString(iv).Replace("-", ""));
 			else
 				Console.WriteLine(Lang.Tools.AesRes.Info_iv,
-					IV,
+					Encoding.ASCII.GetString(iv),
 					BitConverter.ToString(iv).Replace("-", ""));
 			Console.WriteLine(Lang.Tools.AesRes.Info_len, Length);
 			Console.WriteLine(Lang.Tools.AesRes.Info_offset,
@@ -101,7 +101,7 @@ namespace firmware_wintools.Tools
 				 * check/build iv and key
 				 */
 				/* iv */
-				if (IV.Length == 0) // if iv is not specified
+				if (IVAry == null)
 				{
 					/* use default array of iv (filled by '0') */
 					Console.Error.WriteLine(
@@ -110,8 +110,8 @@ namespace firmware_wintools.Tools
 				}
 				else    // if iv is specified
 				{
-					if ((!HexIV && IV.Length > iv.Length) ||
-						(HexIV && IV.Length != iv.Length * 2))
+					if ((!HexIV && IVAry.Length > iv.Length) ||
+					    (HexIV && IVAry.Length != iv.Length))
 					{
 						Console.Error.Write(
 							Lang.Resource.Main_Error_Prefix +
@@ -122,64 +122,32 @@ namespace firmware_wintools.Tools
 						return 1;
 					}
 
-					if (HexIV)
-					{
-						if (!Utils.StrToByteArray(ref IV, out iv))
-						{
-							Console.Error.WriteLine(
-								Lang.Resource.Main_Error_Prefix +
-								Lang.Tools.AesRes.Error_InvalidIVHex);
-							if (iv != null)
-								Console.Error.WriteLine("(char: \"{0}\")", IV);
-
-							return 1;
-						}
-					}
-					else
-					{
-						byte[] tmp_iv = Encoding.ASCII.GetBytes(IV);
-						Array.Copy(tmp_iv, iv, tmp_iv.Length);
-					}
+					Buffer.BlockCopy(IVAry, 0, iv, 0, IVAry.Length);
 				}
 				/* iv end */
 
 				/* key */
-				if (HexKey)
+				if (KeyAry == null)
 				{
-					if (Key.Length != key.Length * 2)
-					{
-						Console.Error.Write(
-							Lang.Resource.Main_Error_Prefix +
-							Lang.Tools.AesRes.Error_InvalidKeyLenHex);
-
-						return 1;
-					}
-
-					if (!Utils.StrToByteArray(ref Key, out key))
-					{
-						Console.Error.WriteLine(
-							Lang.Resource.Main_Error_Prefix +
-							Lang.Tools.AesRes.Error_InvalidKeyHex);
-						if (key != null)
-							Console.Error.WriteLine("(char: \"{0}\")", Key);
-
-						return 1;
-					}
-				}
-				else
-				{
-					if (Key.Length > key.Length)
-					{
-						Console.Error.Write(
+					Console.Error.WriteLine(
 						Lang.Resource.Main_Error_Prefix +
-						Lang.Tools.AesRes.Error_LongKeyLen, key.Length);
+						Lang.Tools.AesRes.Error_NoKey);
 
-						return 1;
-					}
-
-					byte[] tmp_key = Encoding.ASCII.GetBytes(Key);
-					Array.Copy(tmp_key, key, tmp_key.Length);
+					return 1;
 				}
+				if ((!HexKey && KeyAry.Length > key.Length) ||
+					(HexKey && KeyAry.Length != key.Length))
+				{
+					string tmp = !HexKey ?
+						string.Format(Lang.Tools.AesRes.Error_LongKeyLen, key.Length) :
+						Lang.Tools.AesRes.Error_InvalidKeyLenHex;
+					Console.Error.Write(
+						Lang.Resource.Main_Error_Prefix + tmp);
+
+					return 1;
+				}
+
+				Buffer.BlockCopy(KeyAry, 0, key, 0, KeyAry.Length);
 				/* key end */
 				/*
 				 * check/build iv and key end
