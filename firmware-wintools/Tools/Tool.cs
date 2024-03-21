@@ -104,6 +104,9 @@ namespace firmware_wintools.Tools
 						else
 							errtype = "long";
 						break;
+					case PTYPE.BARY:
+						setf.SetValue(this, System.Text.Encoding.ASCII.GetBytes(tmp));
+						break;
 					case PTYPE.BARY_H:
 						/* 指定された文字列の長さが２の倍数でない */
 						if (tmp.Length % 2 != 0)
