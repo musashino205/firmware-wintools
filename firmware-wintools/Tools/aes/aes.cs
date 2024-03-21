@@ -23,6 +23,7 @@ namespace firmware_wintools.Tools
 		private bool HexIV = false;
 		private bool ShortKey = false;
 		private bool UsePSK = false;
+		private bool NoPad = false;
 		private long Length = -1;
 		private long Offset = 0;
 
@@ -36,6 +37,7 @@ namespace firmware_wintools.Tools
 			new Param() { PChar = 'l', PType = Param.PTYPE.LONG, SetField = "Length", HelpKey = "Help_Options_l" },
 			new Param() { PChar = 'O', PType = Param.PTYPE.LONG, SetField = "Offset", HelpKey = "Help_Options_O2" },
 			new Param() { PChar = 's', PType = Param.PTYPE.BOOL, SetField = "ShortKey", HelpKey = "Help_Options_s" },
+			new Param() { PChar = 'n', PType = Param.PTYPE.BOOL, SetField = "NoPad", HelpKey = "Help_Options_n" },
 		};
 
 		private void PrintInfo(byte[] key, byte[] iv, byte[] salt)
@@ -284,9 +286,9 @@ namespace firmware_wintools.Tools
 			if (Length % 16 != 0)
 			{
 				Console.Error.WriteLine(
-					Decrypt ?
+					(Decrypt || NoPad) ?
 						Lang.Resource.Main_Error_Prefix +
-						Lang.Tools.AesRes.Error_InvalidDecLen :
+						Lang.Tools.AesRes.Error_InvalidDataBlkLen :
 						Lang.Resource.Main_Warning_Prefix +
 						Lang.Tools.AesRes.Warning_ShortEncLen);
 				if (Decrypt)
@@ -303,7 +305,7 @@ namespace firmware_wintools.Tools
 				IV = iv,
 				Key = key,
 				Mode = CipherMode.CBC,
-				Padding = PaddingMode.PKCS7
+				Padding = NoPad ? PaddingMode.None : PaddingMode.PKCS7
 			};
 
 			ICryptoTransform endec = Decrypt ?

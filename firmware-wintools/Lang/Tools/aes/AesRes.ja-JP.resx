@@ -120,7 +120,7 @@
   <data name="Error.FailReadSalt" xml:space="preserve">
     <value>入力データからのソルトの読み取りに失敗しました</value>
   </data>
-  <data name="Error.InvalidDecLen" xml:space="preserve">
+  <data name="Error.InvalidDataBlkLen" xml:space="preserve">
     <value>対象データの長さが 16 の倍数ではありません</value>
   </data>
   <data name="Error.InvalidIVHex" xml:space="preserve">
@@ -162,6 +162,9 @@
   <data name="Help.Options.l" xml:space="preserve">
     <value>  -l &lt;長さ&gt;		入力ファイルの暗号化 / 復号を行う長さを指定します
 </value>
+  </data>
+  <data name="Help.Options.n" xml:space="preserve">
+    <value>  -n			対象データ末尾のブロックパディングを無効にします</value>
   </data>
   <data name="Help.Options.O2" xml:space="preserve">
     <value>  -O &lt;オフセット&gt;	入力ファイルの暗号化 / 復号を開始するオフセットを指定します

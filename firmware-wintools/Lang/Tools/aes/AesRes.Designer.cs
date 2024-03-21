@@ -72,9 +72,9 @@ namespace firmware_wintools.Lang.Tools {
         /// <summary>
         ///   the length of target data is not a multiple of 16 に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string Error_InvalidDecLen {
+        internal static string Error_InvalidDataBlkLen {
             get {
-                return ResourceManager.GetString("Error.InvalidDecLen", resourceCulture);
+                return ResourceManager.GetString("Error.InvalidDataBlkLen", resourceCulture);
             }
         }
         
@@ -187,6 +187,15 @@ namespace firmware_wintools.Lang.Tools {
         internal static string Help_Options_l {
             get {
                 return ResourceManager.GetString("Help.Options.l", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///     -n			disable block padding at the end of target data に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Help_Options_n {
+            get {
+                return ResourceManager.GetString("Help.Options.n", resourceCulture);
             }
         }
         

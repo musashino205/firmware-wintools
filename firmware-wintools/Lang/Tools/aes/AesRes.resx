@@ -120,7 +120,7 @@
   <data name="Error.FailReadSalt" xml:space="preserve">
     <value>failed to read salt from input data</value>
   </data>
-  <data name="Error.InvalidDecLen" xml:space="preserve">
+  <data name="Error.InvalidDataBlkLen" xml:space="preserve">
     <value>the length of target data is not a multiple of 16</value>
   </data>
   <data name="Error.InvalidIVHex" xml:space="preserve">
@@ -162,6 +162,9 @@
   <data name="Help.Options.l" xml:space="preserve">
     <value>  -l &lt;length&gt;		encrypt/decrypt specified length of the input image
 </value>
+  </data>
+  <data name="Help.Options.n" xml:space="preserve">
+    <value>  -n			disable block padding at the end of target data</value>
   </data>
   <data name="Help.Options.O2" xml:space="preserve">
     <value>  -O &lt;offset&gt;		encrypt/decrypt from specified offset of the input image
