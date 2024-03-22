@@ -1,58 +1,47 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace firmware_wintools.Tools
 {
-	internal partial class BinCut : Tool
+	internal class BinCut : Tool
 	{
 		/* ツール情報　*/
 		public override string name { get => "bincut"; }
 		public override string desc { get => Lang.Tools.BinCutRes.FuncDesc; }
 		public override string descFmt { get => Lang.Tools.BinCutRes.Main_FuncDesc_Fmt; }
+		public override string resName => "BinCutRes";
 
-		public struct Properties
+		private long Length = -1;
+		private long Offset = 0;
+		private long Pad = 0;
+		private long PadBS = 0;
+
+		internal override List<Param> ParamList => new List<Param>()
 		{
-			public long len;
-			public long offset;
-			public long pad;
-			public long padBS;
-		}
+			new Param() { PChar = 'l', PType = Param.PTYPE.LONG, SetField = "Length", HelpKey = "Help_Options_Length" },
+			new Param() { PChar = 'O', PType = Param.PTYPE.LONG, SetField = "Offset", HelpKey = "Help_Options_Offset" },
+			new Param() { PChar = 'p', PType = Param.PTYPE.LONG, SetField = "Pad", HelpKey = "Help_Options_Pad" },
+			new Param() { PChar = 'P', PType = Param.PTYPE.LONG, SetField = "PadBS", HelpKey = "Help_Options_PadBS" }
+		};
 
-		private static void PrintHelp(int arg_idx)
-		{
-			Console.WriteLine(Lang.Tools.BinCutRes.Help_Usage +
-				Lang.Tools.BinCutRes.FuncDesc +
-				Environment.NewLine,
-				arg_idx < 2 ? "" : "firmware-wintools ");	// 引数インデックスが2未満（symlink呼び出し）の場合機能名のみ
-			// 共通オプション表示
-			Program.PrintCommonOption();
-			// 機能オプション表示
-			Console.WriteLine(Lang.CommonRes.Help_FunctionOpts +
-				Lang.Tools.BinCutRes.Help_Options_Length +
-				Lang.Tools.BinCutRes.Help_Options_Offset +
-				Lang.Tools.BinCutRes.Help_Options_Pad +
-				Lang.Tools.BinCutRes.Help_Options_PadBS);
-		}
-
-		private static void PrintInfo(Properties subprops, long data_len)
+		private void PrintInfo()
 		{
 			Console.WriteLine(Lang.Tools.BinCutRes.Info);
 			Console.WriteLine(Lang.Tools.BinCutRes.Info_length,
-				data_len);
+				Length);
 			Console.WriteLine(Lang.Tools.BinCutRes.Info_offset,
-				subprops.offset);
-			if (subprops.pad > 0)
+				Offset);
+			if (Pad > 0)
 				Console.WriteLine(Lang.Tools.BinCutRes.Info_Pad,
-					subprops.pad);
-			if (subprops.padBS > 0)
+					Pad);
+			if (PadBS > 0)
 				Console.WriteLine(Lang.Tools.BinCutRes.Info_PadBS,
-					subprops.padBS);
+					PadBS);
 		}
 
 		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
-			Properties subprops = new Properties();
-
 			Firmware fw = new Firmware();
 
 			if (props.help)
@@ -61,42 +50,43 @@ namespace firmware_wintools.Tools
 				return 0;
 			}
 
-			Init_args(args, arg_idx, ref subprops);
+			InitArgs(args, arg_idx);
 
 			fw.inFInfo = new FileInfo(props.inFile);
 
 			/* check offset/length */
-			if (subprops.offset > fw.inFInfo.Length)
+			if (Offset >  fw.inFInfo.Length)
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Warning_Prefix +
 					Lang.Tools.BinCutRes.Warning_LargeOffset);
-				subprops.offset = 0;
+				Offset = 0;
 			}
 
-			if (subprops.len < 0 || subprops.len > fw.inFInfo.Length - subprops.offset)
+			if (Length == -1)
+				Length = fw.inFInfo.Length - Offset;
+			if (Length < 0 ||
+			    Length > fw.inFInfo.Length - Offset)
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Warning_Prefix +
 					Lang.Tools.BinCutRes.Warning_InvalidLength);
-				subprops.len = 0;
+				Length = fw.inFInfo.Length - Offset;
 			}
 
-			if (subprops.pad > 0 && subprops.padBS > 0)
+			if (Pad > 0 && PadBS > 0)
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 					Lang.Tools.BinCutRes.Error_DualPad);
 				return 1;
 			}
 
-			if (subprops.pad != 0 &&
-				subprops.pad <
-					(subprops.len != 0 ? subprops.len : fw.inFInfo.Length - subprops.offset))
+			if (Pad > 0 && Pad < Length)
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 					Lang.Tools.BinCutRes.Error_SmallPadSize);
 				return 1;
 			}
 
-			if (subprops.padBS < 0)
+			if (PadBS < 0)
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 					Lang.Tools.BinCutRes.Error_InvalidPadBSSize);
@@ -104,10 +94,8 @@ namespace firmware_wintools.Tools
 			}
 			/* check offset/length/pad/pad_with_bs end */
 
-			long data_len =
-				subprops.len != 0 ? subprops.len : (fw.inFInfo.Length - subprops.offset);
 			if (!props.quiet)
-				PrintInfo(subprops, data_len);
+				PrintInfo();
 
 			try
 			{
@@ -116,37 +104,36 @@ namespace firmware_wintools.Tools
 				using (fw.outFs = new FileStream(props.outFile, FileMode.Create,
 							FileAccess.Write, FileShare.None))
 				{
-					fw.inFs.Seek(subprops.offset, SeekOrigin.Begin);
+					fw.inFs.Seek(Offset, SeekOrigin.Begin);
 
 					fw.inFs.CopyTo(fw.outFs);
 
-					if (subprops.len != 0)
-						fw.outFs.SetLength(subprops.len);
+					if (Length != 0)
+						fw.outFs.SetLength(Length);
 
 					/* padding無しであればここで終了 */
-					if (subprops.pad == 0 && subprops.padBS == 0)
+					if (Pad == 0 && PadBS == 0)
 						return 0;
 
-					long padded_len;
+					long padlen;
 					/*
 					 * blocksizeでのpaddingの際は余りを確認して、あるようならblocksizeを足す
 					 * 指定サイズへのpaddingの際はそのサイズをそのまま指定
 					 */
-					if (subprops.padBS > 0)
-						padded_len = subprops.padBS *
-							((data_len / subprops.padBS) + (data_len % subprops.padBS > 0 ? 1 : 0));
+					if (PadBS > 0)
+						padlen = PadBS *
+							((Length / PadBS) + (Length % PadBS > 0 ? 1 : 0));
 					else
-						padded_len = subprops.pad;
-					long len;
+						padlen = Pad;
+
 					byte[] buf = new byte[0x10000];
 
-					for (len = padded_len - data_len; len >= buf.Length; len -= buf.Length)
-					{
+					padlen -= Length;
+					for (; padlen >= buf.Length; padlen -= buf.Length)
 						fw.outFs.Write(buf, 0, buf.Length);
-					}
 
-					if (len > 0)
-						fw.outFs.Write(buf, 0, (int)len);
+					if (padlen > 0)
+						fw.outFs.Write(buf, 0, (int)padlen);
 				}
 			}
 			catch (IOException e)
