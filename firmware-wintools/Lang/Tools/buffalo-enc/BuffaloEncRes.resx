@@ -120,9 +120,6 @@
   <data name="Error.BigFile" xml:space="preserve">
     <value>specified file is too big (&gt;= 2GiB)</value>
   </data>
-  <data name="Error.CksumNotMatch" xml:space="preserve">
-    <value>checksum doesn't match, exiting...</value>
-  </data>
   <data name="Error.FailDecrypt" xml:space="preserve">
     <value>failed to decrypt</value>
   </data>
@@ -249,7 +246,7 @@
   <data name="Main.FuncDesc.Fmt" xml:space="preserve">
     <value>    {0}		: {1}</value>
   </data>
-  <data name="Warn.CksumNotMatch" xml:space="preserve">
-    <value>checksum doesn't match, ignoring...</value>
+  <data name="WarnError.CksumNotMatch" xml:space="preserve">
+    <value>checksum doesn't match</value>
   </data>
 </root>

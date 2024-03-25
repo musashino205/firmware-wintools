@@ -1,182 +1,108 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	internal partial class Buffalo_Enc : Tool
+	internal class Buffalo_Enc : Tool
 	{
 		/* ツール情報　*/
 		public override string name { get => "buffalo-enc"; }
 		public override string desc { get => Lang.Tools.BuffaloEncRes.FuncDesc; }
 		public override string descFmt { get => Lang.Tools.BuffaloEncRes.Main_FuncDesc_Fmt; }
+		public override string resName => "BuffaloEncRes";
 
+		private string CryptKey = "Buffalo";
+		private string Magic = "start";
+		private byte Seed = 0x4F; /* Char: 'O' */
+		private string Product = null;
+		private string Version = null;
+		private long Length = -1;
+		private long Offset = 0;
+		private bool IsDec = false;
+		private bool IsLong = false;
+		private bool IsMinorCksum = false;
+		private bool Force = false;
 
-		const string DEFAULT_KEY = "Buffalo";
-		const string DEFAULT_MAGIC = "start";
-
-		public struct Properties
+		internal override List<Param> ParamList => new List<Param>()
 		{
-			public string crypt_key;
-			public string magic;
-			public bool islong;
-			public byte seed;
-			public string product;
-			public string version;
-			public bool isde;
-			public int offset;
-			public int size;
-			public bool isMinorCksum;
-			public bool force;
-		}
+			new Param() { PChar = 'd', PType = Param.PTYPE.BOOL, SetField = "IsDec", HelpKey = "Help_Options_d" },
+			new Param() { PChar = 'l', PType = Param.PTYPE.BOOL, SetField = "IsLong", HelpKey = "Help_Options_l" },
+			new Param() { PChar = 'k', PType = Param.PTYPE.STR, SetField = "CryptKey", HelpKey = "Help_Options_k" },
+			new Param() { PChar = 'm', PType = Param.PTYPE.STR, SetField = "Magic", HelpKey = "Help_Options_m" },
+			new Param() { PChar = 'p', PType = Param.PTYPE.STR, SetField = "Product", HelpKey = "Help_Options_p" },
+			new Param() { PChar = 'v', PType = Param.PTYPE.STR, SetField = "Version", HelpKey = "Help_Options_v" },
+			new Param() { PChar = 's', PType = Param.PTYPE.BYTE, SetField = "Seed" },
+			new Param() { PChar = 'O', PType = Param.PTYPE.LONG, SetField = "Offset", HelpKey = "Help_Options_o2" },
+			new Param() { PChar = 'S', PType = Param.PTYPE.LONG, SetField = "Length", HelpKey = "Help_Options_S" },
+			new Param() { PChar = 'C', PType = Param.PTYPE.BOOL, SetField = "IsMinorCksum" },
+			new Param() { PChar = 'F', PType = Param.PTYPE.BOOL, SetField = "Force", HelpKey = "Help_Options_F" }
+		};
 
-		private static void PrintHelp(int arg_idx)
+		private void PrintInfo(uint cksum)
 		{
-			Console.WriteLine(Lang.Tools.BuffaloEncRes.Help_Usage +
-				Lang.Tools.BuffaloEncRes.FuncDesc +
-				Environment.NewLine,
-				arg_idx < 2 ? "" : "firmware-wintools ");	// 引数インデックスが2未満（symlink呼び出し）の場合機能名のみ
-			// 共通オプション表示
-			Program.PrintCommonOption();
-			// 機能オプション表示
-			Console.WriteLine(Lang.CommonRes.Help_FunctionOpts +
-				Lang.Tools.BuffaloEncRes.Help_Options_d +
-				Lang.Tools.BuffaloEncRes.Help_Options_l +
-				Lang.Tools.BuffaloEncRes.Help_Options_k +
-				Lang.Tools.BuffaloEncRes.Help_Options_m +
-				Lang.Tools.BuffaloEncRes.Help_Options_p +
-				Lang.Tools.BuffaloEncRes.Help_Options_v +
-				Lang.Tools.BuffaloEncRes.Help_Options_o2 +
-				Lang.Tools.BuffaloEncRes.help_Options_S +
-				Lang.Tools.BuffaloEncRes.Help_Options_F,
-				DEFAULT_KEY, DEFAULT_MAGIC);
-		}
-
-		private static void PrintInfo(Properties subprops, long datalen, uint cksum, bool isdbg)
-		{
-			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info, subprops.isde ?
-				Lang.Tools.BuffaloEncRes.Info_Decrypt : Lang.Tools.BuffaloEncRes.Info_Encrypt);
-			if (isdbg)
-			{
-				Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Longstate, subprops.islong);
-				Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Key, subprops.crypt_key);
-			}
-			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Magic, subprops.magic);
-			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Seed, subprops.seed);
-			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Product, subprops.product);
-			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Version, subprops.version);
-			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_DataLen, datalen);
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info,
+				IsDec ?
+					Lang.Tools.BuffaloEncRes.Info_Decrypt :
+					Lang.Tools.BuffaloEncRes.Info_Encrypt);
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Magic, Magic);
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Seed, Seed);
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Product, Product);
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Version, Version);
+			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_DataLen, Length);
 			Console.WriteLine(Lang.Tools.BuffaloEncRes.Info_Cksum, cksum);
 		}
 
-		private static int CheckParams(Properties subprops)
+		private int Encrypt(ref BufEncFirmware fw, Program.Properties props)
 		{
-			if (subprops.crypt_key == null || subprops.crypt_key.Length == 0)
-			{
-				Console.Error.WriteLine(
-					Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_NoKey);
-				return 1;
-			}
-			else if (subprops.crypt_key.Length > BufBcrypt.BCRYPT_MAX_KEYLEN)
-			{
-				Console.Error.WriteLine(
-					Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_LongKey,
-					subprops.crypt_key);
-				return 1;
-			}
-
-			if (subprops.magic.Length != BufEncHeader.ENC_MAGIC_LEN - 1)
-			{
-				Console.Error.WriteLine(
-					Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_InvalidMagicLen,
-					BufEncHeader.ENC_MAGIC_LEN - 1);
-				return 1;
-			}
-
-			if (!subprops.isde)
-			{
-				if (subprops.product == null)
-				{
-					Console.Error.WriteLine(
-						Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_NoProduct);
-					return 1;
-				}
-				else if (subprops.product.Length > BufEncHeader.ENC_PRODUCT_LEN - 1)
-				{
-					Console.Error.WriteLine(
-						Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_LongProduct,
-						subprops.product);
-					return 1;
-				}
-
-				if (subprops.version == null)
-				{
-					Console.Error.WriteLine(
-						Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_NoVersion);
-					return 1;
-				}
-				else if (subprops.version.Length > BufEncHeader.ENC_VERSION_LEN - 1)
-				{
-					Console.Error.WriteLine(
-						Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_LongVersion,
-						subprops.version);
-					return 1;
-				}
-			}
-
-			return 0;
-		}
-
-		private static int Encrypt(ref BufEncFirmware fw, Properties subprops, Program.Properties props)
-		{
-			int ret;
+			MemoryStream ms = new MemoryStream();
 			byte[] key;
+			/* 暗号化しないデータ長 */
+			long noEncLen = fw.inFInfo.Length - Length;
+			int ret;
 
-			/* magic, product, versionは末尾 0x0 ('\0') で終端 */
+			/*
+			 * 以下はNULL終端
+			 * - Magic
+			 * - Product
+			 * - Version
+			 */
 			fw.header = new BufEncHeader()
 			{
-				magic = Encoding.ASCII.GetBytes(subprops.magic + "\0"),
-				seed = subprops.seed,
-				prod_len = subprops.product.Length + 1,
-				product = Encoding.ASCII.GetBytes(subprops.product + "\0"),
-				ver_len = subprops.version.Length + 1,
-				version = Encoding.ASCII.GetBytes(subprops.version + "\0"),
-				data_len = subprops.size > 0 ?
-						(uint)subprops.size : (uint)fw.inFInfo.Length
+				magic = Encoding.ASCII.GetBytes(Magic + "\0"),
+				seed = Seed,
+				product = Encoding.ASCII.GetBytes(Product + "\0"),
+				version = Encoding.ASCII.GetBytes(Version + "\0"),
+				prod_len = Product.Length + 1,
+				ver_len = Version.Length + 1,
+				data_len = (uint)Length
 			};
-
 			fw.footer = new BufEncFooter();
 
-			MemoryStream bufStream = new MemoryStream();
+			/* NULL終端 */
+			key = Encoding.ASCII.GetBytes(CryptKey + "\0");
 
-			/* キーは 0x00 ('\0') で終端 */
-			key = Encoding.ASCII.GetBytes(subprops.crypt_key + "\0");
-
-			/* ヘッダ/データ/フッタの各部長さ */
-			fw.header.totalLen = fw.header.GetHeaderLen();	// ヘッダ
-			fw.dataLen = fw.header.data_len;			// データ
-			fw.footer.totalLen = sizeof(uint);			// フッタ1
-			/* フッタ4byteパディング分 */
-			fw.footer.totalLen +=				// フッタ2
-				4 - (fw.footer.totalLen + fw.header.totalLen + fw.dataLen) % 4;
+			fw.header.totalLen = fw.header.GetHeaderLen();
+			fw.dataLen = fw.header.data_len;
+			fw.footer.totalLen = sizeof(uint);
+			/* 4byteブロックパディング */
+			fw.footer.totalLen
+				+= 4 - (fw.header.totalLen + fw.footer.totalLen + fw.dataLen) % 4;
 
 			try
 			{
 				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
-							FileAccess.Read, FileShare.Read))
+						FileAccess.Read, FileShare.Read))
 				{
 					fw.data = new byte[fw.dataLen];
-					Firmware.FileToBytes(in fw.inFs, ref fw.data, fw.dataLen);
+					Firmware.FileToBytes(fw.inFs, ref fw.data, fw.dataLen);
 
-					/*
-					 * サイズ指定ある場合バッファにコピー
-					 * バッファ側は読み込んだ分進むので0にシーク
-					 */
-					if (subprops.size > 0)
+					/* 残データをMemoryStreamにコピー */
+					if (noEncLen > 0)
 					{
-						fw.inFs.CopyTo(bufStream);
-						bufStream.Seek(0, SeekOrigin.Begin);
+						fw.inFs.CopyTo(ms);
+						ms.Seek(0, SeekOrigin.Begin);
 					}
 				}
 			}
@@ -186,38 +112,37 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			fw.footer.cksum = fw.GetCksum(subprops.isMinorCksum);
+			fw.footer.cksum = fw.GetCksum(IsMinorCksum);
 
 			if (!props.quiet)
-				PrintInfo(subprops, fw.dataLen, fw.footer.cksum, props.debug);
+				PrintInfo(fw.footer.cksum);
 
-			/* ヘッダ暗号化（+ product長, ver長, データ長BE変換） */
-			ret = fw.header.EncryptHeader(key, subprops.islong);
-			if (ret > 0)
+			ret = fw.header.EncryptHeader(key, IsLong);
+			if (ret != 0)
 			{
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Error_Prefix +
 					Lang.Tools.BuffaloEncRes.Error_FailEncryptHeader);
 				return ret;
 			}
-			/* ヘッダシリアル化 */
-			fw.headerData = new byte[fw.header.totalLen];
-			if (fw.header.SerializeProps(ref fw.headerData, 0) != fw.header.totalLen)
-				return 1;
 
-			/* フッタcksumをBE変換 */
-			fw.footer.cksum = (uint)IPAddress.HostToNetworkOrder((int)fw.footer.cksum);
-			/* フッタシリアル化 */
+			fw.footer.cksum = (uint)Utils.BE32toHost(fw.footer.cksum);
+
+			fw.headerData = new byte[fw.header.totalLen];
 			fw.footerData = new byte[fw.footer.totalLen];
+
+			if (fw.header.SerializeProps(ref fw.headerData, 0)
+					!= fw.header.totalLen)
+				return 1;
 			fw.footer.SerializeProps(ref fw.footerData, 0);
 
-			/* データ暗号化 */
-			if (fw.EncryptData(key, subprops.islong) > 0)
+			ret = fw.EncryptData(key, IsLong);
+			if (ret != 0)
 			{
 				Console.Error.WriteLine(
 					Lang.Resource.Main_Error_Prefix +
 					Lang.Tools.BuffaloEncRes.Error_FailEncryptData);
-				return 1;
+				return ret;
 			}
 
 			try
@@ -227,9 +152,9 @@ namespace firmware_wintools.Tools
 				{
 					ret = fw.WriteToFile(false);
 
-					/* サイズ指定ある場合残りのデータを出力ファイルにコピー */
-					if (subprops.size > 0)
-						bufStream.CopyTo(fw.outFs);
+					/* 残データコピー */
+					if (noEncLen > 0)
+						ms.CopyTo(fw.outFs);
 				}
 			}
 			catch (IOException e)
@@ -241,57 +166,54 @@ namespace firmware_wintools.Tools
 			return ret;
 		}
 
-		private static int Decrypt(ref BufEncFirmware fw, Properties subprops, Program.Properties props)
+		private int Decrypt(ref BufEncFirmware fw, Program.Properties props)
 		{
-			int ret;
-			uint cksum;
 			byte[] key;
+			uint cksum;
+			int ret;
+
+			if (Offset > fw.inFInfo.Length)
+			{
+				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+					Lang.Tools.BuffaloEncRes.Error_LargeOffset);
+				return 1;
+			}
 
 			fw.header = new BufEncHeader();
 			fw.footer = new BufEncFooter();
 
-			if (fw.inFInfo.Length < subprops.offset)
-			{
-				Console.Error.WriteLine(
-					Lang.Resource.Main_Error_Prefix + Lang.Tools.BuffaloEncRes.Error_LargeOffset,
-					subprops.offset);
-				return 1;
-			}
-
 			try
 			{
 				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
-							FileAccess.Read, FileShare.Read)) {
-					fw.inFs.Seek(subprops.offset, SeekOrigin.Begin);
+							FileAccess.Read, FileShare.Read))
+				{
+					fw.inFs.Seek(Offset, SeekOrigin.Begin);
 
-					/* ヘッダ読み込み */
 					ret = fw.header.LoadHeader(fw.inFs);
-					if (ret > 0)
+					if (ret != 0)
 					{
 						Console.Error.WriteLine(
 							Lang.Resource.Main_Error_Prefix +
 							Lang.Tools.BuffaloEncRes.Error_FailLoadHeader);
-						return ret;
+						return 1;
 					}
 
-					/* データ読み込み */
 					ret = fw.LoadData(fw.header.data_len);
-					if (ret > 0)
+					if (ret != 0)
 					{
 						Console.Error.WriteLine(
 							Lang.Resource.Main_Error_Prefix +
 							Lang.Tools.BuffaloEncRes.Error_FailLoadData);
-						return ret;
+						return 1;
 					}
 
-					/* フッタ読み込み */
 					ret = fw.footer.LoadFooter(fw.inFs);
-					if (ret > 0)
+					if (ret != 0)
 					{
 						Console.Error.WriteLine(
 							Lang.Resource.Main_Error_Prefix +
 							Lang.Tools.BuffaloEncRes.Error_FailLoadFooter);
-						return ret;
+						return 1;
 					}
 				}
 			}
@@ -301,60 +223,51 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			key = Encoding.ASCII.GetBytes(subprops.crypt_key);
+			key = Encoding.ASCII.GetBytes(CryptKey);
 
-			/* Decrypt Header/Data */
-			if (fw.header.DecryptHeader(key, subprops.islong) != 0 ||
-			    fw.DecryptData(in key, subprops.islong) != 0)
+			ret = fw.header.DecryptHeader(key, IsLong);
+			if (ret == 0)
+				ret = fw.DecryptData(key, IsLong);
+			if (ret != 0)
 			{
-				Console.Error.WriteLine(
-					Lang.Resource.Main_Error_Prefix +
+				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 					Lang.Tools.BuffaloEncRes.Error_FailDecryptData);
-				return 1;
+				return ret;
 			}
 
 			fw.dataLen = fw.header.data_len;
-			cksum = fw.GetCksum(subprops.isMinorCksum);
-			/* 計算cksumと埋め込みcksum不一致 & 非forceならエラー */
-			if (!subprops.force && cksum != fw.footer.cksum)
-			{
-				Console.Error.WriteLine(
-					Lang.Resource.Main_Error_Prefix +
-					Lang.Tools.BuffaloEncRes.Error_CksumNotMatch);
-
-				return 1;
-			}
+			cksum = fw.GetCksum(IsMinorCksum);
 			if (cksum != fw.footer.cksum)
 			{
 				Console.Error.WriteLine(
-					Lang.Resource.Main_Warning_Prefix +
-					Lang.Tools.BuffaloEncRes.Warn_CksumNotMatch);
+					(Force ?
+						Lang.Resource.Main_Warning_Prefix :
+						Lang.Resource.Main_Error_Prefix) +
+					Lang.Tools.BuffaloEncRes.WarnError_CksumNotMatch);
+				if (!Force)
+					return 1;
 			}
 
-			subprops.magic = Encoding.ASCII.GetString(fw.header.magic).TrimEnd('\0');
-			subprops.seed = fw.header.seed;
-			subprops.product = Encoding.ASCII.GetString(fw.header.product).TrimEnd('\0');
-			subprops.version = Encoding.ASCII.GetString(fw.header.version).TrimEnd('\0');
-			subprops.size = Convert.ToInt32(fw.header.data_len);
+			Magic = Encoding.ASCII.GetString(fw.header.magic).TrimEnd('\0');
+			Seed = fw.header.seed;
+			Product = Encoding.ASCII.GetString(fw.header.product).TrimEnd('\0');
+			Version = Encoding.ASCII.GetString(fw.header.version).TrimEnd('\0');
+			Length = fw.header.data_len;
 
 			if (!props.quiet)
-				PrintInfo(subprops, fw.header.data_len, fw.footer.cksum, props.debug);
+				PrintInfo(cksum);
 
 			return fw.OpenAndWriteToFile(true);
 		}
 
 		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
-			int ret;
 			BufEncFirmware fw = new BufEncFirmware();
-			Properties subprops = new Properties
-			{
-				crypt_key = DEFAULT_KEY,
-				magic = DEFAULT_MAGIC,
-				seed = 0x4F   // Char: O
-			};
+			int ret;
 
-			Init_args(args, arg_idx, ref subprops);
+			ret = InitArgs(args, arg_idx);
+			if (ret != 0)
+				return ret;
 
 			if (props.help)
 			{
@@ -362,32 +275,66 @@ namespace firmware_wintools.Tools
 				return 0;
 			}
 
-			if (CheckParams(subprops) != 0)
+			if (CryptKey.Length > BufBcrypt.BCRYPT_MAX_KEYLEN) {
+				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+					Lang.Tools.BuffaloEncRes.Error_LongKey);
 				return 1;
+			}
+
+			if (Magic.Length != BufEncHeader.ENC_MAGIC_LEN - 1) {
+				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+					Lang.Tools.BuffaloEncRes.Error_InvalidMagicLen);
+				return 1;
+			}
+
+			if (!IsDec)
+			{
+				if (Product == null || Version == null)
+				{
+					Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+						Product == null ?
+							Lang.Tools.BuffaloEncRes.Error_NoProduct :
+							Lang.Tools.BuffaloEncRes.Error_NoVersion);
+					return 1;
+				}
+				if (Product.Length > BufEncHeader.ENC_PRODUCT_LEN - 1 ||
+				    Version.Length > BufEncHeader.ENC_VERSION_LEN - 1) {
+					Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+						(Product.Length > (BufEncHeader.ENC_PRODUCT_LEN - 1) ?
+							Lang.Tools.BuffaloEncRes.Error_LongProduct :
+							Lang.Tools.BuffaloEncRes.Error_LongVersion));
+					return 1;
+				}
+			}
 
 			fw.outFile = props.outFile;
 			fw.outFMode = FileMode.Create;
 			fw.inFInfo = new FileInfo(props.inFile);
 
-			if (fw.inFInfo.Length > uint.MaxValue) {
-				Console.Error.WriteLine(Lang.Tools.BuffaloEncRes.Error_BigFile);
+			if (!IsDec && Length == -1)
+				Length = fw.inFInfo.Length;
+			/*
+			 * サイズチェック
+			 *
+			 * - 復号かつデータ長 - オフセットが uint 最大値より長い
+			 * - 暗号化かつ対象データ長が uint 最大値より長い
+			 */
+			if ((IsDec && fw.inFInfo.Length - Offset > uint.MaxValue) ||
+			    (!IsDec && Length > uint.MaxValue))
+			{
+				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+					Lang.Tools.BuffaloEncRes.Error_BigFile);
 				return 1;
 			}
 
-			ret = subprops.isde ?
-				Decrypt(ref fw, subprops, props) :
-				Encrypt(ref fw, subprops, props);
-
-			if (ret != 0)
-			{
-				if (subprops.isde)
-					Console.Error.WriteLine(
-						Lang.Resource.Main_Error_Prefix +
-						Lang.Tools.BuffaloEncRes.Error_FailDecrypt);
-				else
-					Console.Error.WriteLine(
-						Lang.Resource.Main_Error_Prefix +
-						Lang.Tools.BuffaloEncRes.Error_FailEncrypt);
+			ret = IsDec ?
+				Decrypt(ref fw, props) :
+				Encrypt(ref fw, props);
+			if (ret != 0) {
+				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+					(IsDec ?
+						Lang.Tools.BuffaloEncRes.Error_FailDecrypt :
+						Lang.Tools.BuffaloEncRes.Error_FailEncrypt));
 			}
 
 			return ret;

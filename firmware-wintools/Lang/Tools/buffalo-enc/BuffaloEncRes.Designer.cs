@@ -70,15 +70,6 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
-        ///   checksum doesn&apos;t match, exiting... に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string Error_CksumNotMatch {
-            get {
-                return ResourceManager.GetString("Error.CksumNotMatch", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   failed to decrypt に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Error_FailDecrypt {
@@ -439,11 +430,11 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
-        ///   checksum doesn&apos;t match, ignoring... に類似しているローカライズされた文字列を検索します。
+        ///   checksum doesn&apos;t match に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string Warn_CksumNotMatch {
+        internal static string WarnError_CksumNotMatch {
             get {
-                return ResourceManager.GetString("Warn.CksumNotMatch", resourceCulture);
+                return ResourceManager.GetString("WarnError.CksumNotMatch", resourceCulture);
             }
         }
     }
