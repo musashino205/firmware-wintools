@@ -12,6 +12,7 @@ namespace firmware_wintools.Tools
 		public string SetField = "";
 		public string SetBool = "";
 		public string HelpKey;
+		public object HelpOpt;
 		public bool Override;
 
 		public enum PTYPE
@@ -165,7 +166,8 @@ namespace firmware_wintools.Tools
 			foreach (Param p in ParamList) {
 				if ((tmp = GetResText(t, p.HelpKey)) == null)
 					continue;
-				buf += tmp;
+				buf += (p.HelpOpt == null) ?
+					tmp : string.Format(tmp, p.HelpOpt);
 			}
 			Console.WriteLine(buf);
 		}
