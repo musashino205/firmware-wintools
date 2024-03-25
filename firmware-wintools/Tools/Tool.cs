@@ -19,6 +19,7 @@ namespace firmware_wintools.Tools
 		{
 			INT = 0,
 			LONG,
+			BYTE,
 			BARY,
 			BARY_H,
 			BOOL,
@@ -103,6 +104,14 @@ namespace firmware_wintools.Tools
 							setf.SetValue(this, cnvLong);
 						else
 							errtype = "long";
+						break;
+					case PTYPE.BYTE:
+						if (!Utils.StrToInt(tmp, out cnvInt,
+								System.Globalization.NumberStyles.None) ||
+							cnvInt > byte.MaxValue || cnvInt < byte.MinValue)
+							errtype = "byte";
+						else
+							setf.SetValue(this, (byte)cnvInt);
 						break;
 					case PTYPE.BARY:
 						setf.SetValue(this, System.Text.Encoding.ASCII.GetBytes(tmp));
