@@ -29,8 +29,8 @@ namespace firmware_wintools.Tools
 		{
 			new Param() { PChar = 'd', PType = Param.PTYPE.BOOL, SetField = "IsDec", HelpKey = "Help_Options_d" },
 			new Param() { PChar = 'l', PType = Param.PTYPE.BOOL, SetField = "IsLong", HelpKey = "Help_Options_l" },
-			new Param() { PChar = 'k', PType = Param.PTYPE.STR, SetField = "CryptKey", HelpKey = "Help_Options_k" },
-			new Param() { PChar = 'm', PType = Param.PTYPE.STR, SetField = "Magic", HelpKey = "Help_Options_m" },
+			new Param() { PChar = 'k', PType = Param.PTYPE.STR, SetField = "CryptKey", HelpKey = "Help_Options_k", HelpOpt = CryptKey },
+			new Param() { PChar = 'm', PType = Param.PTYPE.STR, SetField = "Magic", HelpKey = "Help_Options_m", HelpOpt = Magic },
 			new Param() { PChar = 'p', PType = Param.PTYPE.STR, SetField = "Product", HelpKey = "Help_Options_p" },
 			new Param() { PChar = 'v', PType = Param.PTYPE.STR, SetField = "Version", HelpKey = "Help_Options_v" },
 			new Param() { PChar = 's', PType = Param.PTYPE.BYTE, SetField = "Seed" },

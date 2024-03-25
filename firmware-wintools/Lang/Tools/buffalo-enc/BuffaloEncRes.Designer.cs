@@ -262,7 +262,7 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
-        ///     -m &lt;magic&gt;		use &lt;magic&gt; for encryption (default: &quot;{1}&quot;)
+        ///     -m &lt;magic&gt;		use &lt;magic&gt; for encryption (default: &quot;{0}&quot;)
         /// に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Help_Options_m {

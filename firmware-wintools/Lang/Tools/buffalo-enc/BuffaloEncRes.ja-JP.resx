@@ -163,7 +163,7 @@
 </value>
   </data>
   <data name="Help.Options.m" xml:space="preserve">
-    <value>  -m &lt;マジック&gt;		暗号化に用いる &lt;マジック&gt; を指定します（デフォルト: "{1}"）
+    <value>  -m &lt;マジック&gt;		暗号化に用いる &lt;マジック&gt; を指定します（デフォルト: "{0}"）
 </value>
   </data>
   <data name="Help.Options.o2" xml:space="preserve">

@@ -187,7 +187,7 @@
 </value>
   </data>
   <data name="Help.Options.m" xml:space="preserve">
-    <value>  -m &lt;magic&gt;		use &lt;magic&gt; for encryption (default: "{1}")
+    <value>  -m &lt;magic&gt;		use &lt;magic&gt; for encryption (default: "{0}")
 </value>
   </data>
   <data name="Help.Options.o2" xml:space="preserve">
