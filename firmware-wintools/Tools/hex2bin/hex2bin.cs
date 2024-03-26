@@ -1,10 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	internal partial class Hex2Bin : Tool
+	internal class Hex2Bin : Tool
 	{
 		/* ツール情報　*/
 		public override string name { get => "hex2bin"; }
@@ -12,15 +13,23 @@ namespace firmware_wintools.Tools
 		public override string descFmt { get => "    {0}		: {1}"; }
 
 
-		bool isTable = false;
-		int offset = 0;
-		int width = 16;
-		bool skipFirstBlock = false;
+		private bool IsTable = false;
+		private int Offset = 0;
+		private int Width = 16;
+		private bool SkipFirstBlk = false;
+
+		internal override List<Param> ParamList => new List<Param>()
+		{
+			new Param() { PChar = 'w', PType = Param.PTYPE.INT, SetField = "Width" },
+			new Param() { PChar = 't', PType = Param.PTYPE.BOOL, SetField = "IsTable" },
+			new Param() { PChar = 'H', PType = Param.PTYPE.BOOL, SetField = "SkipFirstBlk" },
+			new Param() { PChar = 'O', PType = Param.PTYPE.INT, SetField = "Offset" }
+		};
 
 		/// <summary>
 		/// rtkwebの機能ヘルプを表示します
 		/// </summary>
-		public void PrintHelp(int arg_idx)
+		public new void PrintHelp(int arg_idx)
 		{
 			Console.WriteLine("Usage: {0}hex2bin [options...]\n" +
 				desc +
@@ -30,25 +39,16 @@ namespace firmware_wintools.Tools
 			Program.PrintCommonOption(true);
 			// 機能オプション表示
 			Console.WriteLine(Lang.CommonRes.Help_FunctionOpts +
-				"  -s			specify column width of table\n" +
+				"  -w			specify column width of table\n" +
 				"  -t			convert table format (ex.: hexdump, od)\n" +
 				"  -H			skip first block of line on table mode\n" +
 				"  -O <offset>		start conversion from <offset> on table mode\n");
 		}
 
-		private int LineToFile(ref string line, ref FileStream fs, int len)
-		{
-			if (!Utils.StrToByteArray(ref line, out byte[] buf, 0, len))
-				return 1;
-
-			fs.Write(buf, 0, len);
-			return 0;
-		}
-
 		/// <summary>
-		/// rtkwebメイン関数
-		/// <para>コマンドライン引数とメインプロパティから、xorによりファームウェアの
-		/// エンコード/デコード を行います</para>
+		/// hex2binメイン関数
+		/// <para>コマンドライン引数とメインプロパティから、16新数値のテキストデータを
+		/// バイナリデータに変換します</para>
 		/// </summary>
 		/// <param name="args">コマンドライン引数</param>
 		/// <param name="props">Program内のメインプロパティ</param>
@@ -56,6 +56,7 @@ namespace firmware_wintools.Tools
 		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
 			Firmware fw = new Firmware();
+			int ret;
 
 			if (props.help)
 			{
@@ -63,7 +64,9 @@ namespace firmware_wintools.Tools
 				return 0;
 			}
 
-			Init_args(args, arg_idx);
+			ret = InitArgs(args, arg_idx);
+			if (ret != 0)
+				return ret;
 
 			try
 			{
@@ -77,17 +80,17 @@ namespace firmware_wintools.Tools
 
 					while (sr.Peek() > -1)
 					{
-						if (isTable)
+						if (IsTable)
 						{
 							i++;
-							if (i <= offset)
+							if (i <= Offset)
 							{
 								sr.ReadLine();
 								continue;
 							}
 
 							line = sr.ReadLine();
-							if (skipFirstBlock)
+							if (SkipFirstBlk)
 							{
 								int firstSpace = line.IndexOf(' ');
 								if (firstSpace == -1)
@@ -105,17 +108,19 @@ namespace firmware_wintools.Tools
 						}
 
 						line = line.Replace(" ", "");
-						if (!isTable)
-							width = line.Length / 2;
+						if (!IsTable)
+							Width = line.Length / 2;
 
-						if (LineToFile(ref line, ref fw.outFs, width) != 0)
+						if (!Utils.StrToByteArray(ref line, out byte[] _buf, 0, Width))
 						{
 							Console.Error.Write(Lang.Resource.Main_Error_Prefix +
 									"invalid character detected \"{0}\"", line);
-							if (isTable)
+							if (IsTable)
 								Console.Error.WriteLine(" at line {0}", i);
 							return 1;
 						}
+
+						fw.outFs.Write(_buf, 0, Width);
 					}
 				}
 			}
