@@ -1,76 +1,46 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	internal partial class MkEdimaxImg : Tool
+	internal class MkEdimaxImg : Tool
 	{
 		/* ツール情報　*/
 		public override string name { get => "mkedimaximg"; }
 		public override string desc { get => Lang.Tools.MkEdimaxImgRes.FuncDesc; }
 		public override string descFmt { get => Lang.Tools.MkEdimaxImgRes.Main_FuncDesc_Fmt; }
+		public override string resName => "MkEdimaxImgRes";
 
-		/// <summary>
-		/// mkedimaximgの機能プロパティ
-		/// </summary>
-		public struct Properties
-		{
-			/// <summary>
-			/// edimaxヘッダに付加するシグネチャ
-			/// </summary>
-			public string signature;
-			/// <summary>
-			/// edimaxヘッダに付加するモデル名
-			/// </summary>
-			public string model;
-			/// <summary>
-			/// edimaxヘッダに付加するフラッシュ アドレス
-			/// </summary>
-			public int flash;
-			/// <summary>
-			/// edimaxヘッダに付加するスタート アドレス
-			/// </summary>
-			public int start;
-			/// <summary>
-			/// edimaxヘッダの数値をBEで算出/書き込みを行うか否か
-			/// </summary>
-			public bool isbe;
-		}
+		private string Signature = null;
+		private string Model = null;
+		private int Flash = 0x0;
+		private int Start = 0x0;
+		private bool IsBE = false;
 
-		/// <summary>
-		/// mkedimaximgの機能ヘルプを表示します
-		/// </summary>
-		private static void PrintHelp(int arg_idx)
+		internal override List<Param> ParamList => new List<Param>()
 		{
-			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Help_Usage +
-				Lang.Tools.MkEdimaxImgRes.FuncDesc +
-				Environment.NewLine,
-				arg_idx < 2 ? "" : "firmware-wintools ");	// 引数インデックスが2未満（symlink呼び出し）の場合機能名のみ
-			// 共通オプション表示
-			Program.PrintCommonOption();
-			// 機能オプション表示
-			Console.WriteLine(Lang.CommonRes.Help_FunctionOpts +
-				Lang.Tools.MkEdimaxImgRes.Help_Options_s +
-				Lang.Tools.MkEdimaxImgRes.Help_Options_m +
-				Lang.Tools.MkEdimaxImgRes.Help_Options_f +
-				Lang.Tools.MkEdimaxImgRes.Help_Options_s2 +
-				Lang.Tools.MkEdimaxImgRes.Help_Options_b);
-		}
+			new Param() { PChar = 's', PType = Param.PTYPE.STR, SetField = "Signature", HelpKey = "Help_Options_s" },
+			new Param() { PChar = 'm', PType = Param.PTYPE.STR, SetField = "Model", HelpKey = "Help_Options_m" },
+			new Param() { PChar = 'f', PType = Param.PTYPE.INT, SetField = "Flash", HelpKey = "Help_Options_f" },
+			new Param() { PChar = 'S', PType = Param.PTYPE.INT, SetField = "Start", HelpKey = "Help_Options_s2" },
+			new Param() { PChar = 'b', PType = Param.PTYPE.BOOL, SetField = "IsBE", HelpKey = "Help_Options_b" }
+		};
 
 		/// <summary>
 		/// mkedimaximgの実行情報を表示します
 		/// </summary>
 		/// <param name="props"></param>
-		private static void PrintInfo(Properties subprops)
+		private void PrintInfo()
 		{
 			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info);
-			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_Signature, subprops.signature);
-			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_Model, subprops.model);
-			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_FlashAddr, subprops.flash);
-			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_StartAddr, subprops.start);
-			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_BE, subprops.isbe.ToString());
+			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_Signature, Signature);
+			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_Model, Model);
+			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_FlashAddr, Flash);
+			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_StartAddr, Start);
+			Console.WriteLine(Lang.Tools.MkEdimaxImgRes.Info_BE, IsBE.ToString());
 		}
 
 		/// <summary>
@@ -83,8 +53,8 @@ namespace firmware_wintools.Tools
 		/// <returns></returns>
 		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
-			Properties subprops = new Properties();
 			EdimaxFirmware fw = new EdimaxFirmware();
+			int ret;
 
 			if (props.help)
 			{
@@ -92,46 +62,48 @@ namespace firmware_wintools.Tools
 				return 0;
 			}
 
-			Init_args(args, arg_idx, ref subprops);
+			ret = InitArgs(args, arg_idx);
+			if (ret != 0)
+				return ret;
 
 			fw.inFInfo = new FileInfo(props.inFile);
 			fw.outFile = props.outFile;
 			fw.outFMode = FileMode.Create;
 
-			if (subprops.signature == null || subprops.signature == "")
+			if (Signature == null)
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 					Lang.Tools.MkEdimaxImgRes.Error_NoSignature);
 				return 1;
 			}
-			else if (subprops.signature.Length != 4)
+			else if (Signature.Length != 4)
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 					Lang.Tools.MkEdimaxImgRes.Error_InvalidSignatureLen);
 				return 1;
 			}
 
-			if (subprops.model == null || subprops.model == "")
+			if (Model == null)
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 					Lang.Tools.MkEdimaxImgRes.Error_NoModel);
 				return 1;
 			}
-			else if (subprops.model.Length != 4)
+			else if (Model.Length != 4)
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 					Lang.Tools.MkEdimaxImgRes.Error_InvalidModelLen);
 				return 1;
 			}
 
-			if (subprops.flash == 0)
+			if (Flash == 0)
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 					Lang.Tools.MkEdimaxImgRes.Error_NoInvalidFlash);
 				return 1;
 			}
 
-			if (subprops.start == 0)
+			if (Start == 0)
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 					Lang.Tools.MkEdimaxImgRes.Error_NoInvalidStart);
@@ -146,20 +118,20 @@ namespace firmware_wintools.Tools
 			}
 
 			if (!props.quiet)
-				PrintInfo(subprops);
+				PrintInfo();
 
 			fw.dataLen = Convert.ToInt32(fw.inFInfo.Length + sizeof(short));
 
 			/* ヘッダ設定 */
-			fw.header.sign = Encoding.ASCII.GetBytes(subprops.signature);
-			fw.header.start = subprops.isbe ?
-						IPAddress.HostToNetworkOrder(subprops.start) :
-						subprops.start;
-			fw.header.flash = subprops.isbe ?
-						IPAddress.HostToNetworkOrder(subprops.flash) :
-						subprops.flash;
-			fw.header.model = Encoding.ASCII.GetBytes(subprops.model);
-			fw.header.size = subprops.isbe ?
+			fw.header.sign = Encoding.ASCII.GetBytes(Signature);
+			fw.header.start = IsBE ?
+						IPAddress.HostToNetworkOrder(Start) :
+						Start;
+			fw.header.flash = IsBE ?
+						IPAddress.HostToNetworkOrder(Flash) :
+						Flash;
+			fw.header.model = Encoding.ASCII.GetBytes(Model);
+			fw.header.size = IsBE ?
 						IPAddress.HostToNetworkOrder(fw.dataLen) :
 						fw.dataLen;
 
@@ -185,7 +157,7 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			fw.footer.cksum = fw.CalcCksum(subprops.isbe);
+			fw.footer.cksum = fw.CalcCksum(IsBE);
 			if (props.debug)
 			{
 				Console.WriteLine(" header size:\t{0} bytes (0x{0:X})", fw.header.totalLen);
@@ -200,7 +172,7 @@ namespace firmware_wintools.Tools
 				return 1;
 
 			/* BEモード時フッタcksumをBE変換 */
-			if (subprops.isbe)
+			if (IsBE)
 				fw.footer.cksum = (ushort)IPAddress.HostToNetworkOrder((short)fw.footer.cksum);
 			/* フッタシリアル化 */
 			fw.footerData = new byte[sizeof(ushort)];

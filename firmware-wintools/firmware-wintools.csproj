@@ -138,7 +138,6 @@
     <Compile Include="Tools\Firmware.cs" />
     <Compile Include="Tools\mkedimaximg\EdimaxFirmware.cs" />
     <Compile Include="Tools\mkedimaximg\mkedimaximg.cs" />
-    <Compile Include="Tools\mkedimaximg\ToolsArgMap.cs" />
     <Compile Include="Tools\mksenaofw\mksenaofw.cs" />
     <Compile Include="Tools\mksenaofw\SenaoFirmware.cs" />
     <Compile Include="Tools\mksenaofw\ToolsArgMap.cs" />
