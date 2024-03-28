@@ -6,56 +6,37 @@ using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	internal partial class MkSenaoFw : Tool
+	internal class MkSenaoFw : Tool
 	{
 		/* ツール情報　*/
 		public override string name { get => "mksenaofw"; }
 		public override string desc { get => Lang.Tools.MkSenaoFwRes.FuncDesc; }
 		public override string descFmt { get => Lang.Tools.MkSenaoFwRes.Main_FuncDesc_Fmt; }
+		public override string resName => "MkSenaoFwRes";
 
 
-		static byte[] md5sum;
+		private byte FWType = SenaoHeader.FirmwareType.TYPE_NONE;
+		private byte[] Version = Encoding.ASCII.GetBytes(SenaoHeader.DEF_VERSION);
+		private uint Vendor = 0;
+		private uint Product = 0;
+		private uint Magic = SenaoHeader.DEF_MAGIC;
+		private bool IsDec = false;
+		private bool Pad = false;
+		private int BS = SenaoFirmware.DEF_BLOCK_SIZE;
 
-		/// <summary>
-		/// mksenaofwの機能プロパティ
-		/// </summary>
-		public struct Properties
+		internal override List<Param> ParamList => new List<Param>()
 		{
-			/// <summary>
-			/// decodeモードか否か
-			/// </summary>
-			internal bool isde;
-			/// <summary>
-			/// ファームウェアタイプ
-			/// </summary>
-			internal byte fw_type;
-			/// <summary>
-			/// ファームウェアバージョン文字列
-			/// </summary>
-			internal string version;
-			/// <summary>
-			/// ベンダID
-			/// </summary>
-			internal uint vendor;
-			/// <summary>
-			/// プロダクトID
-			/// </summary>
-			internal uint product;
-			/// <summary>
-			/// ファームウェアマジック値
-			/// </summary>
-			internal uint magic;
-			/// <summary>
-			/// ファームウェア末尾パディング有無
-			/// </summary>
-			internal bool pad;
-			/// <summary>
-			/// パディング時のブロックサイズ
-			/// </summary>
-			internal int bs;
-		}
+			new Param() { PChar = 't', PType = Param.PTYPE.BYTE, SetField = "FWType" },
+			new Param() { PChar = 'v', PType = Param.PTYPE.BARY, SetField = "Version" },
+			new Param() { PChar = 'r', PType = Param.PTYPE.UINT, SetField = "Vendor" },
+			new Param() { PChar = 'p', PType = Param.PTYPE.UINT, SetField = "Product" },
+			new Param() { PChar = 'm', PType = Param.PTYPE.UINT, SetField = "Magic" },
+			new Param() { PChar = 'z', PType = Param.PTYPE.BOOL, SetField = "Pad" },
+			new Param() { PChar = 'b', PType = Param.PTYPE.INT, SetField = "BS" },
+			new Param() { PChar = 'd', PType = Param.PTYPE.BOOL, SetField = "IsDec" }
+		};
 
-		private static void PrintHelp(int arg_idx)
+		private static new void PrintHelp(int arg_idx)
 		{
 			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Help_Usage +
 				Lang.Tools.MkSenaoFwRes.FuncDesc +
@@ -85,30 +66,30 @@ namespace firmware_wintools.Tools
 				Lang.Tools.MkSenaoFwRes.Help_Options_d);
 		}
 
-		private static void PrintInfo(Properties subprops)
+		private void PrintInfo(byte[] md5)
 		{
 			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info,
-				subprops.isde ?
+				IsDec ?
 					Lang.Tools.MkSenaoFwRes.Info_Decode :
 					Lang.Tools.MkSenaoFwRes.Info_Encode);
 			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_FwType,
-				subprops.fw_type,
-				SenaoHeader.FirmwareType.TYPES[subprops.fw_type].name);
-			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_FwVer, subprops.version);
-			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_Vendor, subprops.vendor);
-			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_Product, subprops.product);
+				FWType,
+				SenaoHeader.FirmwareType.TYPES[FWType].name);
+			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_FwVer,
+				Encoding.ASCII.GetString(Version));
+			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_Vendor, Vendor);
+			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_Product, Product);
 			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_MD5,
-				BitConverter.ToString(md5sum).Replace("-", ""));
-			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_Magic, subprops.magic);
+				BitConverter.ToString(md5).Replace("-", ""));
+			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_Magic, Magic);
 
-			if (!subprops.isde)
+			if (!IsDec)
 			{
-				Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_Pad, subprops.pad);
-				if (subprops.pad)
+				Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_Pad, Pad);
+				if (Pad)
 					Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_BS,
-						subprops.bs);
+						BS);
 			}
-
 		}
 
 		/// <summary>
@@ -118,38 +99,34 @@ namespace firmware_wintools.Tools
 		/// <param name="props">メインプロパティ</param>
 		/// <param name="subprops">機能プロパティ</param>
 		/// <returns></returns>
-		private static int Encode(ref SenaoFirmware fw, Program.Properties props, Properties subprops)
+		private int Encode(ref SenaoFirmware fw, Program.Properties props)
 		{
 			long pad_len;
 
 			fw.header = new SenaoHeader()
 			{
-				vendor_id = (uint)IPAddress.HostToNetworkOrder((int)subprops.vendor),
-				product_id = (uint)IPAddress.HostToNetworkOrder((int)subprops.product),
-				firmware_type = (uint)IPAddress.HostToNetworkOrder((int)subprops.fw_type),
+				vendor_id = (uint)Utils.BE32toHost(Vendor),
+				product_id = (uint)Utils.BE32toHost(Product),
+				firmware_type = (uint)Utils.BE32toHost(FWType),
 				filesize = (uint)IPAddress.HostToNetworkOrder((int)fw.inFInfo.Length),
-				magic = (uint)IPAddress.HostToNetworkOrder((int)subprops.magic),
+				magic = (uint)Utils.BE32toHost(Magic),
 				totalLen = SenaoHeader.HDR_LEN
 			};
 
 			/* versionをコピー */
-			Array.Copy(
-				Encoding.ASCII.GetBytes(subprops.version),
-				fw.header.version,
-				Encoding.ASCII.GetByteCount(subprops.version) > SenaoHeader.VER_LEN ?
-					SenaoHeader.VER_LEN :
-					Encoding.ASCII.GetByteCount(subprops.version));
+			Array.Copy(Version, fw.header.version,
+				Version.Length > SenaoHeader.VER_LEN ?
+					SenaoHeader.VER_LEN : Version.Length);
 
 			/* パディングサイズ */
-			pad_len = subprops.bs > 0 ?
-					(subprops.bs - (fw.inFInfo.Length % subprops.bs)) : 0;
+			pad_len = Pad & BS > 0 ? (BS - (fw.inFInfo.Length % BS)) : 0;
 
 			try
 			{
 				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
 							FileAccess.Read, FileShare.Read))
 				{
-					md5sum = fw.header.md5sum = fw.GetMd5sum();
+					fw.header.md5sum = fw.GetMd5sum();
 					/* MD5sum読み取りでStreamのPositionが末尾まで飛ぶ */
 					fw.inFs.Seek(0, SeekOrigin.Begin);
 
@@ -164,11 +141,11 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			fw.header.cksum = (uint)IPAddress.HostToNetworkOrder(
-						(int)fw.header.CalcHeaderCksum(SenaoHeader.HDR_LEN));
+			fw.header.cksum = (uint)Utils.BE32toHost(
+					fw.header.CalcHeaderCksum(SenaoHeader.HDR_LEN));
 
 			if (!props.quiet)
-				PrintInfo(subprops);
+				PrintInfo(fw.header.md5sum);
 
 			/* ヘッダシリアル化 */
 			fw.headerData = new byte[SenaoHeader.HDR_LEN];
@@ -176,7 +153,7 @@ namespace firmware_wintools.Tools
 				return 1;
 
 			/* データエンコード */
-			fw.EncodeData(subprops.magic);
+			fw.EncodeData(Magic);
 
 			return fw.OpenAndWriteToFile(false);
 		}
@@ -188,7 +165,7 @@ namespace firmware_wintools.Tools
 		/// <param name="props">メインプロパティ</param>
 		/// <param name="subprops">機能プロパティ</param>
 		/// <returns></returns>
-		private static int Decode(ref SenaoFirmware fw, Program.Properties props, Properties subprops)
+		private int Decode(ref SenaoFirmware fw, Program.Properties props)
 		{
 			fw.header = new SenaoHeader();
 
@@ -227,15 +204,14 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			subprops.fw_type = BitConverter.GetBytes(fw.header.firmware_type)[0];
-			subprops.vendor = fw.header.vendor_id;
-			subprops.product = fw.header.product_id;
-			subprops.version = Encoding.ASCII.GetString(fw.header.version);
-			subprops.magic = fw.header.magic;
-			md5sum = fw.header.md5sum;
+			FWType = BitConverter.GetBytes(fw.header.firmware_type)[0];
+			Vendor = fw.header.vendor_id;
+			Product = fw.header.product_id;
+			Version = fw.header.version;
+			Magic = fw.header.magic;
 
 			if (!props.quiet)
-				PrintInfo(subprops);
+				PrintInfo(fw.header.md5sum);
 
 			if (!SenaoHeader.ChkFwType(fw.header.firmware_type))
 				return 1;
@@ -256,13 +232,7 @@ namespace firmware_wintools.Tools
 		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
 			SenaoFirmware fw = new SenaoFirmware();
-			Properties subprops = new Properties()
-			{
-				fw_type = SenaoHeader.FirmwareType.TYPE_NONE,
-				version = SenaoHeader.DEF_VERSION,
-				magic = SenaoHeader.DEF_MAGIC,
-				bs = SenaoFirmware.DEF_BLOCK_SIZE
-			};
+			int ret;
 
 			if (props.help)
 			{
@@ -270,22 +240,21 @@ namespace firmware_wintools.Tools
 				return 0;
 			}
 
-			Init_args(args, arg_idx, ref subprops);
-
-			if (!subprops.pad)
-				subprops.bs = 0;
+			ret = InitArgs(args, arg_idx);
+			if (ret != 0)
+				return ret;
 
 			fw.inFInfo = new FileInfo(props.inFile);
 
 			/* エンコード時 */
-			if (!subprops.isde)
+			if (!IsDec)
 			{
-				if (!SenaoHeader.ChkFwType(Convert.ToUInt32(subprops.fw_type)))
+				if (!SenaoHeader.ChkFwType(Convert.ToUInt32(FWType)))
 					return 1;
 
 				/* 0 < version len < 17 */
-				if (Encoding.ASCII.GetByteCount(subprops.version) > SenaoHeader.VER_LEN ||
-				    Encoding.ASCII.GetByteCount(subprops.version) == 0)
+				if (Version.Length > SenaoHeader.VER_LEN ||
+				    Version.Length == 0)
 				{
 					Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 						Lang.Tools.MkSenaoFwRes.Error_InvalidVerLen);
@@ -293,7 +262,7 @@ namespace firmware_wintools.Tools
 				}
 
 				/* ref: https://wikidevi.com/wiki/Senao */
-				if (subprops.vendor == 0 || subprops.product == 0)
+				if (Vendor == 0 || Product == 0)
 				{
 					Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 						Lang.Tools.MkSenaoFwRes.Error_NoInvalidVenProd);
@@ -315,11 +284,9 @@ namespace firmware_wintools.Tools
 			fw.outFile = props.outFile;
 			fw.outFMode = FileMode.Create;
 
-			return subprops.isde ?
-					Decode(ref fw, props, subprops) :
-					Encode(ref fw, props, subprops);
+			return IsDec ?
+					Decode(ref fw, props) :
+					Encode(ref fw, props);
 		}
 	}
-
-
 }

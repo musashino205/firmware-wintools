@@ -179,6 +179,8 @@ namespace firmware_wintools.Tools
 			{
 				internal string name;
 				internal string comment = "";
+
+				internal const byte TYPE_NONE = 0xFF;
 			}
 		}
 	}

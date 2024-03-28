@@ -140,7 +140,6 @@
     <Compile Include="Tools\mkedimaximg\mkedimaximg.cs" />
     <Compile Include="Tools\mksenaofw\mksenaofw.cs" />
     <Compile Include="Tools\mksenaofw\SenaoFirmware.cs" />
-    <Compile Include="Tools\mksenaofw\ToolsArgMap.cs" />
     <Compile Include="Tools\nec-bsdtools\BsdFFS_SuperBlk.cs" />
     <Compile Include="Tools\nec-bsdtools\BsdFFS_Inode.cs" />
     <Compile Include="Tools\nec-bsdtools\nec-bsdffs.cs" />
