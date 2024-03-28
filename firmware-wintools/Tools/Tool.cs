@@ -18,6 +18,7 @@ namespace firmware_wintools.Tools
 		public enum PTYPE
 		{
 			INT = 0,
+			UINT,
 			LONG,
 			BYTE,
 			BARY,
@@ -97,6 +98,13 @@ namespace firmware_wintools.Tools
 							setf.SetValue(this, cnvInt);
 						else
 							errtype = "int";
+						break;
+					case PTYPE.UINT:
+						if (Utils.StrToUInt(tmp, out uint cnvUInt,
+								System.Globalization.NumberStyles.None))
+							setf.SetValue(this, cnvUInt);
+						else
+							errtype = "uint";
 						break;
 					case PTYPE.LONG:
 						if (Utils.StrToLong(tmp, out long cnvLong,
