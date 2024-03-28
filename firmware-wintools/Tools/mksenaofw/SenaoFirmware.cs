@@ -41,6 +41,26 @@ namespace firmware_wintools.Tools
 		[NonSerialized]
 		internal const uint DEF_MAGIC = 0x12345678;
 
+		[NonSerialized]
+		internal static readonly
+		Dictionary<byte, FirmwareType> FWTYPES = new Dictionary<byte, FirmwareType>()
+		{
+			{ 0x00, new FirmwareType(){ name = "combo", comment = "(not implemented)" } },	// 実装省略
+			{ 0x01, new FirmwareType(){ name = "bootloader" } },
+			{ 0x02, new FirmwareType(){ name = "kernel" } },
+			{ 0x03, new FirmwareType(){ name = "kernelapp" } },
+			{ 0x04, new FirmwareType(){ name = "apps" } },
+			/* 以下メーカー依存の値 */
+			{ 0x05, new FirmwareType(){ name = "littleapps", comment = "(D-Link)/factoryapps (EnGenius)" } },
+			{ 0x06, new FirmwareType(){ name = "sounds", comment = "(D-Link)/littleapps (EnGenius)" } },
+			{ 0x07, new FirmwareType(){ name = "userconfig", comment = "(D-Link)/appdata (EnGenius)" } },
+			{ 0x08, new FirmwareType(){ name = "userconfig", comment = "(EnGenius)" } },
+			{ 0x09, new FirmwareType(){ name = "odmapps", comment = "(EnGenius)" } },
+			{ 0x0a, new FirmwareType(){ name = "factoryapps", comment = "(D-Link)" } },
+			{ 0x0b, new FirmwareType(){ name = "odmapps", comment = "(D-Link)" } },
+			{ 0x0c, new FirmwareType(){ name = "langpack", comment =  "(D-Link)" } }
+		};
+
 		/// <summary>
 		/// ヘッダ部分のチェックサムを算出します。
 		/// </summary>
@@ -133,7 +153,7 @@ namespace firmware_wintools.Tools
 		{
 			byte type = BitConverter.GetBytes(fw_type)[0];
 
-			if (!FirmwareType.TYPES.ContainsKey(type))
+			if (!FWTYPES.ContainsKey(type))
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 					Lang.Tools.MkSenaoFwRes.Error_NoInvalidFwType);
@@ -154,34 +174,10 @@ namespace firmware_wintools.Tools
 
 		internal class FirmwareType
 		{
+			internal string name;
+			internal string comment = "";
+
 			internal const byte TYPE_NONE = 0xFF;
-
-			internal static readonly
-			Dictionary<byte, TypeInfo> TYPES = new Dictionary<byte, TypeInfo>()
-			{
-			{ 0x00, new TypeInfo(){ name = "combo", comment = "(not implemented)" } },	// 実装省略
-			{ 0x01, new TypeInfo(){ name = "bootloader" } },
-			{ 0x02, new TypeInfo(){ name = "kernel" } },
-			{ 0x03, new TypeInfo(){ name = "kernelapp" } },
-			{ 0x04, new TypeInfo(){ name = "apps" } },
-			/* 以下メーカー依存の値 */
-			{ 0x05, new TypeInfo(){ name = "littleapps", comment = "(D-Link)/factoryapps (EnGenius)" } },
-			{ 0x06, new TypeInfo(){ name = "sounds", comment = "(D-Link)/littleapps (EnGenius)" } },
-			{ 0x07, new TypeInfo(){ name = "userconfig", comment = "(D-Link)/appdata (EnGenius)" } },
-			{ 0x08, new TypeInfo(){ name = "userconfig", comment = "(EnGenius)" } },
-			{ 0x09, new TypeInfo(){ name = "odmapps", comment = "(EnGenius)" } },
-			{ 0x0a, new TypeInfo(){ name = "factoryapps", comment = "(D-Link)" } },
-			{ 0x0b, new TypeInfo(){ name = "odmapps", comment = "(D-Link)" } },
-			{ 0x0c, new TypeInfo(){ name = "langpack", comment =  "(D-Link)" } }
-			};
-
-			internal class TypeInfo
-			{
-				internal string name;
-				internal string comment = "";
-
-				internal const byte TYPE_NONE = 0xFF;
-			}
 		}
 	}
 

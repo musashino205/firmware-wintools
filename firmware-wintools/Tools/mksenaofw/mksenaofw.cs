@@ -48,8 +48,8 @@ namespace firmware_wintools.Tools
 			Console.WriteLine(Lang.CommonRes.Help_FunctionOpts +
 				Lang.Tools.MkSenaoFwRes.Help_Options_t +
 				Lang.Tools.MkSenaoFwRes.Help_Options_t_values);
-			foreach (KeyValuePair<byte, SenaoHeader.FirmwareType.TypeInfo> pair
-					in SenaoHeader.FirmwareType.TYPES)
+			foreach (KeyValuePair<byte, SenaoHeader.FirmwareType> pair
+					in SenaoHeader.FWTYPES)
 			{
 				Console.WriteLine(Lang.Tools.MkSenaoFwRes.Help_Options_t_TypeFmt,
 					pair.Key,
@@ -74,7 +74,7 @@ namespace firmware_wintools.Tools
 					Lang.Tools.MkSenaoFwRes.Info_Encode);
 			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_FwType,
 				FWType,
-				SenaoHeader.FirmwareType.TYPES[FWType].name);
+				SenaoHeader.FWTYPES[FWType].name);
 			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_FwVer,
 				Encoding.ASCII.GetString(Version));
 			Console.WriteLine(Lang.Tools.MkSenaoFwRes.Info_Vendor, Vendor);
