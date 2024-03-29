@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace firmware_wintools.Tools
 {
-	internal partial class Nec_BsdFw : Tool
+	internal class Nec_BsdFw : Tool
 	{
 		/* ツール情報　*/
 		public override string name { get => "nec-bsdfw"; }
@@ -14,18 +14,23 @@ namespace firmware_wintools.Tools
 		public override bool skipOFChk => true;
 
 
-		internal bool isListMode = false;
-		internal string output = null;
-		internal int outPos = 0;
-
 		private readonly int BLKHDR_LEN = 0x18;
 		private readonly uint BLKHDR_F_GZIP = 0x80000000;	/* BIT(31) */
 		private readonly uint BLKHDR_F_EXEC = 0x00020000;   /* BIT(17) */
 
+		private bool IsList = false;
+		private int OutPos = 0;
+
+		internal override List<Param> ParamList => new List<Param>()
+		{
+			new Param() { PChar = 'l', PType = Param.PTYPE.BOOL, SetField = "IsList" },
+			new Param() { PChar = 'p', PType = Param.PTYPE.INT, SetField = "OutPos" }
+		};
+
 		/// <summary>
 		/// rtkwebの機能ヘルプを表示します
 		/// </summary>
-		public void PrintHelp(int arg_idx)
+		public new void PrintHelp(int arg_idx)
 		{
 			Console.WriteLine("Usage: {0}rtkweb [options...]\n" +
 				desc +
@@ -74,8 +79,10 @@ namespace firmware_wintools.Tools
 			return 0;
 		}
 
-		private void PrintBlkHeader(in BlkHeader header, int index)
+		private void PrintBlkHeader(in List<BlkHeader> headers, int index)
 		{
+			BlkHeader header = headers[index];
+
 			Console.WriteLine("- Data {0}:", index);
 			Console.WriteLine("  Flags                 : 0x{0:X08}",
 					header.flags);
@@ -112,6 +119,7 @@ namespace firmware_wintools.Tools
 		{
 			Firmware fw = new Firmware();
 			List<BlkHeader> hdrs = new List<BlkHeader>();
+			int ret;
 
 			if (props.help)
 			{
@@ -119,11 +127,14 @@ namespace firmware_wintools.Tools
 				return 0;
 			}
 
-			Init_args(args, arg_idx);
+			ret = InitArgs(args, arg_idx);
+			if (ret != 0)
+				return ret;
 
 			fw.inFInfo = new FileInfo(props.inFile);
 
-			if (!isListMode && output == null)
+			if (!IsList &&
+			    (props.outFile == null || props.outFile.Length == 0))
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 							Lang.Resource.Main_Error_NoInOutFile);
@@ -137,7 +148,7 @@ namespace firmware_wintools.Tools
 				{
 					byte[] hdrbuf = new byte[BLKHDR_LEN];
 					BlkHeader hdr = null;
-					int read_len, ret = 0;
+					int read_len;
 
 					while (fw.inFs.Position < fw.inFs.Length) {
 						read_len = fw.inFs.Read(hdrbuf, 0, BLKHDR_LEN);
@@ -158,8 +169,8 @@ namespace firmware_wintools.Tools
 
 						hdr.offset = fw.inFs.Position;
 						hdrs.Add(hdr);
-						if (isListMode)
-							PrintBlkHeader(in hdr, hdrs.Count - 1);
+						if (IsList)
+							PrintBlkHeader(in hdrs, hdrs.Count - 1);
 
 						fw.inFs.Seek(hdr.length - BLKHDR_LEN, SeekOrigin.Current);
 						if (hdr.length % 4 > 0)
@@ -168,29 +179,29 @@ namespace firmware_wintools.Tools
 				}
 
 				/* リスト表示の場合は終了 */
-				if (isListMode)
+				if (IsList)
 					return 0;
 
-				if (outPos > hdrs.Count - 1)
+				if (OutPos > hdrs.Count - 1)
 				{
 					Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 							"specified index doesn't exist");
 					return 1;
 				}
 
-				if (hdrs[outPos].length - BLKHDR_LEN > 0)
+				if (hdrs[OutPos].length - BLKHDR_LEN > 0)
 					using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
 								FileAccess.Read, FileShare.Read))
 					using (fw.outFs = new FileStream(props.outFile, FileMode.Create,
 								FileAccess.Write, FileShare.None))
 					{
 						int read_len, data_len;
-						BlkHeader hdr = hdrs[outPos];
+						BlkHeader hdr = hdrs[OutPos];
 
 						data_len = hdr.length - BLKHDR_LEN;
 						fw.data = new byte[data_len];
 
-						fw.inFs.Seek(hdrs[outPos].offset, SeekOrigin.Begin);
+						fw.inFs.Seek(hdrs[OutPos].offset, SeekOrigin.Begin);
 						read_len = fw.inFs.Read(fw.data, 0, data_len);
 						if (read_len != data_len)
 						{
@@ -206,7 +217,7 @@ namespace firmware_wintools.Tools
 					Console.Error.WriteLine(Lang.Resource.Main_Warning_Prefix +
 							"the data block at specified position has no body data\n");
 
-				PrintBlkHeader(hdrs[outPos], outPos);
+				PrintBlkHeader(hdrs, OutPos);
 			}
 			catch (IOException e)
 			{
