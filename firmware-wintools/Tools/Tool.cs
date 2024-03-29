@@ -55,11 +55,16 @@ namespace firmware_wintools.Tools
 				if (p == null)
 					continue;
 
-				FieldInfo setf = GetType().GetField(p.SetField,
+				/* bool型かつ1文字目が '!' なら2文字目から読み取り */
+				FieldInfo setf = GetType().GetField(
+						p.PType == PTYPE.BOOL && p.SetField.StartsWith("!") ?
+							p.SetField.Substring(1) : p.SetField,
 						BindingFlags.Instance |
 						BindingFlags.NonPublic |
 						BindingFlags.DeclaredOnly);
-				FieldInfo setb = GetType().GetField(p.SetBool,
+				FieldInfo setb = GetType().GetField(
+						p.SetBool.StartsWith("!") ?
+							p.SetBool.Substring(1) : p.SetBool,
 						BindingFlags.Instance |
 						BindingFlags.NonPublic |
 						BindingFlags.DeclaredOnly);
@@ -160,7 +165,8 @@ namespace firmware_wintools.Tools
 						setf.SetValue(this, cnvBary);
 						break;
 					case PTYPE.BOOL:
-						setf.SetValue(this, true);
+						setf.SetValue(this,
+							p.SetField.StartsWith("!") ? false : true);
 						break;
 					case PTYPE.STR:
 						setf.SetValue(this, tmp);
@@ -182,7 +188,8 @@ namespace firmware_wintools.Tools
 				if (setb == null)
 					continue;
 
-				setb.SetValue(this, true);
+				setb.SetValue(this,
+					p.SetBool.StartsWith("!") ? false : true);
 			}
 
 			return 0;
