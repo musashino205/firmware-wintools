@@ -87,9 +87,9 @@ namespace firmware_wintools.Tools
 			Console.WriteLine("  Flags                 : 0x{0:X08}",
 					header.flags);
 			Console.WriteLine("    GZIP Compressed       : {0}",
-					((header.flags & BLKHDR_F_GZIP) != 0).ToString());
+					(header.flags & BLKHDR_F_GZIP) != 0 ? "Yes" : "No");
 			Console.WriteLine("    Executable            : {0}",
-					((header.flags & BLKHDR_F_EXEC) != 0).ToString());
+					(header.flags & BLKHDR_F_EXEC) != 0 ? "Yes" : "No");
 			Console.WriteLine("  Data Length (with hdr): 0x{0:X}",
 					header.length);
 			Console.WriteLine("  Header Length         : 0x18");
