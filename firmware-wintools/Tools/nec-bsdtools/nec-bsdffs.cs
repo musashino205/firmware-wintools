@@ -13,13 +13,6 @@ namespace firmware_wintools.Tools
 		public override bool skipOFChk => true;
 
 
-		internal bool isListMode = false;
-		internal bool listToText = false;
-		internal bool skipHardLink = true;
-		internal string outTxt = null;
-		internal string outDir = "necbsd-root";
-		internal string outFsBin = null;
-
 		private long supBlkOffset = 0;
 		private long inoBlkOffset = 0;
 		private long datBlkOffset = 0;
@@ -27,10 +20,26 @@ namespace firmware_wintools.Tools
 
 		private const long defSupBlkOffset = 0x2000;
 
+		private bool IsList = false;
+		private bool IsListToText = false;
+		private bool SkipHardLink = true;
+		private string OutText = null;
+		private string OutDir = "necbsd-root";
+		private string OutFsBin = null;
+
+		internal override List<Param> ParamList => new List<Param>()
+		{
+			new Param()	{ PChar = 'd', PType = Param.PTYPE.STR, SetField = "OutDir" },
+			new Param() { PChar = 'f', PType = Param.PTYPE.STR, SetField = "OutFsBin" },
+			new Param() { PChar = 'H', PType = Param.PTYPE.BOOL, SetField = "!SkipHardLink" },
+			new Param() { PChar = 'L', PType = Param.PTYPE.STR, SetField = "OutText", SetBool = "IsListToText" },
+			new Param() { PChar = 'l', PType = Param.PTYPE.BOOL, SetField = "IsList" }
+		};
+
 		/// <summary>
 		/// rtkwebの機能ヘルプを表示します
 		/// </summary>
-		public void PrintHelp(int arg_idx)
+		public new void PrintHelp(int arg_idx)
 		{
 			Console.WriteLine("Usage: {0}nec-bsdffs [options...]\n" +
 				desc +
@@ -73,6 +82,7 @@ namespace firmware_wintools.Tools
 			 * 後でinodeがhardlinkされているか否かのチェック用
 			 */
 			List<uint> actInoList = new List<uint>();
+			int ret;
 
 			if (props.help)
 			{
@@ -80,11 +90,13 @@ namespace firmware_wintools.Tools
 				return 0;
 			}
 
-			Init_args(args, arg_idx);
+			ret = InitArgs(args, arg_idx);
+			if (ret != 0)
+				return ret;
 
 			fw.inFInfo = new FileInfo(props.inFile);
 
-			if (listToText && outTxt == null)
+			if (IsListToText && OutText == null)
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 							"no output file of list specifed");
@@ -96,7 +108,7 @@ namespace firmware_wintools.Tools
 				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
 							FileAccess.Read, FileShare.Read))
 				{
-					int read_len, ret = 0;
+					int read_len;
 					uint i;
 					long cur_off = 0;
 					sBlk = new DiskSuperBlk();
@@ -129,9 +141,9 @@ namespace firmware_wintools.Tools
 					sBlk.PrintSuperBlk(cur_off);
 
 					/* ファイルシステム切り出し */
-					if (outFsBin != null)
+					if (OutFsBin != null)
 					{
-						string[] finfo = outFsBin.Split(':');
+						string[] finfo = OutFsBin.Split(':');
 						string dir = Path.GetDirectoryName(finfo[0]);
 						long len = sBlk._totalBlks * DiskSuperBlk.BLKSZ;
 
@@ -234,23 +246,23 @@ namespace firmware_wintools.Tools
 							 * 無いものが出る為、名前が未設定なら飛ばす
 							 */
 							if (tmp.ino_name != null)
-								if (isListMode)
+								if (IsList || IsListToText)
 								{
-									Stream listStream = listToText ?
-											new FileStream(outTxt, FileMode.Create,
+									Stream listStream = IsListToText ?
+											new FileStream(OutText, FileMode.Create,
 													FileAccess.Write, FileShare.None) :
 											Console.OpenStandardOutput();
 									using (listStream)
 									using (StreamWriter sw = new StreamWriter(listStream))
 										tmp.PrintDirFiles(in sw, in actInoList, null, isBE,
-												skipHardLink);
+												SkipHardLink);
 								}
 								else
 								{
-									if (!Directory.Exists(outDir))
-										Directory.CreateDirectory(outDir);
-									tmp.ExtractDirFiles(in fw.inFs, in actInoList, null, outDir,
-											isBE, skipHardLink);
+									if (!Directory.Exists(OutDir))
+										Directory.CreateDirectory(OutDir);
+									tmp.ExtractDirFiles(in fw.inFs, in actInoList, null, OutDir,
+											isBE, SkipHardLink);
 								}
 						}
 					}
