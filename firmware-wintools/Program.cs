@@ -101,7 +101,7 @@ namespace firmware_wintools
 		/// <returns>実行結果</returns>
 		static int Main()
 		{
-			int ret, arg_idx = 1;
+			int ret, arg_idx = 0;
 			string[] args;
 			Properties props = new Properties();
 			string lc_all, lang, shell;
@@ -140,7 +140,8 @@ namespace firmware_wintools
 			args = Environment.GetCommandLineArgs();
 
 			/* 実行ファイル名からモード取得試行 */
-			tool = toolList.Find(x => x.name == Path.GetFileNameWithoutExtension(args[0]));
+			tool = toolList.Find(x => x.name == Path.GetFileNameWithoutExtension(args[arg_idx]));
+			arg_idx++;
 			if (tool == null) /* 実行ファイル名が機能名ではない */
 			{
 				if (args.Length == 1) /* - 引数無し */
@@ -150,16 +151,14 @@ namespace firmware_wintools
 				}
 
 				/* 最初の引数からモード取得試行 */
-				tool = toolList.Find(x => x.name == args[1]);
+				tool = toolList.Find(x => x.name == args[arg_idx]);
 				if (tool != null)
 					arg_idx++;
 			}
-			else /* 実行ファイル名が機能名 */
-			{
-				/* 機能に飛んだ後ヘルプ表示させる */
-				if (args.Length == 1)
-					props.Help = true;
-			}
+
+			/* 引数が無しまたは機能名のみ */
+			if (args.Length == arg_idx)
+				props.Help = true;
 
 			ret = props.Do(args, arg_idx, null);
 			if (ret < 0) /* エラー */
