@@ -148,7 +148,6 @@
     <Compile Include="Tools\nec-bsdtools\nec-bsdfw.cs" />
     <Compile Include="Tools\rtkweb\rtkweb.cs" />
     <Compile Include="Tools\Tool.cs" />
-    <Compile Include="Tools\xorimage\ToolsArgMap.cs" />
     <Compile Include="Tools\xorimage\xorimage.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
