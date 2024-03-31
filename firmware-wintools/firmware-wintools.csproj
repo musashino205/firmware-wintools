@@ -143,7 +143,6 @@
     <Compile Include="Tools\nec-bsdtools\BsdFFS_SuperBlk.cs" />
     <Compile Include="Tools\nec-bsdtools\BsdFFS_Inode.cs" />
     <Compile Include="Tools\nec-bsdtools\nec-bsdffs.cs" />
-    <Compile Include="Tools\nec-enc\NecEncFirmware.cs" />
     <Compile Include="Tools\nec-enc\nec-enc.cs" />
     <Compile Include="Tools\hex2bin\hex2bin.cs" />
     <Compile Include="Tools\nec-bsdtools\nec-bsdfw.cs" />
