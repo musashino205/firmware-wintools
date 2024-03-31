@@ -303,7 +303,7 @@ namespace firmware_wintools.Tools
 				IV = iv,
 				Key = key,
 				Mode = CipherMode.CBC,
-				Padding = PaddingMode.Zeros
+				Padding = PaddingMode.PKCS7
 			};
 
 			ICryptoTransform endec = Decrypt ?

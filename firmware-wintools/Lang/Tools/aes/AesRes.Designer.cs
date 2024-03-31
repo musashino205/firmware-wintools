@@ -390,7 +390,7 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
-        ///   the length of the last block on the target data is shorter than 16 bytes, will padded by zero に類似しているローカライズされた文字列を検索します。
+        ///   the length of the last block on the target data is shorter than 16 bytes, will padded by PKCS#7 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Warning_ShortEncLen {
             get {

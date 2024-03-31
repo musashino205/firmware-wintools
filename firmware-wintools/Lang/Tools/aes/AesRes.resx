@@ -237,6 +237,6 @@
     <value>no iv specified, use default ('0')</value>
   </data>
   <data name="Warning.ShortEncLen" xml:space="preserve">
-    <value>the length of the last block on the target data is shorter than 16 bytes, will padded by zero</value>
+    <value>the length of the last block on the target data is shorter than 16 bytes, will padded by PKCS#7</value>
   </data>
 </root>

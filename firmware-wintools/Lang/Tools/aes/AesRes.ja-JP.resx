@@ -237,6 +237,6 @@
     <value>IV が指定されていません。デフォルト ('0') を使用します</value>
   </data>
   <data name="Warning.ShortEncLen" xml:space="preserve">
-    <value>対象データの最終ブロックにおける長さが 16 バイト未満です。 0 により 16 バイトまで埋め合わされます</value>
+    <value>対象データの最終ブロックにおける長さが 16 バイト未満です。 PKCS#7 により 16 バイトまで埋め合わされます</value>
   </data>
 </root>
