@@ -1,53 +1,36 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	internal partial class Nec_Enc : Tool
+	internal class Nec_Enc : Tool
 	{
 		/* ツール情報　*/
 		public override string name { get => "nec-enc"; }
 		public override string desc { get => Lang.Tools.NecEncRes.FuncDesc; }
 		public override string descFmt { get => Lang.Tools.NecEncRes.Main_FuncDesc_Fmt; }
+		public override string resName => "NecEncRes";
 
-		/// <summary>
-		/// nec-encの機能プロパティ
-		/// </summary>
-		private struct Properties
-		{
-			/// <summary>
-			/// patternのxorに用いるキー
-			/// </summary>
-			public string key;
-			public bool half;
-		}
+		private byte[] Key = null;
+		private bool Half = false;
 
-		/// <summary>
-		/// nec-encの機能ヘルプを表示します
-		/// </summary>
-		private static void PrintHelp(int arg_idx)
+		internal override List<Param> ParamList => new List<Param>()
 		{
-			Console.WriteLine(Lang.Tools.NecEncRes.Help_Usage +
-				Lang.Tools.NecEncRes.FuncDesc +
-				Environment.NewLine,
-				arg_idx < 2 ? "" : "firmware-wintools ");	// 引数インデックスが2未満（symlink呼び出し）の場合機能名のみ
-			// 共通オプション表示
-			Program.PrintCommonOption();
-			// 機能オプション表示
-			Console.WriteLine(Lang.CommonRes.Help_FunctionOpts +
-				Lang.Tools.NecEncRes.Help_Options_k);
-		}
+			new Param() { PChar = 'k', PType = Param.PTYPE.BARY, SetField = "Key", HelpKey = "Help_Options_k" },
+			new Param() { PChar = 'H', PType = Param.PTYPE.BOOL, SetField = "Half" }
+		};
 
 		/// <summary>
 		/// nec-encの実行情報を表示します
 		/// </summary>
 		/// <param name="props">nec-encの機能プロパティ</param>
-		private static void PrintInfo(Properties subprops)
+		private void PrintInfo()
 		{
 			Console.WriteLine(Lang.Tools.NecEncRes.Info);
 			Console.WriteLine(Lang.Tools.NecEncRes.Info_key,
-				!subprops.half ? subprops.key : "(none)");
+				!Half ? Encoding.ASCII.GetString(Key) : "(none)");
 		}
 
 		/// <summary>
@@ -105,15 +88,15 @@ namespace firmware_wintools.Tools
 			const int MAX_KEY_LEN = 32;
 			int read_len;
 			int k_off = 0;
-			int k_len = 0;
-			byte[] key = new byte[0];
-			Properties subprops = new Properties();
 			NecEncFirmware fw = new NecEncFirmware() {
 				data = new byte[4096],
 				buf_ptn = new byte[4096]
 			};
+			int ret;
 
-			Init_args(args, arg_idx, ref subprops);
+			ret = InitArgs(args, arg_idx);
+			if (ret != 0)
+				return ret;
 
 			if (props.help)
 			{
@@ -121,29 +104,26 @@ namespace firmware_wintools.Tools
 				return 0;
 			}
 
-			if (!subprops.half)
+			if (!Half)
 			{
-				if (subprops.key == null)
+				if (Key == null)
 				{
 					Console.Error.WriteLine(
 						Lang.Resource.Main_Error_Prefix + Lang.Tools.NecEncRes.Error_NoKey);
 					return 1;
 				}
 
-				k_len = subprops.key.Length;
-				if (k_len == 0 || k_len > MAX_KEY_LEN)
+				if (Key.Length == 0 || Key.Length > MAX_KEY_LEN)
 				{
 					Console.Error.WriteLine(
 						Lang.Resource.Main_Error_Prefix + Lang.Tools.NecEncRes.Error_InvalidKeyLen,
 						MAX_KEY_LEN);
 					return 1;
 				}
-
-				key = Encoding.ASCII.GetBytes(subprops.key);
 			}
 
 			if (!props.quiet)
-				PrintInfo(subprops);
+				PrintInfo();
 
 			try
 			{
@@ -154,7 +134,7 @@ namespace firmware_wintools.Tools
 				{
 					patFs = new FileStream(@"pattern.bin",
 							FileMode.Create, FileAccess.Write);
-					if (!subprops.half)
+					if (!Half)
 						xpatFs = new FileStream(@"pattern.xor",
 							FileMode.Create, FileAccess.Write);
 				}
@@ -171,9 +151,9 @@ namespace firmware_wintools.Tools
 						if (props.debug)
 							patFs.Write(fw.buf_ptn, 0, read_len);
 
-						if (!subprops.half)
+						if (!Half)
 						{
-							k_off = XorPattern(ref fw.buf_ptn, read_len, key, k_len, k_off);
+							k_off = XorPattern(ref fw.buf_ptn, read_len, Key, Key.Length, k_off);
 							if (props.debug)
 								xpatFs.Write(fw.buf_ptn, 0, read_len);
 						}
@@ -187,7 +167,7 @@ namespace firmware_wintools.Tools
 				if (props.debug)
 				{
 					patFs.Close();
-					if (!subprops.half)
+					if (!Half)
 						xpatFs.Close();
 				}
 			}
