@@ -123,7 +123,7 @@ namespace firmware_wintools.Tools
 
 			try
 			{
-				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
+				using (fw.inFs = new FileStream(props.InFile, FileMode.Open,
 							FileAccess.Read, FileShare.Read))
 				{
 					fw.header.md5sum = fw.GetMd5sum();
@@ -144,7 +144,7 @@ namespace firmware_wintools.Tools
 			fw.header.cksum = (uint)Utils.BE32toHost(
 					fw.header.CalcHeaderCksum(SenaoHeader.HDR_LEN));
 
-			if (!props.quiet)
+			if (!props.Quiet)
 				PrintInfo(fw.header.md5sum);
 
 			/* ヘッダシリアル化 */
@@ -171,7 +171,7 @@ namespace firmware_wintools.Tools
 
 			try
 			{
-				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
+				using (fw.inFs = new FileStream(props.InFile, FileMode.Open,
 							FileAccess.Read, FileShare.Read))
 				{
 					if (fw.header.LoadHeader(in fw.inFs) != 0)
@@ -210,7 +210,7 @@ namespace firmware_wintools.Tools
 			Version = fw.header.version;
 			Magic = fw.header.magic;
 
-			if (!props.quiet)
+			if (!props.Quiet)
 				PrintInfo(fw.header.md5sum);
 
 			if (!SenaoHeader.ChkFwType(fw.header.firmware_type))
@@ -234,7 +234,7 @@ namespace firmware_wintools.Tools
 			SenaoFirmware fw = new SenaoFirmware();
 			int ret;
 
-			if (props.help)
+			if (props.Help)
 			{
 				PrintHelp(arg_idx);
 				return 0;
@@ -244,7 +244,7 @@ namespace firmware_wintools.Tools
 			if (ret != 0)
 				return ret;
 
-			fw.inFInfo = new FileInfo(props.inFile);
+			fw.inFInfo = new FileInfo(props.InFile);
 
 			/* エンコード時 */
 			if (!IsDec)
@@ -281,7 +281,7 @@ namespace firmware_wintools.Tools
 				}
 			}
 
-			fw.outFile = props.outFile;
+			fw.outFile = props.OutFile;
 			fw.outFMode = FileMode.Create;
 
 			return IsDec ?

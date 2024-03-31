@@ -54,7 +54,7 @@ namespace firmware_wintools.Tools
 			Firmware fw = new Firmware();
 			int ret;
 
-			if (props.help)
+			if (props.Help)
 			{
 				PrintHelp(arg_idx);
 				return 0;
@@ -64,7 +64,7 @@ namespace firmware_wintools.Tools
 			if (ret != 0)
 				return ret;
 
-			fw.inFInfo = new FileInfo(props.inFile);
+			fw.inFInfo = new FileInfo(props.InFile);
 
 			if (FInfoLen % 4 != 0 || FInfoLen > 0x100)
 			{
@@ -82,7 +82,7 @@ namespace firmware_wintools.Tools
 
 			try
 			{
-				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
+				using (fw.inFs = new FileStream(props.InFile, FileMode.Open,
 							FileAccess.Read, FileShare.Read))
 				{
 					string fname, fdir, fbase;
@@ -134,7 +134,7 @@ namespace firmware_wintools.Tools
 											FileMode.Create, FileAccess.Write, FileShare.Read))
 							outfile.Write(fw.data, 0, (int)flen);
 
-						if (props.debug)
+						if (props.Debug)
 							Console.WriteLine("{0,45}: size-> 0x{1:X08} ({1,8} bytes), offset-> 0x{2:X08}",
 									fname, flen, fw.inFs.Position);
 //						else

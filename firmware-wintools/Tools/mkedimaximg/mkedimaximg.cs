@@ -56,7 +56,7 @@ namespace firmware_wintools.Tools
 			EdimaxFirmware fw = new EdimaxFirmware();
 			int ret;
 
-			if (props.help)
+			if (props.Help)
 			{
 				PrintHelp(arg_idx);
 				return 0;
@@ -66,8 +66,8 @@ namespace firmware_wintools.Tools
 			if (ret != 0)
 				return ret;
 
-			fw.inFInfo = new FileInfo(props.inFile);
-			fw.outFile = props.outFile;
+			fw.inFInfo = new FileInfo(props.InFile);
+			fw.outFile = props.OutFile;
 			fw.outFMode = FileMode.Create;
 
 			if (Signature == null)
@@ -117,7 +117,7 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			if (!props.quiet)
+			if (!props.Quiet)
 				PrintInfo();
 
 			fw.dataLen = Convert.ToInt32(fw.inFInfo.Length + sizeof(short));
@@ -144,7 +144,7 @@ namespace firmware_wintools.Tools
 
 			try
 			{
-				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
+				using (fw.inFs = new FileStream(props.InFile, FileMode.Open,
 							FileAccess.Read, FileShare.Read))
 				{
 					fw.data = new byte[fw.inFInfo.Length];
@@ -158,7 +158,7 @@ namespace firmware_wintools.Tools
 			}
 
 			fw.footer.cksum = fw.CalcCksum(IsBE);
-			if (props.debug)
+			if (props.Debug)
 			{
 				Console.WriteLine(" header size:\t{0} bytes (0x{0:X})", fw.header.totalLen);
 				Console.WriteLine(" data size:\t{0} bytes (0x{0:X})", fw.inFInfo.Length + sizeof(short));

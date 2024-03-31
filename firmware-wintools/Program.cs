@@ -12,31 +12,28 @@ namespace firmware_wintools
 	class Program
 	{
 		/// <summary>
-		/// メインプロパティ
-		/// <para>プログラム全体で必要となるパラメータを管理</para>
+		/// 基本オプション用クラス
+		/// <para>Tools.Toolを利用し基本オプションのInitArgsを呼ぶ</para>
 		/// </summary>
-		public struct Properties
+		public class Properties : Tools.Tool
 		{
-			/// <summary>
-			/// 出力詳細化
-			/// </summary>
-			public bool debug;
-			/// <summary>
-			/// ヘルプ フラグ
-			/// </summary>
-			public bool help;
-			/// <summery>
-			/// コンソール出力低減
-			/// </summery>
-			public bool quiet;
-			/// <summary>
-			/// 入力ファイル パス
-			/// </summary>
-			public string inFile;
-			/// <summary>
-			/// 出力ファイル パス
-			/// </summary>
-			public string outFile;
+			internal bool Debug = false;
+			internal bool Help = false;
+			internal bool Quiet = false;
+			internal string InFile = null;
+			internal string OutFile = null;
+
+			internal override List<Tools.Param> ParamList => new List<Tools.Param>()
+			{
+				new Tools.Param() { PChar = 'i', PType = Tools.Param.PTYPE.STR, SetField = "InFile" },
+				new Tools.Param() { PChar = 'o', PType = Tools.Param.PTYPE.STR, SetField = "OutFile" },
+				new Tools.Param() { PChar = 'h', PType = Tools.Param.PTYPE.BOOL, SetField = "Help" },
+				new Tools.Param() { PChar = 'D', PType = Tools.Param.PTYPE.BOOL, SetField = "Debug" },
+				new Tools.Param() { PChar = 'Q', PType = Tools.Param.PTYPE.BOOL, SetField = "Quiet" }
+			};
+
+			internal override int Do(string[] args, int arg_idx, Properties props)
+				=> InitArgs(args, arg_idx);
 		}
 
 		/// <summary>
@@ -78,42 +75,6 @@ namespace firmware_wintools
 				Lang.Resource.Main_Help_DetailsMsg);
 
 			PrintCommonOption();
-		}
-
-		private static int InitArgs(string[] args, int arg_idx, ref Properties props)
-		{
-			int ret = 0;
-			string tmp;
-
-			for (int i = arg_idx; i < args.Length; i++)
-			{
-				if (!args[i].StartsWith("-"))
-					continue;
-
-				switch (args[i].Replace("-", ""))
-				{
-					case "i":
-						Utils.GetStrParam(args, i, out props.inFile);
-						break;
-					case "o":
-						Utils.GetStrParam(args, i, out props.outFile);
-						break;
-					case "h":
-					case "help":
-						props.help = true;
-						break;
-					case "D":
-						props.debug = true;
-						break;
-					case "Q":
-						props.quiet = true;
-						break;
-					case "":
-						return -22;
-				}
-			}
-
-			return 0;
 		}
 
 		/// <summary>
@@ -197,22 +158,22 @@ namespace firmware_wintools
 			{
 				/* 機能に飛んだ後ヘルプ表示させる */
 				if (args.Length == 1)
-					props.help = true;
+					props.Help = true;
 			}
 
-			ret = InitArgs(args, arg_idx, ref props);
-				if (ret < 0) /* エラー */
-				{
-					Console.Error.WriteLine(
-						Lang.Resource.Main_Error_Prefix + Lang.Resource.Main_Error_InvalidParam);
-					return ret;
-				}
+			ret = props.Do(args, arg_idx, null);
+			if (ret < 0) /* エラー */
+			{
+				Console.Error.WriteLine(
+					Lang.Resource.Main_Error_Prefix + Lang.Resource.Main_Error_InvalidParam);
+				return ret;
+			}
 
 			/* 最初の引数からのモード取得試行に失敗した場合 */
 			if (tool == null)
 			{
 				/* 最初の引数がモードではなく、ヘルプが指定されている */
-				if (args[1].StartsWith("-") && props.help)
+				if (args[1].StartsWith("-") && props.Help)
 				{
 					PrintHelp();
 					return 0;
@@ -225,11 +186,11 @@ namespace firmware_wintools
 				return -22;
 			}
 
-			if (!props.help)
+			if (!props.Help)
 			{
 				/* 入出力ファイル指定有無チェック */
-				if (props.inFile == null ||
-				    (!tool.skipOFChk && props.outFile == null))
+				if (props.InFile == null ||
+				    (!tool.skipOFChk && props.OutFile == null))
 				{
 					Console.Error.WriteLine(
 						Lang.Resource.Main_Error_Prefix + Lang.Resource.Main_Error_NoInOutFile);
@@ -237,7 +198,7 @@ namespace firmware_wintools
 				}
 
 				/* 入力ファイル存在チェック */
-				if (!File.Exists(props.inFile))
+				if (!File.Exists(props.InFile))
 				{
 					Console.Error.WriteLine(
 						Lang.Resource.Main_Error_Prefix + Lang.Resource.Main_Error_MissInputFile);
@@ -245,11 +206,11 @@ namespace firmware_wintools
 				}
 
 				/* ファイル情報表示（デバッグ） */
-				if (!props.quiet && props.debug)
+				if (!props.Quiet && props.Debug)
 					Console.WriteLine(Lang.Resource.Main_Info + Environment.NewLine,
-						Path.GetFileName(props.inFile), Directory.GetParent(props.inFile),
-						tool.skipOFChk ? "-" : Path.GetFileName(props.outFile),
-						tool.skipOFChk ? "-" : Directory.GetParent(props.outFile).ToString());
+						Path.GetFileName(props.InFile), Directory.GetParent(props.InFile),
+						tool.skipOFChk ? "-" : Path.GetFileName(props.OutFile),
+						tool.skipOFChk ? "-" : Directory.GetParent(props.OutFile).ToString());
 			}
 
 			ret = tool.Do(args, arg_idx, props);

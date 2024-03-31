@@ -58,7 +58,7 @@ namespace firmware_wintools.Tools
 			Firmware fw = new Firmware();
 			int ret;
 
-			if (props.help)
+			if (props.Help)
 			{
 				PrintHelp(arg_idx);
 				return 0;
@@ -70,8 +70,8 @@ namespace firmware_wintools.Tools
 
 			try
 			{
-				using (StreamReader sr = new StreamReader(props.inFile, Encoding.ASCII))
-				using (fw.outFs = new FileStream(props.outFile, FileMode.Create,
+				using (StreamReader sr = new StreamReader(props.InFile, Encoding.ASCII))
+				using (fw.outFs = new FileStream(props.OutFile, FileMode.Create,
 							FileAccess.Write, FileShare.Read))
 				{
 					char[] charBuf = new char[0x10000];

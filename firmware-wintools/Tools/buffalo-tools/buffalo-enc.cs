@@ -92,7 +92,7 @@ namespace firmware_wintools.Tools
 
 			try
 			{
-				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
+				using (fw.inFs = new FileStream(props.InFile, FileMode.Open,
 						FileAccess.Read, FileShare.Read))
 				{
 					fw.data = new byte[fw.dataLen];
@@ -114,7 +114,7 @@ namespace firmware_wintools.Tools
 
 			fw.footer.cksum = fw.GetCksum(IsMinorCksum);
 
-			if (!props.quiet)
+			if (!props.Quiet)
 				PrintInfo(fw.footer.cksum);
 
 			ret = fw.header.EncryptHeader(key, IsLong);
@@ -184,7 +184,7 @@ namespace firmware_wintools.Tools
 
 			try
 			{
-				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
+				using (fw.inFs = new FileStream(props.InFile, FileMode.Open,
 							FileAccess.Read, FileShare.Read))
 				{
 					fw.inFs.Seek(Offset, SeekOrigin.Begin);
@@ -254,7 +254,7 @@ namespace firmware_wintools.Tools
 			Version = Encoding.ASCII.GetString(fw.header.version).TrimEnd('\0');
 			Length = fw.header.data_len;
 
-			if (!props.quiet)
+			if (!props.Quiet)
 				PrintInfo(cksum);
 
 			return fw.OpenAndWriteToFile(true);
@@ -269,7 +269,7 @@ namespace firmware_wintools.Tools
 			if (ret != 0)
 				return ret;
 
-			if (props.help)
+			if (props.Help)
 			{
 				PrintHelp(arg_idx);
 				return 0;
@@ -307,9 +307,9 @@ namespace firmware_wintools.Tools
 				}
 			}
 
-			fw.outFile = props.outFile;
+			fw.outFile = props.OutFile;
 			fw.outFMode = FileMode.Create;
-			fw.inFInfo = new FileInfo(props.inFile);
+			fw.inFInfo = new FileInfo(props.InFile);
 
 			if (!IsDec && Length == -1)
 				Length = fw.inFInfo.Length;

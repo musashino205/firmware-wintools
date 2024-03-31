@@ -84,7 +84,7 @@ namespace firmware_wintools.Tools
 			List<uint> actInoList = new List<uint>();
 			int ret;
 
-			if (props.help)
+			if (props.Help)
 			{
 				PrintHelp(arg_idx);
 				return 0;
@@ -94,7 +94,7 @@ namespace firmware_wintools.Tools
 			if (ret != 0)
 				return ret;
 
-			fw.inFInfo = new FileInfo(props.inFile);
+			fw.inFInfo = new FileInfo(props.InFile);
 
 			if (IsListToText && OutText == null)
 			{
@@ -105,7 +105,7 @@ namespace firmware_wintools.Tools
 
 			try
 			{
-				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
+				using (fw.inFs = new FileStream(props.InFile, FileMode.Open,
 							FileAccess.Read, FileShare.Read))
 				{
 					int read_len;

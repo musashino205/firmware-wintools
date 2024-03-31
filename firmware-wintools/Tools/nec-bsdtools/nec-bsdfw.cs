@@ -121,7 +121,7 @@ namespace firmware_wintools.Tools
 			List<BlkHeader> hdrs = new List<BlkHeader>();
 			int ret;
 
-			if (props.help)
+			if (props.Help)
 			{
 				PrintHelp(arg_idx);
 				return 0;
@@ -131,10 +131,10 @@ namespace firmware_wintools.Tools
 			if (ret != 0)
 				return ret;
 
-			fw.inFInfo = new FileInfo(props.inFile);
+			fw.inFInfo = new FileInfo(props.InFile);
 
 			if (!IsList &&
-			    (props.outFile == null || props.outFile.Length == 0))
+			    (props.OutFile == null || props.OutFile.Length == 0))
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 							Lang.Resource.Main_Error_NoInOutFile);
@@ -143,7 +143,7 @@ namespace firmware_wintools.Tools
 
 			try
 			{
-				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
+				using (fw.inFs = new FileStream(props.InFile, FileMode.Open,
 							FileAccess.Read, FileShare.Read))
 				{
 					byte[] hdrbuf = new byte[BLKHDR_LEN];
@@ -190,9 +190,9 @@ namespace firmware_wintools.Tools
 				}
 
 				if (hdrs[OutPos].length - BLKHDR_LEN > 0)
-					using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
+					using (fw.inFs = new FileStream(props.InFile, FileMode.Open,
 								FileAccess.Read, FileShare.Read))
-					using (fw.outFs = new FileStream(props.outFile, FileMode.Create,
+					using (fw.outFs = new FileStream(props.OutFile, FileMode.Create,
 								FileAccess.Write, FileShare.None))
 					{
 						int read_len, data_len;

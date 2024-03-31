@@ -40,7 +40,7 @@ namespace firmware_wintools.Tools
 		internal virtual List<Param> ParamList { get; }
 
 		internal abstract int
-		Do(string[] args, int arg_idx, Program.Properties baseProps);
+		Do(string[] args, int arg_idx, Program.Properties props);
 
 		internal int InitArgs(string[] args, int offset)
 		{

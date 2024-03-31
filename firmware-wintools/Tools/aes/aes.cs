@@ -83,14 +83,14 @@ namespace firmware_wintools.Tools
 			if (ret != 0)
 				return ret;
 
-			if (props.help)
+			if (props.Help)
 			{
 				PrintHelp(arg_idx);
 				return 0;
 			}
 
-			fw.inFInfo = new FileInfo(props.inFile);
-			fw.outFile = props.outFile;
+			fw.inFInfo = new FileInfo(props.InFile);
+			fw.outFile = props.OutFile;
 
 			iv = new byte[16];
 			key = new byte[(ShortKey ? 128 : 256) / 8];	// 128または256bit
@@ -169,7 +169,7 @@ namespace firmware_wintools.Tools
 				{
 					try
 					{
-						using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
+						using (fw.inFs = new FileStream(props.InFile, FileMode.Open,
 								FileAccess.Read, FileShare.Write))
 						{
 							fw.inFs.Seek(Offset, SeekOrigin.Begin);
@@ -264,7 +264,7 @@ namespace firmware_wintools.Tools
 			}
 			/* check offset/length end */
 
-			if (!props.quiet)
+			if (!props.Quiet)
 				PrintInfo(key, iv, salt);
 
 			AesManaged aes = new AesManaged
@@ -282,9 +282,9 @@ namespace firmware_wintools.Tools
 
 			try
 			{
-				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
+				using (fw.inFs = new FileStream(props.InFile, FileMode.Open,
 							FileAccess.Read, FileShare.Write))
-				using (fw.outFs = new FileStream(props.outFile, FileMode.Create,
+				using (fw.outFs = new FileStream(props.OutFile, FileMode.Create,
 							FileAccess.Write, FileShare.None))
 				using (Cs = new CryptoStream(fw.outFs, endec, CryptoStreamMode.Write))
 				{

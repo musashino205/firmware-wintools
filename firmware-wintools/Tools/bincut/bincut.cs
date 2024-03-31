@@ -44,7 +44,7 @@ namespace firmware_wintools.Tools
 		{
 			Firmware fw = new Firmware();
 
-			if (props.help)
+			if (props.Help)
 			{
 				PrintHelp(arg_idx);
 				return 0;
@@ -52,7 +52,7 @@ namespace firmware_wintools.Tools
 
 			InitArgs(args, arg_idx);
 
-			fw.inFInfo = new FileInfo(props.inFile);
+			fw.inFInfo = new FileInfo(props.InFile);
 
 			/* check offset/length */
 			if (Offset >  fw.inFInfo.Length)
@@ -94,14 +94,14 @@ namespace firmware_wintools.Tools
 			}
 			/* check offset/length/pad/pad_with_bs end */
 
-			if (!props.quiet)
+			if (!props.Quiet)
 				PrintInfo();
 
 			try
 			{
-				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
+				using (fw.inFs = new FileStream(props.InFile, FileMode.Open,
 							FileAccess.Read, FileShare.Read))
-				using (fw.outFs = new FileStream(props.outFile, FileMode.Create,
+				using (fw.outFs = new FileStream(props.OutFile, FileMode.Create,
 							FileAccess.Write, FileShare.None))
 				{
 					fw.inFs.Seek(Offset, SeekOrigin.Begin);

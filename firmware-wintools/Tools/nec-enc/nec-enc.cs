@@ -68,7 +68,7 @@ namespace firmware_wintools.Tools
 			if (ret != 0)
 				return ret;
 
-			if (props.help)
+			if (props.Help)
 			{
 				PrintHelp(arg_idx);
 				return 0;
@@ -92,14 +92,14 @@ namespace firmware_wintools.Tools
 				}
 			}
 
-			if (!props.quiet)
+			if (!props.Quiet)
 				PrintInfo();
 
 			try
 			{
-				using (fw.inFs = new FileStream(props.inFile, FileMode.Open,
+				using (fw.inFs = new FileStream(props.InFile, FileMode.Open,
 							FileAccess.Read, FileShare.Read))
-				using (fw.outFs = new FileStream(props.outFile, FileMode.Create,
+				using (fw.outFs = new FileStream(props.OutFile, FileMode.Create,
 							FileAccess.Write, FileShare.None))
 				{
 					fw.data = new byte[0x1000];
