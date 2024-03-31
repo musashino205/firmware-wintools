@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -14,14 +15,19 @@ namespace firmware_wintools.Tools
 		public override bool skipOFChk => true;
 
 
-		private int finfo_len = 0x40;
+		private int FInfoLen = 0x40;
+		private string OutDir = "webdata";
 
-		string dir = "webdata";
+		internal override List<Param> ParamList => new List<Param>()
+		{
+			new Param() { PChar = 'd', PType = Param.PTYPE.STR, SetField = "OutDir" },
+			new Param() { PChar = 'H', PType = Param.PTYPE.INT, SetField = "FInfoLen" }
+		};
 
 		/// <summary>
 		/// rtkwebの機能ヘルプを表示します
 		/// </summary>
-		public void PrintHelp(int arg_idx)
+		public new void PrintHelp(int arg_idx)
 		{
 			Console.WriteLine("Usage: {0}rtkweb [options...]\n" +
 				desc +
@@ -46,6 +52,7 @@ namespace firmware_wintools.Tools
 		{
 			int read_len, fcnt = 0;
 			Firmware fw = new Firmware();
+			int ret;
 
 			if (props.help)
 			{
@@ -53,11 +60,13 @@ namespace firmware_wintools.Tools
 				return 0;
 			}
 
-			Init_args(args, arg_idx);
+			ret = InitArgs(args, arg_idx);
+			if (ret != 0)
+				return ret;
 
 			fw.inFInfo = new FileInfo(props.inFile);
 
-			if (finfo_len % 4 != 0 || finfo_len > 0x100)
+			if (FInfoLen % 4 != 0 || FInfoLen > 0x100)
 			{
 				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 							"specified file header is not multiple of 4 (len % 4 != 0)"
@@ -65,7 +74,7 @@ namespace firmware_wintools.Tools
 				return 1;
 			}
 
-			if (dir.Length == 0) {
+			if (OutDir.Length == 0) {
 				Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 							"invalid output directory specified");
 				return 1;
@@ -78,13 +87,13 @@ namespace firmware_wintools.Tools
 				{
 					string fname, fdir, fbase;
 					uint flen = 0;
-					int nameEnd = 0, finfo_name_len = finfo_len - sizeof(uint);
+					int nameEnd = 0, finfo_name_len = FInfoLen - sizeof(uint);
 
 					while (fw.inFs.Position < fw.inFs.Length) {
-						fw.data = new byte[finfo_len];
-						read_len = fw.inFs.Read(fw.data, 0, finfo_len);
+						fw.data = new byte[FInfoLen];
+						read_len = fw.inFs.Read(fw.data, 0, FInfoLen);
 
-						if (read_len < finfo_len) {
+						if (read_len < FInfoLen) {
 							Console.Error.WriteLine(Lang.Resource.Main_Warning_Prefix +
 										"fileinfo field is too short! {0} bytes (ofs: 0x{1:x08})",
 										read_len, fw.inFs.Position);
@@ -108,8 +117,8 @@ namespace firmware_wintools.Tools
 						fdir = Path.GetDirectoryName(fname);
 						fbase = Path.GetFileName(fname);
 
-						if (fdir.Length != 0 && !Directory.Exists(dir + "/" + fdir))
-							Directory.CreateDirectory(dir + "/" + fdir);
+						if (fdir.Length != 0 && !Directory.Exists(OutDir + "/" + fdir))
+							Directory.CreateDirectory(OutDir + "/" + fdir);
 
 						fw.data = new byte[(int)flen];
 						read_len = fw.inFs.Read(fw.data, 0, (int)flen);
@@ -119,9 +128,9 @@ namespace firmware_wintools.Tools
 										flen);
 						}
 
-						if (!Directory.Exists(dir))
-							Directory.CreateDirectory(dir);
-						using (FileStream outfile = new FileStream(dir + "/" + fname,
+						if (!Directory.Exists(OutDir))
+							Directory.CreateDirectory(OutDir);
+						using (FileStream outfile = new FileStream(OutDir + "/" + fname,
 											FileMode.Create, FileAccess.Write, FileShare.Read))
 							outfile.Write(fw.data, 0, (int)flen);
 
