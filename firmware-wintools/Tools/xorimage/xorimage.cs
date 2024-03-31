@@ -231,8 +231,8 @@ namespace firmware_wintools.Tools
 					if (Rewrite && Offset > 0)
 					{
 						fw.inFs.CopyTo(fw.outFs);
-						/* outFs.Lengthをoffsetまで切り詰める */
-						fw.outFs.SetLength(Offset);
+						/* 書き換え開始位置までseek */
+						fw.outFs.Seek(Offset, SeekOrigin.Begin);
 					}
 
 					/* inFs.Positionをoffsetに移動 */
@@ -252,10 +252,6 @@ namespace firmware_wintools.Tools
 							break;
 						}
 					}
-
-					/* copy remaining data in inFs to outFs if rewrite mode */
-					if (Rewrite)
-						fw.inFs.CopyTo(fw.outFs);
 				}
 			}
 			catch (IOException e)
