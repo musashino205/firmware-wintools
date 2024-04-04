@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Net;
 using System.Reflection;
 using System.Text;
 
@@ -8,7 +9,19 @@ namespace firmware_wintools.Tools
 	class HeaderFooter
 	{
 		[NonSerialized]
+		internal byte[] Data = null;
+		[NonSerialized]
 		internal long totalLen = 0;
+
+		internal int LoadData(in FileStream fs, int length)
+		{
+			/* 0 or less, or too long */
+			if (length < 0 || length > 0x400)
+				return -22;
+
+			Data = new byte[length];
+			return fs.Read(Data, 0, length) != length ? -22 : 0;
+		}
 
 		internal long SerializeProps(ref byte[] buf, long index)
 		{
@@ -87,6 +100,79 @@ namespace firmware_wintools.Tools
 
 			return curLen;
 		}
+
+		internal int DeserializeProps(int index)
+		{
+			FieldInfo[] fields;
+
+			if (Data == null || Data.Length == 0)
+				return -1;
+
+			fields = GetType().GetFields(
+					BindingFlags.Instance | BindingFlags.DeclaredOnly |
+					BindingFlags.Public | BindingFlags.NonPublic);
+			if (fields == null)
+				return -1;
+
+			foreach (FieldInfo f in fields)
+			{
+				if (f.IsNotSerialized)
+					continue;
+
+				switch (f.GetValue(this))
+				{
+					case byte byteVal when (Data.Length - index) > 0:
+						byteVal = Data[index];
+						f.SetValue(this, byteVal);
+						index++;
+						break;
+
+					case ushort ushortVal when (Data.Length - index) >= sizeof(ushort):
+						ushortVal = BitConverter.ToUInt16(Data, index);
+						ushortVal = (ushort)IPAddress.NetworkToHostOrder(ushortVal);
+						f.SetValue(this, ushortVal);
+						index += sizeof(ushort);
+						break;
+
+					case int intVal when (Data.Length - index) >= sizeof(int):
+						intVal = BitConverter.ToInt32(Data, index);
+						intVal = Utils.BE32toHost(intVal);
+						f.SetValue(this, intVal);
+						index += sizeof(int);
+						break;
+
+					case uint uintVal when (Data.Length - index) >= sizeof(uint):
+						uintVal = BitConverter.ToUInt32(Data, index);
+						uintVal = (uint)Utils.BE32toHost(uintVal);
+						f.SetValue(this, uintVal);
+						index += sizeof(uint);
+						break;
+
+					case long longVal when (Data.Length - index) >= sizeof(long):
+						longVal = BitConverter.ToInt64(Data, index);
+						longVal = IPAddress.NetworkToHostOrder(longVal);
+						f.SetValue(this, longVal);
+						index += sizeof(long);
+						break;
+
+					case byte[] byteAry
+							when byteAry != null
+							&& (Data.Length - index) >= byteAry.Length:
+						 Buffer.BlockCopy(Data, index, byteAry, 0, byteAry.Length);
+						//f.SetValue(this, byteAry);
+						index += byteAry.Length;
+						break;
+
+					default:
+						continue;
+				}
+			}
+
+			return index;
+		}
+
+		internal int DeserializeProps()
+			=> DeserializeProps(0);
 	}
 
 	class Firmware
