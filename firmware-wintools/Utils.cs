@@ -215,5 +215,14 @@ namespace firmware_wintools
 		{
 			return UnixZeroUTC().AddSeconds(unixtime);
 		}
+
+		public static int
+		XorData(ref byte[] data, int len, in byte[] pattern, int p_off)
+		{
+			for (int i = 0; i < len; i++, p_off %= pattern.Length)
+				data[i] ^= pattern[p_off++];
+
+			return p_off;
+		}
 	}
 }
