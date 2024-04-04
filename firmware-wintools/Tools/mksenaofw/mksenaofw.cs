@@ -167,6 +167,8 @@ namespace firmware_wintools.Tools
 		/// <returns></returns>
 		private int Decode(ref SenaoFirmware fw, Program.Properties props)
 		{
+			int ret;
+
 			fw.header = new SenaoHeader();
 
 			try
@@ -174,7 +176,9 @@ namespace firmware_wintools.Tools
 				using (fw.inFs = new FileStream(props.InFile, FileMode.Open,
 							FileAccess.Read, FileShare.Read))
 				{
-					if (fw.header.LoadHeader(in fw.inFs) != 0)
+					ret = fw.header.LoadData(fw.inFs, SenaoHeader.HDR_LEN);
+					if (ret != 0 ||
+					    fw.header.DeserializeProps() != SenaoHeader.HDR_LEN)
 					{
 						Console.Error.WriteLine(
 							Lang.Resource.Main_Error_Prefix +
