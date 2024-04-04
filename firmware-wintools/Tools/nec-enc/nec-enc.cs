@@ -36,16 +36,13 @@ namespace firmware_wintools.Tools
 				!Half ? Encoding.ASCII.GetString(Key) : "(none)");
 		}
 
-		private void
-		XorData(ref byte[] data, int len, byte[] key, ref int k_off, ref byte ptn)
+		private byte
+		XorDataIncrease(ref byte[] data, int len, byte incr, byte min, byte max)
 		{
-			for (int i = 0; len-- > 0;
-			     i++, ptn = (byte)(ptn % PTN_MAX + 1), k_off %= key.Length)
-			{
-				data[i] ^= ptn;
-				if (!Half)
-					data[i] ^= key[k_off++];
-			}
+			for (int i = 0; i < len; i++, incr = (byte)(incr % max + min))
+				data[i] ^= incr;
+
+			return incr;
 		}
 
 		/// <summary>
@@ -107,7 +104,9 @@ namespace firmware_wintools.Tools
 
 					while ((read_len = fw.inFs.Read(fw.data, 0, fw.data.Length)) > 0)
 					{
-						XorData(ref fw.data, read_len, Key, ref k_off, ref ptn);
+						ptn = XorDataIncrease(ref fw.data, read_len, ptn, 1, PTN_MAX);
+						if (!Half)
+							k_off = Utils.XorData(ref fw.data, read_len, Key, k_off);
 
 						fw.outFs.Write(fw.data, 0, read_len);
 					}
