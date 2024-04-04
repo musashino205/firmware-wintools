@@ -49,31 +49,6 @@ namespace firmware_wintools.Tools
 			Console.WriteLine(Lang.Tools.XorImageRes.Info_Rewrite, Rewrite);
 		}
 
-		/// <summary>
-		/// 指定された <paramref name="props"/> 内のpatternを用いて、<paramref name="data"/>
-		/// のxorを行います
-		/// </summary>
-		/// <param name="data">xor対象データ</param>
-		/// <param name="len">xor対象データの長さ</param>
-		/// <param name="props">xorimageの機能プロパティ</param>
-		/// <param name="p_len">パターン長</param>
-		/// <param name="p_off">パターン オフセット</param>
-		/// <returns></returns>
-		private static int
-		XorData(ref byte[] data, int len, in byte[] pattern, int p_len, int p_off)
-		{
-			int data_pos = 0;
-
-			while (len-- > 0)
-			{
-				data[data_pos] ^= pattern[p_off];
-				data_pos++;
-				p_off = (p_off + 1) % p_len;
-			}
-
-			return p_off;
-		}
-
 		private int
 		SetupPattern(out byte[] ptnAry, out int p_len)
 		{
@@ -242,7 +217,7 @@ namespace firmware_wintools.Tools
 					{
 						write_len = (Length < read_len) ? (int)Length : read_len;
 
-						p_off = XorData(ref fw.data, write_len, in ptnAry, p_len, p_off);
+						p_off = Utils.XorData(ref fw.data, write_len, ptnAry, p_off);
 						fw.outFs.Write(fw.data, 0, write_len);
 
 						Length -= write_len;
