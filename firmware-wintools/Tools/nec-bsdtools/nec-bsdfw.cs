@@ -14,7 +14,6 @@ namespace firmware_wintools.Tools
 		public override bool skipOFChk => true;
 
 
-		private readonly int BLKHDR_LEN = 0x18;
 		private readonly uint BLKHDR_F_GZIP = 0x80000000;	/* BIT(31) */
 		private readonly uint BLKHDR_F_EXEC = 0x00020000;   /* BIT(17) */
 
@@ -45,40 +44,6 @@ namespace firmware_wintools.Tools
 				"  -p <position>\t\tcut out the data at specified <position> (default: 0)");
 		}
 
-		private int CheckBlkHeader(in byte[] hdrAry, out BlkHeader header)
-		{
-			int i = 0;
-			uint val;
-			FieldInfo[] fields = typeof(BlkHeader).GetFields(BindingFlags.Instance |
-								BindingFlags.NonPublic);
-
-			header = new BlkHeader();
-
-			foreach (var field in fields)
-			{
-				if (field.IsNotSerialized)
-					continue;
-				val = (uint)Utils.BE32toHost(BitConverter.ToInt32(hdrAry, i));
-				if (field.FieldType == typeof(int))
-					field.SetValue(header, (int)val);
-				else
-					field.SetValue(header, val);
-				i += sizeof(uint);
-			}
-
-			/* フラグ集 */
-			val = header.flags;
-			if ((~val >> 16) != (val & 0xffff))
-				return 1;
-
-			/* ヘッダ長 */
-			val = header.hdrlen;
-			if (val != 0x18)
-				return 1;
-
-			return 0;
-		}
-
 		private void PrintBlkHeader(in List<BlkHeader> headers, int index)
 		{
 			BlkHeader header = headers[index];
@@ -101,7 +66,7 @@ namespace firmware_wintools.Tools
 					header.entryp);
 			//Console.WriteLine("  ---");
 			Console.WriteLine("  Header Offset         : 0x{0:X}",
-					header.offset - BLKHDR_LEN);
+					header.offset - BlkHeader.HDR_LEN);
 			Console.WriteLine("  Data Offset           : 0x{0:X}",
 					header.offset);
 			Console.WriteLine();
@@ -146,17 +111,15 @@ namespace firmware_wintools.Tools
 				using (fw.inFs = new FileStream(props.InFile, FileMode.Open,
 							FileAccess.Read, FileShare.Read))
 				{
-					byte[] hdrbuf = new byte[BLKHDR_LEN];
-					BlkHeader hdr = null;
-					int read_len;
+					BlkHeader hdr;
 
 					while (fw.inFs.Position < fw.inFs.Length) {
-						read_len = fw.inFs.Read(hdrbuf, 0, BLKHDR_LEN);
-						if (read_len < BLKHDR_LEN)
-							break;
-
-						ret = CheckBlkHeader(in hdrbuf, out hdr);
+						hdr = new BlkHeader();
+						ret = hdr.LoadData(fw.inFs, BlkHeader.HDR_LEN);
 						if (ret != 0)
+							break;
+						hdr.DeserializeProps();
+						if (!hdr.Validate())
 						{
 							if (hdrs.Count == 0)
 							{
@@ -172,7 +135,8 @@ namespace firmware_wintools.Tools
 						if (IsList)
 							PrintBlkHeader(in hdrs, hdrs.Count - 1);
 
-						fw.inFs.Seek(hdr.length - BLKHDR_LEN, SeekOrigin.Current);
+						fw.inFs.Seek(hdr.length - BlkHeader.HDR_LEN,
+							SeekOrigin.Current);
 						if (hdr.length % 4 > 0)
 							fw.inFs.Seek(4 - hdr.length % 4, SeekOrigin.Current);
 					}
@@ -189,7 +153,7 @@ namespace firmware_wintools.Tools
 					return 1;
 				}
 
-				if (hdrs[OutPos].length - BLKHDR_LEN > 0)
+				if (hdrs[OutPos].length - BlkHeader.HDR_LEN > 0)
 					using (fw.inFs = new FileStream(props.InFile, FileMode.Open,
 								FileAccess.Read, FileShare.Read))
 					using (fw.outFs = new FileStream(props.OutFile, FileMode.Create,
@@ -198,7 +162,7 @@ namespace firmware_wintools.Tools
 						int read_len, data_len;
 						BlkHeader hdr = hdrs[OutPos];
 
-						data_len = hdr.length - BLKHDR_LEN;
+						data_len = hdr.length - BlkHeader.HDR_LEN;
 						fw.data = new byte[data_len];
 
 						fw.inFs.Seek(hdrs[OutPos].offset, SeekOrigin.Begin);
@@ -228,7 +192,7 @@ namespace firmware_wintools.Tools
 			return 0;
 		}
 
-		private class BlkHeader
+		private class BlkHeader : HeaderFooter
 		{
 			internal uint flags = 0;
 			internal int length = 0;
@@ -239,6 +203,16 @@ namespace firmware_wintools.Tools
 
 			[NonSerialized]
 			internal long offset = 0;
+			[NonSerialized]
+			internal const int HDR_LEN = 0x18;
+
+			internal bool Validate()
+				/*
+				 * - フラグ上位16ビット反転が下位16ビットと異なる
+				 * - ヘッダ長がBLKHDR_LEN (0x18)と異なる
+				 */
+				=> (~flags >> 16) == (flags & 0xffff) &&
+				   hdrlen == HDR_LEN;
 		}
 	}
 }
