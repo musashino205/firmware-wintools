@@ -53,7 +53,7 @@ namespace firmware_wintools.Tools
 		SetupPattern(out byte[] ptnAry, out int p_len)
 		{
 			FileInfo ptnBinInfo = null;
-			int hexPtn_maxLen = 0x100;
+			int hexPtn_maxLen = 0x200;
 
 			ptnAry = null;
 			p_len = 0;
