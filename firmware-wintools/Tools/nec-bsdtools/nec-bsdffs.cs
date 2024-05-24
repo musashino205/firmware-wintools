@@ -23,6 +23,7 @@ namespace firmware_wintools.Tools
 		private bool IsList = false;
 		private bool IsListToText = false;
 		private bool SkipHardLink = true;
+		private bool Search4B = false;
 		private string OutText = null;
 		private string OutDir = "necbsd-root";
 		private string OutFsBin = null;
@@ -33,7 +34,8 @@ namespace firmware_wintools.Tools
 			new Param() { PChar = 'f', PType = Param.PTYPE.STR, SetField = "OutFsBin" },
 			new Param() { PChar = 'H', PType = Param.PTYPE.BOOL, SetField = "!SkipHardLink" },
 			new Param() { PChar = 'L', PType = Param.PTYPE.STR, SetField = "OutText", SetBool = "IsListToText" },
-			new Param() { PChar = 'l', PType = Param.PTYPE.BOOL, SetField = "IsList" }
+			new Param() { PChar = 'l', PType = Param.PTYPE.BOOL, SetField = "IsList" },
+			new Param() { PChar = '4', PType = Param.PTYPE.BOOL, SetField = "Search4B" }
 		};
 
 		/// <summary>
@@ -53,7 +55,8 @@ namespace firmware_wintools.Tools
 				"  -L <output>\t\toutput directory/file list to <output>\n" +
 				"  -d [<directory>]\textract directories/files into <directory> (default: \"necbsd-rootfs\")\n" +
 				"  -f <output>[:<size>]\tcut out filesystem binary to <output> with <size> (default: 32MB)\n" +
-				"  -H\t\t\tdon't skip listing/extracting hard-link files\n");
+				"  -H\t\t\tdon't skip listing/extracting hard-link files\n" +
+				"  -4\t\t\tsearch superblock on each 4 bytes instead of 8 bytes\n");
 		}
 
 		internal long GetBlkOffset(long ExpectOffs)
@@ -125,7 +128,8 @@ namespace firmware_wintools.Tools
 						if (ret == 0)
 							break;
 
-						fw.inFs.Seek(-(DiskSuperBlk.SUPERBLK_LEN - sizeof(uint) * 2),
+						fw.inFs.Seek(-(DiskSuperBlk.SUPERBLK_LEN
+								- sizeof(uint) * (Search4B ? 1 : 2)),
 								SeekOrigin.Current);
 					}
 
