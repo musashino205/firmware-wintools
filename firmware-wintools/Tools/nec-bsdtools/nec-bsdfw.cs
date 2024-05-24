@@ -14,8 +14,8 @@ namespace firmware_wintools.Tools
 		public override bool skipOFChk => true;
 
 
-		private readonly uint BLKHDR_F_GZIP = 0x80000000;	/* BIT(31) */
-		private readonly uint BLKHDR_F_EXEC = 0x00020000;   /* BIT(17) */
+		private const uint BLKHDR_F_GZIP = 0x80000000;	/* BIT(31) */
+		private const uint BLKHDR_F_EXEC = 0x00020000;   /* BIT(17) */
 
 		private bool IsList = false;
 		private int OutPos = 0;
