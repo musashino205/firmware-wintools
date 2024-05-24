@@ -14,7 +14,8 @@ namespace firmware_wintools.Tools
 		public override bool skipOFChk => true;
 
 
-		private const uint BLKHDR_F_GZIP = 0x80000000;	/* BIT(31) */
+		private const uint BLKHDR_F_GZIP = 0x80000000;  /* BIT(31) */
+		private const uint BLKHDR_F_LZMA = 0x20000000;	/* BIT(29) */
 		private const uint BLKHDR_F_EXEC = 0x00020000;   /* BIT(17) */
 
 		private bool IsList = false;
@@ -53,6 +54,8 @@ namespace firmware_wintools.Tools
 					header.flags);
 			Console.WriteLine("    GZIP Compressed       : {0}",
 					(header.flags & BLKHDR_F_GZIP) != 0 ? "Yes" : "No");
+			Console.WriteLine("    LZMA Compressed       : {0}",
+					(header.flags & BLKHDR_F_LZMA) != 0 ? "Yes" : "No");
 			Console.WriteLine("    Executable            : {0}",
 					(header.flags & BLKHDR_F_EXEC) != 0 ? "Yes" : "No");
 			Console.WriteLine("  Data Length (with hdr): 0x{0:X}",
