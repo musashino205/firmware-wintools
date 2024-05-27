@@ -163,6 +163,28 @@ namespace firmware_wintools.Tools
 						index += byteAry.Length;
 						break;
 
+					case int[] intAry
+							when intAry != null
+							&& (Data.Length - index) >= intAry.Length * sizeof(int):
+						for (int i = 0; i < intAry.Length; i++)
+						{
+							intAry[i] = BitConverter.ToInt32(Data, index + i * sizeof(int));
+							intAry[i] = Utils.BE32toHost(intAry[i]);
+						}
+						index += intAry.Length * sizeof(int);
+						break;
+
+					case long[] longAry
+							when longAry != null
+							&& (Data.Length - index) >= longAry.Length * sizeof(long):
+						for (int i = 0; i < longAry.Length; i++)
+						{
+							longAry[i] = BitConverter.ToInt64(Data, index + i * sizeof(long));
+							longAry[i] = Utils.BE64toHost(longAry[i]);
+						}
+						index += longAry.Length * sizeof(long);
+						break;
+
 					default:
 						continue;
 				}
