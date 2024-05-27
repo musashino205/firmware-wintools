@@ -13,6 +13,12 @@ namespace firmware_wintools.Tools
 		[NonSerialized]
 		internal long totalLen = 0;
 
+		internal enum Endian {
+			BE = 0,
+			LE,
+			INVAL = 0xff,
+		};
+
 		internal int LoadData(in FileStream fs, int length)
 		{
 			/* 0 or less, or too long */
@@ -101,9 +107,12 @@ namespace firmware_wintools.Tools
 			return curLen;
 		}
 
-		internal int DeserializeProps(int index)
+		internal int DeserializeProps(int index, Endian endian)
 		{
 			FieldInfo[] fields;
+
+			if (endian == Endian.INVAL)
+				return -1;
 
 			if (Data == null || Data.Length == 0)
 				return -1;
@@ -129,28 +138,38 @@ namespace firmware_wintools.Tools
 
 					case ushort ushortVal when (Data.Length - index) >= sizeof(ushort):
 						ushortVal = BitConverter.ToUInt16(Data, index);
-						ushortVal = (ushort)IPAddress.NetworkToHostOrder(ushortVal);
+						if (endian == Endian.BE)
+							ushortVal = (ushort)IPAddress.NetworkToHostOrder(ushortVal);
 						f.SetValue(this, ushortVal);
 						index += sizeof(ushort);
 						break;
 
 					case int intVal when (Data.Length - index) >= sizeof(int):
 						intVal = BitConverter.ToInt32(Data, index);
-						intVal = Utils.BE32toHost(intVal);
+						if (endian == Endian.BE)
+							intVal = Utils.BE32toHost(intVal);
+						else
+							intVal = Utils.LE32toHost(intVal);
 						f.SetValue(this, intVal);
 						index += sizeof(int);
 						break;
 
 					case uint uintVal when (Data.Length - index) >= sizeof(uint):
 						uintVal = BitConverter.ToUInt32(Data, index);
-						uintVal = (uint)Utils.BE32toHost(uintVal);
+						if (endian == Endian.BE)
+							uintVal = (uint)Utils.BE32toHost(uintVal);
+						else
+							uintVal = (uint)Utils.LE32toHost(uintVal);
 						f.SetValue(this, uintVal);
 						index += sizeof(uint);
 						break;
 
 					case long longVal when (Data.Length - index) >= sizeof(long):
 						longVal = BitConverter.ToInt64(Data, index);
-						longVal = IPAddress.NetworkToHostOrder(longVal);
+						if (endian == Endian.BE)
+							longVal = Utils.BE64toHost(longVal);
+						else
+							longVal = Utils.LE64toHost(longVal);
 						f.SetValue(this, longVal);
 						index += sizeof(long);
 						break;
@@ -169,7 +188,8 @@ namespace firmware_wintools.Tools
 						for (int i = 0; i < intAry.Length; i++)
 						{
 							intAry[i] = BitConverter.ToInt32(Data, index + i * sizeof(int));
-							intAry[i] = Utils.BE32toHost(intAry[i]);
+							if (endian == Endian.BE)
+								intAry[i] = Utils.BE32toHost(intAry[i]);
 						}
 						index += intAry.Length * sizeof(int);
 						break;
@@ -180,7 +200,10 @@ namespace firmware_wintools.Tools
 						for (int i = 0; i < longAry.Length; i++)
 						{
 							longAry[i] = BitConverter.ToInt64(Data, index + i * sizeof(long));
-							longAry[i] = Utils.BE64toHost(longAry[i]);
+							if (endian == Endian.BE)
+								longAry[i] = Utils.BE64toHost(longAry[i]);
+							else
+								longAry[i] = Utils.LE64toHost(longAry[i]);
 						}
 						index += longAry.Length * sizeof(long);
 						break;
@@ -192,6 +215,9 @@ namespace firmware_wintools.Tools
 
 			return index;
 		}
+
+		internal int DeserializeProps(int index)
+			=> DeserializeProps(index, Endian.BE);
 
 		internal int DeserializeProps()
 			=> DeserializeProps(0);
