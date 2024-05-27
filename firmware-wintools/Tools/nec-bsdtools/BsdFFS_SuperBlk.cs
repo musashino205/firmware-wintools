@@ -148,7 +148,7 @@ namespace firmware_wintools.Tools
 				new Property(){ name = "dblkno", desc = "Data Block Offset", fmt = "0x{0:X}", type = Property.Type.BLK },
 				new Property(){ name = "size", desc = "Total Blocks", fmt = "{0:N0}", type = Property.Type.RAW },
 				new Property(){ name = "time", desc = "Last Written", fmt = "{0}", type = Property.Type.DT },
-				new Property(){ name = "ndir", desc = "Directories", fmt = "{0}", type = Property.Type.RAW },
+				new Property(){ name = "ndir", desc = "Directories", fmt = "{0:N0}", type = Property.Type.RAW },
 			};
 
 			internal SuperBlock()
@@ -191,6 +191,10 @@ namespace firmware_wintools.Tools
 				 */
 				if (iblkno > ushort.MaxValue || iblkno < 0 ||
 				    dblkno > ushort.MaxValue || dblkno < 0)
+					return false;
+
+				/* tracks per cylinder * sectors per track = sectors per cylinder */
+				if (ntrack * nsect != spc)
 					return false;
 
 				return true;
