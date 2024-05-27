@@ -75,7 +75,7 @@ namespace firmware_wintools.Tools
 		internal override int Do(string[] args, int arg_idx, Program.Properties props)
 		{
 			Firmware fw = new Firmware();
-			DiskSuperBlk sBlk;
+			SuperBlock sblk;
 			List<Inode> inodes = new List<Inode>();
 			/*
 			 * 実際に存在していたinodeのリスト
@@ -114,42 +114,47 @@ namespace firmware_wintools.Tools
 					int read_len;
 					uint i;
 					long cur_off = 0;
-					sBlk = new DiskSuperBlk();
+					sblk = new SuperBlock();
 					Inode ino = null;
 
 					/* super block検索 */
 					while (fw.inFs.Position < fw.inFs.Length) {
 						cur_off = fw.inFs.Position;
-						read_len = fw.inFs.Read(sBlk.buf, 0, DiskSuperBlk.SUPERBLK_LEN);
-						if (read_len < DiskSuperBlk.SUPERBLK_LEN)
+						read_len = fw.inFs.Read(sblk.Data, 0, SuperBlock.LENGTH);
+						if (read_len < SuperBlock.LENGTH)
 							break;
 
-						ret = sBlk.CheckSuperBlk();
-						if (ret == 0)
+						if (sblk.DeserializeProps(0, sblk.GetEndian()) > 0 &&
+						    sblk.Evaluate())
 							break;
 
-						fw.inFs.Seek(-(DiskSuperBlk.SUPERBLK_LEN
+						fw.inFs.Seek(-(SuperBlock.LENGTH
 								- sizeof(uint) * (Search4B ? 1 : 2)),
 								SeekOrigin.Current);
 					}
 
-					if (ret != 0)
+					/*
+					 * if not found
+					 * (current offset + superblock length is
+					 *  larger than input file)
+					 */
+					if (cur_off + SuperBlock.LENGTH > fw.inFs.Length)
 					{
 						Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
 								"no super block found");
 						return ret;
 					}
 
-					isBE = sBlk.isBE;
+					isBE = sblk.endian == HeaderFooter.Endian.BE ? true : false;
 					supBlkOffset = cur_off;
-					sBlk.PrintSuperBlk(cur_off);
+					sblk.PrintSuperBlock(cur_off);
 
 					/* ファイルシステム切り出し */
 					if (OutFsBin != null)
 					{
 						string[] finfo = OutFsBin.Split(':');
 						string dir = Path.GetDirectoryName(finfo[0]);
-						long len = sBlk._totalBlks * DiskSuperBlk.BLKSZ;
+						long len = sblk.size * SuperBlock.BLKSZ;
 
 						if (dir.Length > 0 && !Directory.Exists(dir))
 						{
@@ -214,12 +219,12 @@ namespace firmware_wintools.Tools
 					}
 
 					/* 以下2つはsuper block前に0x2000あることを期待する */
-					inoBlkOffset = sBlk._iBlkOffs * 0x200;
-					datBlkOffset = sBlk._dBlkOffs * 0x200;
+					inoBlkOffset = sblk.iblkno * SuperBlock.BLKSZ;
+					datBlkOffset = sblk.dblkno * SuperBlock.BLKSZ;
 					fw.inFs.Seek(GetBlkOffset(inoBlkOffset), SeekOrigin.Begin);
 
 					/* inodeパース */
-					for (i = 0; i < (sBlk._dBlkOffs - sBlk._iBlkOffs) * 4; i++)
+					for (i = 0; i < (sblk.dblkno - sblk.iblkno) * 4; i++)
 					{
 						ino = new Inode(this);
 
