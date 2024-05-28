@@ -193,11 +193,13 @@ namespace firmware_wintools.Tools
 				    dblkno > ushort.MaxValue || dblkno < 0)
 					return false;
 
+				if (ntrack == 0 && nsect == spc)
+					return true;
 				/* tracks per cylinder * sectors per track = sectors per cylinder */
-				if (ntrack * nsect != spc)
-					return false;
+				if (ntrack * nsect == spc)
+					return true;
 
-				return true;
+				return false;
 			}
 
 			internal void PrintSuperBlock(long curoff)
