@@ -41,6 +41,12 @@ namespace firmware_wintools.Tools
 			[NonSerialized]
 			internal static readonly int INODE_LEN = 0x80;
 			[NonSerialized]
+			internal const int INODE_NDADDR = 12;
+			[NonSerialized]
+			internal const int INODE_NINDIR = 3;
+			[NonSerialized]
+			internal const int NINDIR_BASE = 512;
+			[NonSerialized]
 			internal byte[] buf = new byte[INODE_LEN];
 			[NonSerialized]
 			internal uint inum = 0;
@@ -159,8 +165,9 @@ namespace firmware_wintools.Tools
 			/// <param name="inFs"></param>
 			/// <param name="buf"></param>
 			/// <param name="isBE"></param>
+			/// <param name="nindir""></param>
 			/// <returns></returns>
-			internal int GetInodeData(in FileStream inFs, out byte[][] buf, bool isBE)
+			internal int GetInodeData(in FileStream inFs, out byte[][] buf, bool isBE, int nindir)
 			{
 				byte[] tmp = new byte[sizeof(uint)];
 				long offset;
@@ -178,16 +185,24 @@ namespace firmware_wintools.Tools
 				{
 					buf[i] = new byte[0x200];
 
-					if (i < 0x60)
+					/*
+					 * direct 1ブロック当たり0x1000 (4096 bytes)
+					 *   = 0x200 (512 bytes) * 8
+					 */
+					if (i < INODE_NDADDR * 8)
 					{
 						offset = directDiskBlks[i >> 3] + 0x200 * (i & 0x7);
 						inFs.Seek(parent.GetBlkOffset(offset), SeekOrigin.Begin);
 						inFs.Read(buf[i], 0, 0x200);
 					}
-					else if (i < 0x1060)
+					/*
+					 * indirect 1ブロック当たり0x1000 (4096bytes)
+					 * pointer 512 * 8
+					 */
+					else if (i < INODE_NDADDR * 8 + nindir * 8)
 					{
-						j = i - 0x60;
-						offset = indirectDiskBlks[0] + 4 * ((j >> 3) & 0x1ff);
+						j = i - INODE_NDADDR * 8;
+						offset = indirectDiskBlks[0] + 4 * ((j >> 3) & (nindir - 1));
 						inFs.Seek(parent.GetBlkOffset(offset), SeekOrigin.Begin);
 						inFs.Read(tmp, 0, sizeof(uint));
 						val = isBE ?
@@ -205,14 +220,16 @@ namespace firmware_wintools.Tools
 					}
 					else
 					{
-						j = i - 0x1060;
-						offset = indirectDiskBlks[1] + 4 * ((j >> 12) & 0x1ff);
+						j = i - (INODE_NDADDR * 8 + nindir * 8);
+						/* NINDIR次第で有効テーブル長が変化 */
+						offset = indirectDiskBlks[1] + 4
+								* ((j >> 12 + (nindir / NINDIR_BASE - 1)) & (nindir - 1));
 						inFs.Seek(parent.GetBlkOffset(offset), SeekOrigin.Begin);
 						inFs.Read(tmp, 0, sizeof(uint));
 						val = isBE ?
 							(uint)Utils.BE32toHost(BitConverter.ToInt32(tmp, 0)) :
 							(uint)Utils.LE32toHost(BitConverter.ToInt32(tmp, 0));
-						offset = val * 0x200 + 0x4 * ((j >> 3) & 0x1ff);
+						offset = val * 0x200 + 0x4 * ((j >> 3) & (nindir - 1));
 						inFs.Seek(parent.GetBlkOffset(offset), SeekOrigin.Begin);
 						inFs.Read(tmp, 0, sizeof(uint));
 						val = isBE ?
@@ -237,11 +254,13 @@ namespace firmware_wintools.Tools
 			/// <param name="baseInoList"></param>
 			/// <param name="actInoList"></param>
 			/// <param name="builtIno"></param>
+			/// <param name="nindir"></param>
 			/// <returns></returns>
 			internal int SetupDirInode(in FileStream inFs, bool isBE,
 						in List<Inode> baseInoList,
 						ref List<uint> actInoList,
-						out Inode builtIno)
+						out Inode builtIno,
+						int nindir)
 			{
 				DirEntry entry;
 				byte[][] inoData;
@@ -269,7 +288,7 @@ namespace firmware_wintools.Tools
 				};
 				dirSetupDone = true;
 
-				ret = GetInodeData(in inFs, out inoData, isBE);
+				ret = GetInodeData(in inFs, out inoData, isBE, nindir);
 				if (ret != 0)
 					return ret;
 				for (int i = 0; i < blocks; i++)
@@ -301,7 +320,7 @@ namespace firmware_wintools.Tools
 						{
 							if (matchIno.dirSetupDone == false)
 								matchIno.SetupDirInode(in inFs, isBE, in baseInoList,
-										ref actInoList, out _matchIno);
+										ref actInoList, out _matchIno, nindir);
 						}
 						else
 						{
@@ -430,13 +449,14 @@ namespace firmware_wintools.Tools
 			/// </summary>
 			/// <param name="inFs"></param>
 			/// <param name="actInoList"></param>
+			/// <param name="nindir"></param>
 			/// <param name="path"></param>
 			/// <param name="outDir"></param>
 			/// <param name="isBE"></param>
 			/// <param name="skipHard"></param>
 			/// <returns></returns>
 			internal int ExtractDirFiles(in FileStream inFs, in List<uint> actInoList,
-						string path, string outDir, bool isBE, bool skipHard)
+						int nindir, string path, string outDir, bool isBE, bool skipHard)
 			{
 				int ret;
 				DateTime dt;
@@ -460,8 +480,8 @@ namespace firmware_wintools.Tools
 						{
 							path += ino_name + (path != null ? "/" : "");
 							foreach (Inode _ino in dirFileEnt)
-								_ino.ExtractDirFiles(in inFs, in actInoList, path,
-										outDir, isBE, skipHard);
+								_ino.ExtractDirFiles(in inFs, in actInoList, nindir,
+										path, outDir, isBE, skipHard);
 						}
 
 						/*
@@ -480,7 +500,7 @@ namespace firmware_wintools.Tools
 					/* Regular File */
 					case FFSFileInfo.FT_REG:
 						string file = outDir + path + ino_name;
-						ret = GetInodeData(in inFs, out byte[][] data, isBE);
+						ret = GetInodeData(in inFs, out byte[][] data, isBE, nindir);
 						if (ret != 0)
 							return ret;
 						using (FileStream fs = new FileStream(@file, FileMode.Create,

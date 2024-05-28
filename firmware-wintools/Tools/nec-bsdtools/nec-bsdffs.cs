@@ -248,7 +248,7 @@ namespace firmware_wintools.Tools
 						    _ino.dirSetupDone == false)
 						{
 							//_ino.PrintInode();
-							_ino.SetupDirInode(fw.inFs, isBE, in inodes, ref actInoList, out tmp);
+							_ino.SetupDirInode(fw.inFs, isBE, in inodes, ref actInoList, out tmp, sblk.nindir);
 
 							/*
 							 * /dev に存在するはずがinodeエントリグループ内に該当inodeが
@@ -270,7 +270,7 @@ namespace firmware_wintools.Tools
 								{
 									if (!Directory.Exists(OutDir))
 										Directory.CreateDirectory(OutDir);
-									tmp.ExtractDirFiles(in fw.inFs, in actInoList, null, OutDir,
+									tmp.ExtractDirFiles(in fw.inFs, in actInoList, sblk.nindir, null, OutDir,
 											isBE, SkipHardLink);
 								}
 						}
