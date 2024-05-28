@@ -193,6 +193,9 @@ namespace firmware_wintools.Tools
 				    dblkno > ushort.MaxValue || dblkno < 0)
 					return false;
 
+				/* nindirが無効な値 */
+				if (nindir == 0)
+					return false;
 				if (ntrack == 0 && nsect == spc)
 					return true;
 				/* tracks per cylinder * sectors per track = sectors per cylinder */
