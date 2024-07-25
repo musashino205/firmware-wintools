@@ -141,7 +141,7 @@ namespace firmware_wintools.Tools
 			[NonSerialized]
 			internal static readonly List<Property> _props = new List<Property>()
 			{
-				new Property(){ name = "magic", desc = "Magic Number", fmt = "0x{0:X08} (endian: {1})", type = Property.Type.MGC },
+				new Property(){ name = "orig_magic", desc = "Magic Number", fmt = "0x{0:X08} (endian: {1})", type = Property.Type.MGC },
 				new Property(){ name = "sblkno", desc = "2nd SuperBlock Offset", fmt = "0x{0:X}", type = Property.Type.BLK },
 				new Property(){ name = "cblkno", desc = "Cylinder Block Offset", fmt = "0x{0:X}", type = Property.Type.BLK },
 				new Property(){ name = "iblkno", desc = "Inode Block Offset", fmt = "0x{0:X}", type = Property.Type.BLK },
