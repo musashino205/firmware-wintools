@@ -192,4 +192,10 @@
   <data name="Warning.LargeOffset" xml:space="preserve">
     <value>the specified offset exceeds the file length, use '0'</value>
   </data>
+  <data name="Error.InvalidPatternChar" xml:space="preserve">
+    <value>the specified hex pattern contains invalid character(s) ("{0}")</value>
+  </data>
+  <data name="Error.ConvertHexPatternFail" xml:space="preserve">
+    <value>failed to convert the specified hex pattern</value>
+  </data>
 </root>

@@ -61,6 +61,15 @@ namespace firmware_wintools.Lang.Tools {
         }
         
         /// <summary>
+        ///   failed to convert the specified hex pattern に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Error_ConvertHexPatternFail {
+            get {
+                return ResourceManager.GetString("Error.ConvertHexPatternFail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   the numbers of charactors (hex) is incorrect に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Error_InvalidHexPatternLen {
@@ -75,6 +84,15 @@ namespace firmware_wintools.Lang.Tools {
         internal static string Error_InvalidPatternBin {
             get {
                 return ResourceManager.GetString("Error.InvalidPatternBin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   the specified hex pattern contains invalid character(s) (&quot;{0}&quot;) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Error_InvalidPatternChar {
+            get {
+                return ResourceManager.GetString("Error.InvalidPatternChar", resourceCulture);
             }
         }
         

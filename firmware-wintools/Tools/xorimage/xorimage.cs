@@ -110,6 +110,8 @@ namespace firmware_wintools.Tools
 
 			if (IsHex)
 			{
+				string tmp;
+
 				if (Pattern.StartsWith("0x"))
 				{
 					Pattern = Pattern.Substring(2);
@@ -130,10 +132,22 @@ namespace firmware_wintools.Tools
 					return 1;
 				}
 
-				p_len /= 2;
-				ptnAry = new byte[p_len];
-				for (int i = 0; i < p_len; i++)
-					ptnAry[i] = Convert.ToByte(Pattern.Substring(i * 2, 2), 16);
+				tmp = Pattern;
+				if (!Utils.StrToByteArray(ref tmp, out ptnAry))
+				{
+					/* エラーになった文字が格納されたかチェック */
+					if (!tmp.Equals(Pattern))
+						Console.Error.WriteLine(
+							Lang.Resource.Main_Error_Prefix +
+							Lang.Tools.XorImageRes.Error_InvalidPatternChar,
+							tmp);
+					else
+						Console.Error.WriteLine(
+							Lang.Resource.Main_Error_Prefix +
+							Lang.Tools.XorImageRes.Error_ConvertHexPatternFail);
+
+					return 1;
+				}
 			}
 			else
 				ptnAry = Encoding.ASCII.GetBytes(Pattern);

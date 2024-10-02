@@ -189,4 +189,10 @@
   <data name="Warning.LargeOffset" xml:space="preserve">
     <value>指定されたオフセットはファイルサイズを超えています。 '0' を使用します</value>
   </data>
+  <data name="Error.InvalidPatternChar" xml:space="preserve">
+    <value>指定されたパターン文字列（16進数）は無効な文字を含んでいます（"{0}"）</value>
+  </data>
+  <data name="Error.ConvertHexPatternFail" xml:space="preserve">
+    <value>指定されたパターン文字列（16進数）の変換に失敗しました</value>
+  </data>
 </root>
