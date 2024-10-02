@@ -110,6 +110,12 @@ namespace firmware_wintools.Tools
 
 			if (IsHex)
 			{
+				if (Pattern.StartsWith("0x"))
+				{
+					Pattern = Pattern.Substring(2);
+					p_len -= 2;
+				}
+
 				if ((p_len / 2) > hexPtn_maxLen)
 				{
 					Console.Error.WriteLine(
