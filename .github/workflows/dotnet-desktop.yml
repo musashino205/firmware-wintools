@@ -28,7 +28,7 @@ jobs:
 
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: MSBuild.exe のセットアップ
-      uses: microsoft/setup-msbuild@v1.0.2
+      uses: microsoft/setup-msbuild@v2
 
     # Execute all unit tests in the solution
     - name: ユニットテストの実行
