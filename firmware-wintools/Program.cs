@@ -53,6 +53,7 @@ namespace firmware_wintools
 			new Tools.Hex2Bin(),
 			new Tools.Nec_BsdFw(),
 			new Tools.Nec_BsdFFS(),
+			new Tools.Nec_WAEnc(),
 		};
 
 		/// <summary>
