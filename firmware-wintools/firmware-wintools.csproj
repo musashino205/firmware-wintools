@@ -165,7 +165,12 @@
     <Content Include="Tools\compile_sample.txt" />
     <Content Include="Tools\debug_sample.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\7zip\7zip.csproj">
+      <Project>{d6a3084f-4935-48d3-9e22-084164084d3d}</Project>
+      <Name>7zip</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Lang\CommonRes.ja-JP.resx" />
     <EmbeddedResource Include="Lang\CommonRes.resx">

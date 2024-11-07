@@ -18,6 +18,7 @@ namespace firmware_wintools.Tools
 		private const uint BLKHDR_F_GZIP = 0x80000000;  /* BIT(31) */
 		private const uint BLKHDR_F_LZMA = 0x20000000;	/* BIT(29) */
 		private const uint BLKHDR_F_EXEC = 0x00020000;   /* BIT(17) */
+		private const uint BLKHDR_F_COMP = BLKHDR_F_GZIP | BLKHDR_F_LZMA;
 
 		private bool IsList = false;
 		private bool Decompress = false;
@@ -45,7 +46,7 @@ namespace firmware_wintools.Tools
 			Console.WriteLine(Lang.CommonRes.Help_FunctionOpts +
 				Lang.CommonRes.Help_Options_o +
 				"  -l\t\t\tshow list of data blocks instead of cutting out\n" +
-				"  -d\t\t\tdecompress gzip compressed data\n" +
+				"  -d\t\t\tdecompress gzip/lzma compressed data\n" +
 				"  -p <position>\t\tcut out the data at specified <position> (default: 0)");
 		}
 
@@ -161,11 +162,11 @@ namespace firmware_wintools.Tools
 				}
 
 				if (Decompress &&
-				    (hdrs[OutPos].flags & BLKHDR_F_GZIP) == 0)
+				    (hdrs[OutPos].flags & (BLKHDR_F_GZIP | BLKHDR_F_LZMA)) == 0)
 				{
 					Console.Error.WriteLine(
 						Lang.Resource.Main_Warning_Prefix +
-						"specified data is not gzip-compressed, " +
+						"specified data is not compressed with valid type (gzip/lzma), " +
 						"output binary without decompression...");
 					Decompress = false;
 				}
@@ -176,34 +177,60 @@ namespace firmware_wintools.Tools
 					using (fw.outFs = new FileStream(props.OutFile, FileMode.Create,
 								FileAccess.Write, FileShare.None))
 					{
-						GZipStream gz = Decompress ?
-								new GZipStream(fw.inFs, CompressionMode.Decompress) :
-								null;
-						int read_len, data_len;
 						BlkHeader hdr = hdrs[OutPos];
+						int read_len, data_len;
+						uint flags = Decompress ?
+								(hdr.flags & BLKHDR_F_COMP) : 0;
 
 						fw.data = new byte[0x10000];
 						data_len = hdr.length - BlkHeader.HDR_LEN;
-						read_len = (!Decompress && data_len < fw.data.Length) ?
-									data_len : fw.data.Length;
 
 						fw.inFs.Seek(hdrs[OutPos].offset, SeekOrigin.Begin);
-						while ((read_len = Decompress ?
-								gz.Read(fw.data, 0, read_len) :
-								fw.inFs.Read(fw.data, 0, read_len)) > 0)
+						switch (flags)
 						{
-							fw.outFs.Write(fw.data, 0, read_len);
-							data_len -= read_len;
-							read_len = (!Decompress && data_len < fw.data.Length) ?
-									data_len : fw.data.Length;
-						}
+							case BLKHDR_F_GZIP:
+								GZipStream gz
+									= new GZipStream(fw.inFs, CompressionMode.Decompress);
 
-						if (!Decompress && data_len != 0)
-						{
-							Console.Error.WriteLine(
-									Lang.Resource.Main_Error_Prefix +
-									" failed to read block data");
-							return 1;
+								while ((read_len = gz.Read(fw.data, 0, fw.data.Length)) > 0)
+									fw.outFs.Write(fw.data, 0, read_len);
+								gz.Close();
+								break;
+
+							case BLKHDR_F_LZMA:
+								SevenZip.Compression.LZMA.Decoder lzma
+									= new SevenZip.Compression.LZMA.Decoder();
+								byte[] buf = new byte[sizeof(int) * 2];
+								long decode_len;
+
+								fw.inFs.Read(buf, 0, 5);
+								lzma.SetDecoderProperties(buf);
+
+								fw.inFs.Read(buf, 0, sizeof(int) * 2);
+								decode_len = BitConverter.ToInt64(buf, 0);
+
+								lzma.Code(fw.inFs, fw.outFs, data_len, decode_len, null);
+								break;
+
+							default: /* uncompressed or unkown compression type */
+								read_len = (data_len < fw.data.Length) ?
+										data_len : fw.data.Length;
+								while ((read_len = fw.inFs.Read(fw.data, 0, read_len)) > 0)
+								{
+									fw.outFs.Write(fw.data, 0, read_len);
+									data_len -= read_len;
+									read_len = (data_len < fw.data.Length) ?
+											data_len : fw.data.Length;
+								}
+
+								if (data_len != 0)
+								{
+									Console.Error.WriteLine(
+										Lang.Resource.Main_Error_Prefix +
+										" failed to read block data");
+									return 1;
+								}
+								break;
 						}
 					}
 				else
