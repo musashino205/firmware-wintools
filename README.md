@@ -248,6 +248,7 @@ firmware-wintools xorimage -i <input file> -o <output file> -p <pattern> [-x] [-
 
 ## バージョン履歴
 
+- 0.7.3 (2024/11/07): nec-waenc 追加
 - 0.7.2.1 (2024/10/02): nec-bsdffsモードにおけるFS情報表示でエンディアン変換前の値を使用, xorimageモードにおいて非数値を指定した際の16進数変換時の例外を修正
 - 0.7.2 (2024/05/28): Firmwareクラスにデシリアライザを追加, nec-bsdfwモードにLZMA圧縮表示を追加, nec-bsdffsに4バイト探索オプションとnindir=512以外のサポートを追加
 - 0.7.0 (2024/03/31): 全体でコマンドラインオプションをリスト化, aesモードに事前共有鍵サポートを追加, aesモードのパディングをPKCS#7に変更
