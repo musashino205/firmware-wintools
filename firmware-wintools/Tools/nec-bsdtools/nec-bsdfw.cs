@@ -165,20 +165,25 @@ namespace firmware_wintools.Tools
 						int read_len, data_len;
 						BlkHeader hdr = hdrs[OutPos];
 
+						fw.data = new byte[0x10000];
 						data_len = hdr.length - BlkHeader.HDR_LEN;
-						fw.data = new byte[data_len];
+						read_len = data_len > fw.data.Length ? fw.data.Length : data_len;
 
 						fw.inFs.Seek(hdrs[OutPos].offset, SeekOrigin.Begin);
-						read_len = fw.inFs.Read(fw.data, 0, data_len);
-						if (read_len != data_len)
+						while ((read_len = fw.inFs.Read(fw.data, 0, read_len)) > 0)
+						{
+							fw.outFs.Write(fw.data, 0, read_len);
+							data_len -= read_len;
+							read_len = data_len > fw.data.Length ? fw.data.Length : data_len;
+						}
+
+						if (data_len != 0)
 						{
 							Console.Error.WriteLine(
 									Lang.Resource.Main_Error_Prefix +
 									" failed to read block data");
 							return 1;
 						}
-
-						fw.outFs.Write(fw.data, 0, data_len);
 					}
 				else
 					Console.Error.WriteLine(Lang.Resource.Main_Warning_Prefix +
