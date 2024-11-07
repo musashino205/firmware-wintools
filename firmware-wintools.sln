@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29025.244
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "firmware-wintools", "firmware-wintools\firmware-wintools.csproj", "{32681909-9B6C-4E2A-9346-5CDAEB9BADF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "7zip", "7zip\7zip.csproj", "{D6A3084F-4935-48D3-9E22-084164084D3D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{32681909-9B6C-4E2A-9346-5CDAEB9BADF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32681909-9B6C-4E2A-9346-5CDAEB9BADF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32681909-9B6C-4E2A-9346-5CDAEB9BADF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6A3084F-4935-48D3-9E22-084164084D3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6A3084F-4935-48D3-9E22-084164084D3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6A3084F-4935-48D3-9E22-084164084D3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6A3084F-4935-48D3-9E22-084164084D3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
