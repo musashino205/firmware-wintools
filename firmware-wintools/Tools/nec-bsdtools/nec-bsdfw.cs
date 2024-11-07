@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Reflection;
 
 namespace firmware_wintools.Tools
@@ -19,11 +20,13 @@ namespace firmware_wintools.Tools
 		private const uint BLKHDR_F_EXEC = 0x00020000;   /* BIT(17) */
 
 		private bool IsList = false;
+		private bool Decompress = false;
 		private int OutPos = 0;
 
 		internal override List<Param> ParamList => new List<Param>()
 		{
 			new Param() { PChar = 'l', PType = Param.PTYPE.BOOL, SetField = "IsList" },
+			new Param() { PChar = 'd', PType = Param.PTYPE.BOOL, SetField = "Decompress" },
 			new Param() { PChar = 'p', PType = Param.PTYPE.INT, SetField = "OutPos" }
 		};
 
@@ -42,6 +45,7 @@ namespace firmware_wintools.Tools
 			Console.WriteLine(Lang.CommonRes.Help_FunctionOpts +
 				Lang.CommonRes.Help_Options_o +
 				"  -l\t\t\tshow list of data blocks instead of cutting out\n" +
+				"  -d\t\t\tdecompress gzip compressed data\n" +
 				"  -p <position>\t\tcut out the data at specified <position> (default: 0)");
 		}
 
@@ -156,28 +160,45 @@ namespace firmware_wintools.Tools
 					return 1;
 				}
 
+				if (Decompress &&
+				    (hdrs[OutPos].flags & BLKHDR_F_GZIP) == 0)
+				{
+					Console.Error.WriteLine(
+						Lang.Resource.Main_Warning_Prefix +
+						"specified data is not gzip-compressed, " +
+						"output binary without decompression...");
+					Decompress = false;
+				}
+
 				if (hdrs[OutPos].length - BlkHeader.HDR_LEN > 0)
 					using (fw.inFs = new FileStream(props.InFile, FileMode.Open,
 								FileAccess.Read, FileShare.Read))
 					using (fw.outFs = new FileStream(props.OutFile, FileMode.Create,
 								FileAccess.Write, FileShare.None))
 					{
+						GZipStream gz = Decompress ?
+								new GZipStream(fw.inFs, CompressionMode.Decompress) :
+								null;
 						int read_len, data_len;
 						BlkHeader hdr = hdrs[OutPos];
 
 						fw.data = new byte[0x10000];
 						data_len = hdr.length - BlkHeader.HDR_LEN;
-						read_len = data_len > fw.data.Length ? fw.data.Length : data_len;
+						read_len = (!Decompress && data_len < fw.data.Length) ?
+									data_len : fw.data.Length;
 
 						fw.inFs.Seek(hdrs[OutPos].offset, SeekOrigin.Begin);
-						while ((read_len = fw.inFs.Read(fw.data, 0, read_len)) > 0)
+						while ((read_len = Decompress ?
+								gz.Read(fw.data, 0, read_len) :
+								fw.inFs.Read(fw.data, 0, read_len)) > 0)
 						{
 							fw.outFs.Write(fw.data, 0, read_len);
 							data_len -= read_len;
-							read_len = data_len > fw.data.Length ? fw.data.Length : data_len;
+							read_len = (!Decompress && data_len < fw.data.Length) ?
+									data_len : fw.data.Length;
 						}
 
-						if (data_len != 0)
+						if (!Decompress && data_len != 0)
 						{
 							Console.Error.WriteLine(
 									Lang.Resource.Main_Error_Prefix +
