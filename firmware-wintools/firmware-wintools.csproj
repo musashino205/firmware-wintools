@@ -144,10 +144,10 @@
     <Compile Include="Tools\nec-bsdtools\BsdFFS_Inode.cs" />
     <Compile Include="Tools\nec-bsdtools\nec-bsdffs.cs" />
     <Compile Include="Tools\nec-enc\nec-enc.cs" />
-    <Compile Include="Tools\hex2bin\hex2bin.cs" />
+    <Compile Include="Tools\misc-tools\hex2bin.cs" />
     <Compile Include="Tools\nec-bsdtools\nec-bsdfw.cs" />
-    <Compile Include="Tools\nec-waenc\nec-waenc.cs" />
-    <Compile Include="Tools\rtkweb\rtkweb.cs" />
+    <Compile Include="Tools\misc-tools\nec-waenc.cs" />
+    <Compile Include="Tools\misc-tools\rtkweb.cs" />
     <Compile Include="Tools\Tool.cs" />
     <Compile Include="Tools\xorimage\xorimage.cs" />
     <Compile Include="Utils.cs" />
@@ -255,5 +255,6 @@
       <CustomToolNamespace>firmware_wintools.Lang.Tools</CustomToolNamespace>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
