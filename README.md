@@ -248,6 +248,7 @@ firmware-wintools xorimage -i <input file> -o <output file> -p <pattern> [-x] [-
 
 ## バージョン履歴
 
+- 0.7.4 (2024/12/18): netgear-encimg 追加, AesData() 関数追加, xorimageモードにおける16進数パターン長を 0x400 に拡大, 7zipのLZMAライブラリを追加
 - 0.7.3.2 (2024/11/07): nec-bsdfwモードにgzip展開サポートを追加, nec-bsdfwモードにおけるバイナリ出力時のデータ読み出しを固定長バッファ使用ループに変更
 - 0.7.3 (2024/11/07): nec-waenc 追加
 - 0.7.2.1 (2024/10/02): nec-bsdffsモードにおけるFS情報表示でエンディアン変換前の値を使用, xorimageモードにおいて非数値を指定した際の16進数変換時の例外を修正
