@@ -1,5 +1,7 @@
 using System;
 using System.Globalization;
+using System.IO;
+using System.Security.Cryptography;
 
 namespace firmware_wintools
 {
@@ -223,6 +225,47 @@ namespace firmware_wintools
 				data[i] ^= pattern[p_off++];
 
 			return p_off;
+		}
+
+		public static void
+		AesData(int keylen, in byte[] key, in byte[] iv, bool encrypt,
+			CipherMode cipher, PaddingMode pad,
+			in Stream input, in Stream output, long datalen)
+		{
+			using (Aes aes = Aes.Create())
+			{
+				aes.Key = key;
+				aes.IV = iv;
+				aes.KeySize = keylen;
+				aes.Mode = cipher;
+				aes.Padding = pad;
+
+				using (CryptoStream cs
+					= new CryptoStream(
+						output,
+						encrypt ?
+							aes.CreateEncryptor(key, iv) :
+							aes.CreateDecryptor(key, iv),
+						CryptoStreamMode.Write))
+				{
+					byte[] buf = new byte[0x10000];
+					int readlen;
+
+					while ((readlen = input.Read(buf, 0, buf.Length)) > 0)
+					{
+						if (datalen > readlen)
+						{
+							datalen -= readlen;
+							cs.Write(buf, 0, readlen);
+						}
+						else
+						{
+							cs.Write(buf, 0, Convert.ToInt32(datalen));
+							break;
+						}
+					}
+				}
+			}
 		}
 	}
 }
