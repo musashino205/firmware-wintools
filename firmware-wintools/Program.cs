@@ -54,6 +54,7 @@ namespace firmware_wintools
 			new Tools.Nec_BsdFw(),
 			new Tools.Nec_BsdFFS(),
 			new Tools.Nec_WAEnc(),
+			new Tools.Netgear_EncImg(),
 		};
 
 		/// <summary>
