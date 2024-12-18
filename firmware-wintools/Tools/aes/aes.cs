@@ -76,7 +76,6 @@ namespace firmware_wintools.Tools
 			byte[] key;
 			byte[] salt = null;
 			int ret;
-			CryptoStream Cs;
 			Firmware fw = new Firmware();
 
 			ret = InitArgs(args, arg_idx);
@@ -267,32 +266,17 @@ namespace firmware_wintools.Tools
 			if (!props.Quiet)
 				PrintInfo(key, iv, salt);
 
-			AesManaged aes = new AesManaged
-			{
-				KeySize = ShortKey ? 128 : 256,
-				IV = iv,
-				Key = key,
-				Mode = CipherMode.CBC,
-				Padding = NoPad ? PaddingMode.None : PaddingMode.PKCS7
-			};
-
-			ICryptoTransform endec = Decrypt ?
-				aes.CreateDecryptor(aes.Key, aes.IV) :
-				aes.CreateEncryptor(aes.Key, aes.IV);
-
 			try
 			{
 				using (fw.inFs = new FileStream(props.InFile, FileMode.Open,
 							FileAccess.Read, FileShare.Write))
 				using (fw.outFs = new FileStream(props.OutFile, FileMode.Create,
 							FileAccess.Write, FileShare.None))
-				using (Cs = new CryptoStream(fw.outFs, endec, CryptoStreamMode.Write))
 				{
 					fw.inFs.Seek(Offset, SeekOrigin.Begin);
 
-					byte[] buf = new byte[0x10000];
-
 					if (!Decrypt && UsePSK) {
+						byte[] buf = new byte[0x10];
 						Buffer.BlockCopy(
 							Encoding.ASCII.GetBytes("Salted__"), 0, buf, 0, 8);
 						Buffer.BlockCopy(salt, 0, buf, 8, 8);
@@ -300,20 +284,9 @@ namespace firmware_wintools.Tools
 						fw.outFs.Write(buf, 0, 16);
 					}
 
-					int readlen;
-					while ((readlen = fw.inFs.Read(buf, 0, buf.Length)) > 0)
-					{
-						if (Length > readlen)
-						{
-							Length -= readlen;
-							Cs.Write(buf, 0, readlen);
-						}
-						else
-						{
-							Cs.Write(buf, 0, (int)Length);
-							break;
-						}
-					}
+					Utils.AesData(ShortKey ? 128 : 256, key, iv, !Decrypt,
+						CipherMode.CBC, NoPad ? PaddingMode.None : PaddingMode.PKCS7,
+						fw.inFs, fw.outFs, Length);
 				}
 			}
 			catch (Exception e)
