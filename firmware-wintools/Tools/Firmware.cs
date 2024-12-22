@@ -139,7 +139,7 @@ namespace firmware_wintools.Tools
 					case ushort ushortVal when (Data.Length - index) >= sizeof(ushort):
 						ushortVal = BitConverter.ToUInt16(Data, index);
 						if (endian == Endian.BE)
-							ushortVal = (ushort)IPAddress.NetworkToHostOrder(ushortVal);
+							ushortVal = (ushort)Utils.BE16toHost(ushortVal);
 						f.SetValue(this, ushortVal);
 						index += sizeof(ushort);
 						break;
