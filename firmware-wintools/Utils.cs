@@ -163,6 +163,12 @@ namespace firmware_wintools
 			return StrToByteArray(ref val, out cnv, 0, val.Length / 2);
 		}
 
+		public static short BE16toHost(short val)
+			=> System.Net.IPAddress.NetworkToHostOrder(val);
+
+		public static short BE16toHost(ushort val)
+			=> BE16toHost((short)val);
+
 		public static int BE32toHost(int val)
 		{
 			return System.Net.IPAddress.NetworkToHostOrder(val);
@@ -177,6 +183,21 @@ namespace firmware_wintools
 		{
 			return System.Net.IPAddress.NetworkToHostOrder(val);
 		}
+
+		public static short LE16toHost(short val)
+		{
+			byte[] ary;
+
+			if (BitConverter.IsLittleEndian)
+				return val;
+
+			ary = BitConverter.GetBytes(val);
+			Array.Reverse(ary);
+			return BitConverter.ToInt16(ary, 0);
+		}
+
+		public static short LE16toHost(ushort val)
+			=> LE16toHost((short)val);
 
 		public static int LE32toHost(int val)
 		{
