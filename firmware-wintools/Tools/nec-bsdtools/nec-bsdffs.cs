@@ -39,7 +39,7 @@ namespace firmware_wintools.Tools
 		};
 
 		/// <summary>
-		/// rtkwebの機能ヘルプを表示します
+		/// nec-bsdffsの機能ヘルプを表示します
 		/// </summary>
 		public new void PrintHelp(int arg_idx)
 		{
