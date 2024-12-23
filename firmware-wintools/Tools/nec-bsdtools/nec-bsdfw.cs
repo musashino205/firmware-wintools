@@ -32,11 +32,11 @@ namespace firmware_wintools.Tools
 		};
 
 		/// <summary>
-		/// rtkwebの機能ヘルプを表示します
+		/// nec-bsdfwの機能ヘルプを表示します
 		/// </summary>
 		public new void PrintHelp(int arg_idx)
 		{
-			Console.WriteLine("Usage: {0}rtkweb [options...]\n" +
+			Console.WriteLine("Usage: {0}nec-bsdfw [options...]\n" +
 				desc +
 				Environment.NewLine,
 				arg_idx < 2 ? "" : "firmware-wintools ");   // 引数インデックスが2未満（symlink呼び出し）の場合機能名のみ
