@@ -136,6 +136,14 @@ namespace firmware_wintools.Tools
 						index++;
 						break;
 
+					case short shortVal when (Data.Length - index) >= sizeof(short):
+						shortVal = BitConverter.ToInt16(Data, index);
+						if (endian == Endian.BE)
+							shortVal = Utils.BE16toHost(shortVal);
+						f.SetValue(this, shortVal);
+						index += sizeof(short);
+						break;
+
 					case ushort ushortVal when (Data.Length - index) >= sizeof(ushort):
 						ushortVal = BitConverter.ToUInt16(Data, index);
 						if (endian == Endian.BE)
