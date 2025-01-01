@@ -138,6 +138,7 @@
     <Compile Include="Tools\Firmware.cs" />
     <Compile Include="Tools\misc-tools\netgear-encimg.cs" />
     <Compile Include="Tools\misc-tools\silex-enc.cs" />
+    <Compile Include="Tools\misc-tools\woff-head.cs" />
     <Compile Include="Tools\mkedimaximg\EdimaxFirmware.cs" />
     <Compile Include="Tools\mkedimaximg\mkedimaximg.cs" />
     <Compile Include="Tools\mksenaofw\mksenaofw.cs" />
