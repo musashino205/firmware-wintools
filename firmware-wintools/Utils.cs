@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Security.Cryptography;
 
 namespace firmware_wintools
@@ -288,5 +289,51 @@ namespace firmware_wintools
 				}
 			}
 		}
+
+		public static byte[]
+		ZlibDecompress(in byte[] buf, int offset, int cmplen, int ucmplen)
+		{
+			byte[] output = new byte[ucmplen];
+			byte[] zlibhdr = new byte[2];
+			int readlen;
+
+			try
+			{
+				using (MemoryStream ms = new MemoryStream(buf, offset, cmplen))
+				{
+					if ((readlen = ms.Read(zlibhdr, 0, zlibhdr.Length)) != zlibhdr.Length)
+						return null;
+					/*
+					 * Zlib header (RFC1950, 2.2 Data format):
+					 *
+					 * - zlibhdr[0]: CMF (Compression Method and flags)
+					 *   - bits 7:4 CINFO (compression info)
+					 *   - bits 3:0 CM (compression method)
+					 *
+					 * - zlibhdr[1]: FLG (Flags)
+					 *   - bits 7:6 FLEVEL (compression level)
+					 *   - bit  5   FDICT (preset dictionary)
+					 *   - bits 4:0 FCHECK (check bits for CMF and FLG)
+					 */
+					if (zlibhdr[0] != 0x78 ||
+						(zlibhdr[1] & 0x20) == 1 ||
+						(zlibhdr[0] * 0x100 + zlibhdr[1]) % 0x1f != 0)
+						return null;
+
+					using (DeflateStream ds = new DeflateStream(ms, CompressionMode.Decompress))
+						ds.Read(output, 0, output.Length);
+				}
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+
+			return output;
+		}
+
+		public static byte[]
+		ZlibDecompress(in byte[] buf, int ucmplen)
+			=> ZlibDecompress(buf, 0, buf.Length, ucmplen);
 	}
 }
