@@ -57,6 +57,7 @@ namespace firmware_wintools
 			new Tools.Netgear_EncImg(),
 			new Tools.Silex_Enc(),
 			new Tools.Woff_Head(),
+			new Tools.NosImg_Enc(),
 		};
 
 		/// <summary>
