@@ -27,6 +27,9 @@ namespace firmware_wintools.Tools
 			stream.Seek(entry.offset, SeekOrigin.Begin);
 			if (stream.Read(buf, 0, buf.Length) != entry.cmplen)
 				return null;
+			/* uncompressed data is stored */
+			if (entry.cmplen == entry.ucmplen)
+				return buf;
 
 			return Utils.ZlibDecompress(buf, Convert.ToInt32(entry.ucmplen));
 		}
