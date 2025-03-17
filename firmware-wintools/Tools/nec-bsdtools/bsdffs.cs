@@ -93,6 +93,10 @@ namespace firmware_wintools.Tools
 				return 0;
 			}
 
+			/* 後方互換用 */
+			if (Path.GetFileNameWithoutExtension(args[arg_idx - 1]).Equals("nec-bsdffs"))
+				OutDir = "necbsd-root";
+
 			ret = InitArgs(args, arg_idx);
 			if (ret != 0)
 				return ret;
