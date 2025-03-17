@@ -39,7 +39,7 @@ namespace firmware_wintools
 		/// <summary>
 		/// 各ツールクラスのリスト
 		/// </summary>
-		private static readonly List<Tools.Tool> toolList = new List<Tools.Tool>() {
+		internal static readonly List<Tools.Tool> toolList = new List<Tools.Tool>() {
 			new Tools.Aes(),
 			new Tools.BinCut(),
 			new Tools.Buffalo_Enc(),
