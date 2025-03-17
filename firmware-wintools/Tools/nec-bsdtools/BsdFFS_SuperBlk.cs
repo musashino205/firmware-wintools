@@ -13,7 +13,7 @@ using System.Reflection;
 
 namespace firmware_wintools.Tools
 {
-	internal partial class Nec_BsdFFS
+	internal partial class BsdFFS
 	{
 		private class SuperBlock : HeaderFooter
 		{

@@ -15,7 +15,7 @@ using System.Text;
 
 namespace firmware_wintools.Tools
 {
-	internal partial class Nec_BsdFFS
+	internal partial class BsdFFS
 	{
 		private class Inode
 		{
@@ -63,9 +63,9 @@ namespace firmware_wintools.Tools
 			[NonSerialized]
 			internal bool dirSetupDone = false;
 			[NonSerialized]
-			private Nec_BsdFFS parent = null;
+			private BsdFFS parent = null;
 
-			public Inode(Nec_BsdFFS _parent)
+			public Inode(BsdFFS _parent)
 			{
 				parent = _parent;
 			}

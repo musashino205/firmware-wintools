@@ -4,11 +4,11 @@ using System.IO;
 
 namespace firmware_wintools.Tools
 {
-	internal partial class Nec_BsdFFS : Tool
+	internal partial class BsdFFS : Tool
 	{
 		/* ツール情報　*/
-		public override string name { get => "nec-bsdffs"; }
-		public override string desc { get => "find and list/extract directories/files from NEC NetBSD FFS"; }
+		public override string name { get => "bsdffs"; }
+		public override string desc { get => "find and list/extract directories/files from BSD FFS"; }
 		public override string descFmt { get => "    {0}		: {1}"; }
 		public override bool skipOFChk => true;
 
@@ -25,7 +25,7 @@ namespace firmware_wintools.Tools
 		private bool SkipHardLink = true;
 		private bool Search4B = false;
 		private string OutText = null;
-		private string OutDir = "necbsd-root";
+		private string OutDir = "bsdffs-root";
 		private string OutFsBin = null;
 
 		internal override List<Param> ParamList => new List<Param>()
@@ -39,11 +39,11 @@ namespace firmware_wintools.Tools
 		};
 
 		/// <summary>
-		/// nec-bsdffsの機能ヘルプを表示します
+		/// bsdffsの機能ヘルプを表示します
 		/// </summary>
 		public new void PrintHelp(int arg_idx)
 		{
-			Console.WriteLine("Usage: {0}nec-bsdffs [options...]\n" +
+			Console.WriteLine("Usage: {0}bsdffs [options...]\n" +
 				desc +
 				Environment.NewLine,
 				arg_idx < 2 ? "" : "firmware-wintools ");   // 引数インデックスが2未満（symlink呼び出し）の場合機能名のみ
@@ -65,7 +65,7 @@ namespace firmware_wintools.Tools
 		}
 
 		/// <summary>
-		/// nec-bsdffsメイン関数
+		/// bsdffsメイン関数
 		/// <para>NetBSDベースのNEC Aterm機のFFSを検出してリストを表示
 		/// またはファイルを展開</para>
 		/// </summary>

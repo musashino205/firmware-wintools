@@ -52,7 +52,7 @@ namespace firmware_wintools
 			new Tools.RtkWeb(),
 			new Tools.Hex2Bin(),
 			new Tools.Nec_BsdFw(),
-			new Tools.Nec_BsdFFS(),
+			new Tools.BsdFFS(),
 			new Tools.Nec_WAEnc(),
 			new Tools.Netgear_EncImg(),
 			new Tools.Silex_Enc(),
