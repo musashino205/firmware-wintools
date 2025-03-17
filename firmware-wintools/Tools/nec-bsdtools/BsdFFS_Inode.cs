@@ -473,6 +473,14 @@ namespace firmware_wintools.Tools
 					/* Directory */
 					case FFSFileInfo.FT_DIR:
 						string dir = outDir + path + ino_name;
+						if (path != null &&
+						    ino_name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+						{
+							Console.WriteLine(Lang.Resource.Main_Warning_Prefix +
+								"this directory has invalid name for the current FS (\"{0}\")",
+								ino_name);
+							break;
+						}
 						if (!Directory.Exists(dir))
 							Directory.CreateDirectory(dir);
 
@@ -500,6 +508,13 @@ namespace firmware_wintools.Tools
 					/* Regular File */
 					case FFSFileInfo.FT_REG:
 						string file = outDir + path + ino_name;
+						if (ino_name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+						{
+							Console.WriteLine(Lang.Resource.Main_Warning_Prefix +
+								"this file has invalid name for the current FS (\"{0}\")",
+								ino_name);
+							break;
+						}
 						ret = GetInodeData(in inFs, out byte[][] data, isBE, nindir);
 						if (ret != 0)
 							return ret;
