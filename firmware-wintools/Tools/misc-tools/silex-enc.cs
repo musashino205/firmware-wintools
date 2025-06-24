@@ -86,6 +86,9 @@ namespace firmware_wintools.Tools
 					Encoding.ASCII.GetString(header.model),
 					Encoding.ASCII.GetString(header.version));
 
+			if (entries.Count == 0)
+				return;
+
 			Console.WriteLine("#  offset\tlength");
 			foreach (DataEntry entry in entries)
 			{
@@ -118,9 +121,7 @@ namespace firmware_wintools.Tools
 				{
 					header = new FWHeader();
 					int readlen;
-					byte[] buf = new byte[BlockHeader.BLKHDR_LEN
-								+ BlockHeader.BLKDATA_LEN
-								+ sizeof(ushort)];
+					byte[] buf = new byte[FWHeader.DEFAULT_LEN];
 
 					/* firmware header */
 					if ((readlen = fw.inFs.Read(buf, 0, FWHeader.DEFAULT_LEN))
@@ -144,73 +145,91 @@ namespace firmware_wintools.Tools
 					using (fw.outFs = new FileStream(props.OutFile, FileMode.Create,
 							FileAccess.Write, FileShare.None))
 					{
-						DataEntry entry = null;
-						uint baseoffs = 0, dataoffs;
-						int datalen;
-						int i = 0;
-
-						while ((readlen = fw.inFs.Read(buf, 0, buf.Length)) > 0)
+						if (header.blocks > 0)	/* 複数データ */
 						{
-							/* ヘッダ長 + チェックサム長未満 */
-							if (readlen < BlockHeader.BLKHDR_LEN + sizeof(ushort))
-							{
-								Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
-									"failed to read data block");
-								return 1;
-							}
+							DataEntry entry = null;
+							uint baseoffs = 0, dataoffs;
+							int datalen;
+							int i = 0;
+							buf = new byte[BlockHeader.BLKHDR_LEN
+										+ BlockHeader.BLKDATA_LEN
+										+ sizeof(ushort)];
 
-							ret = DecodeBlock(ref buf, out dataoffs, out datalen);
-							if (ret < 0)
+							while ((readlen = fw.inFs.Read(buf, 0, buf.Length)) > 0)
 							{
-								Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
-									"failed to decode block");
-								return ret;
-							}
-							else if (ret == BlockHeader.ENDBLK_IDX)
-							{
-								if (entry != null)
-									entries.Add(entry);
-								break;
-							}
-
-							int proclen = BlockHeader.BLKHDR_LEN + sizeof(ushort);
-
-							if (datalen > 0)
-							{
-								/*
-								 * SKY-AP-301AN等で 0xF81E0000 など巨大なアドレスを
-								 * 指していることがあり、出力先バイナリが大きくなりすぎるので
-								 * "-r" オプション未指定時は最初のデータのオフセットを
-								 * ベースとして扱う
-								 */
-								if (!RealOffset && ret == 1)
-									baseoffs = dataoffs;
-
-								/*
-								 * ブロックのオフセットが出力先データの現在位置から飛んでいる
-								 * -> 次のデータ開始
-								 */
-								if ((dataoffs - baseoffs) > fw.outFs.Position)
+								/* ヘッダ長 + チェックサム長未満 */
+								if (readlen < BlockHeader.BLKHDR_LEN + sizeof(ushort))
 								{
-									fw.outFs.Seek(dataoffs - baseoffs, SeekOrigin.Begin);
-									i = 0;
+									Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+										"failed to read data block");
+									return 1;
+								}
+
+								ret = DecodeBlock(ref buf, out dataoffs, out datalen);
+								if (ret < 0)
+								{
+									Console.Error.WriteLine(Lang.Resource.Main_Error_Prefix +
+										"failed to decode block");
+									return ret;
+								}
+								else if (ret == BlockHeader.ENDBLK_IDX)
+								{
 									if (entry != null)
 										entries.Add(entry);
+									break;
 								}
-								fw.outFs.Write(buf, 0, datalen);
-								proclen += datalen;
 
-								if (i == 0)
+								int proclen = BlockHeader.BLKHDR_LEN + sizeof(ushort);
+
+								if (datalen > 0)
 								{
-									entry = new DataEntry();
-									entry.offset = dataoffs - baseoffs;
+									/*
+									 * SKY-AP-301AN等で 0xF81E0000 など巨大なアドレスを
+									 * 指していることがあり、出力先バイナリが大きくなりすぎるので
+									 * "-r" オプション未指定時は最初のデータのオフセットを
+									 * ベースとして扱う
+									 */
+									if (!RealOffset && ret == 1)
+										baseoffs = dataoffs;
+
+									/*
+									 * ブロックのオフセットが出力先データの現在位置から飛んでいる
+									 * -> 次のデータ開始
+									 */
+									if ((dataoffs - baseoffs) > fw.outFs.Position)
+									{
+										fw.outFs.Seek(dataoffs - baseoffs, SeekOrigin.Begin);
+										i = 0;
+										if (entry != null)
+											entries.Add(entry);
+									}
+									fw.outFs.Write(buf, 0, datalen);
+									proclen += datalen;
+
+									if (i == 0)
+									{
+										entry = new DataEntry();
+										entry.offset = dataoffs - baseoffs;
+									}
+
+									entry.length += datalen;
+									i++;
 								}
 
-								entry.length += datalen;
-								i++;
+								fw.inFs.Seek(-(readlen - proclen), SeekOrigin.Current);
 							}
+						}
+						else	/* 連続データ（ST-700等）*/
+						{
+							int i = patterns.Length - 1;
+							buf = new byte[0x1000];
 
-							fw.inFs.Seek(-(readlen - proclen), SeekOrigin.Current);
+							while ((readlen = fw.inFs.Read(buf, 0, buf.Length)) > 0)
+							{
+								Utils.XorData(ref buf, buf.Length, new byte[] { patterns[i] }, 0);
+								fw.outFs.Write(buf, 0, readlen);
+								i = (i + 1) % patterns.Length;
+							}
 						}
 					}
 				}
