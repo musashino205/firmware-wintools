@@ -53,7 +53,7 @@ namespace firmware_wintools.Tools
 			Console.WriteLine(Lang.CommonRes.Help_FunctionOpts +
 				"  -l\t\t\tshow list of directories/files instead of extracting\n" +
 				"  -L <output>\t\toutput directory/file list to <output>\n" +
-				"  -d [<directory>]\textract directories/files into <directory> (default: \"necbsd-rootfs\")\n" +
+				"  -d [<directory>]\textract directories/files into <directory> (default: \"" + OutDir + "\")\n" +
 				"  -f <output>[:<size>]\tcut out filesystem binary to <output> with <size> (default: 32MB)\n" +
 				"  -H\t\t\tdon't skip listing/extracting hard-link files\n" +
 				"  -4\t\t\tsearch superblock on each 4 bytes instead of 8 bytes\n");
